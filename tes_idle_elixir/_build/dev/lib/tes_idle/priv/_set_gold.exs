@@ -1,0 +1,1 @@
+import Ecto.Query; alias TesIdle.Repo; alias TesIdle.Schemas.{Hero,User}; for u <- Repo.all(from u in User, select: {u.username, u.email}), do: IO.inspect(u, label: "USER"); for h <- Repo.all(from h in Hero, select: {h.name, h.gold}), do: IO.inspect(h, label: "HERO")

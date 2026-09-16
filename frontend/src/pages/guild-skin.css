@@ -1,0 +1,499 @@
+/* ═══════════════════════════════════════════════════════════════════
+   Guild skin — «Оплот Соратников» (The Guild Bastion)
+   Стилистический слой для страницы /guild в эстетике The Imperial Chronicler.
+   Полная поддержка тёмной («Ночной уголь») и светлой («Пергамент») тем.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Главное геральдическое знамя Оплота ────────────────────── */
+.guild-bastion-banner {
+  background:
+    linear-gradient(135deg, rgba(201, 162, 39, 0.08) 0%, rgba(20, 21, 26, 0.95) 50%, rgba(10, 11, 14, 0.98) 100%),
+    color-mix(in oklab, var(--surface), black 15%);
+  border: 1px solid rgba(201, 162, 39, 0.35);
+  border-radius: var(--radius-lg);
+  padding: 24px 32px;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  box-shadow:
+    0 16px 40px -10px rgba(0, 0, 0, 0.85),
+    inset 0 1px 0 0 rgba(201, 162, 39, 0.3);
+}
+
+.guild-bastion-banner::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  border-top: 2px solid var(--accent);
+  border-left: 2px solid var(--accent);
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.guild-bastion-banner::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 16px;
+  height: 16px;
+  border-bottom: 2px solid var(--accent);
+  border-right: 2px solid var(--accent);
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+/* Медальон эмблемы */
+.guild-emblem-crest {
+  width: 84px;
+  height: 84px;
+  min-width: 84px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, rgba(201, 162, 39, 0.25), rgba(15, 16, 20, 0.95));
+  border: 2px solid rgba(201, 162, 39, 0.55);
+  box-shadow:
+    0 0 24px rgba(201, 162, 39, 0.2),
+    inset 0 0 16px rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 44px;
+  position: relative;
+}
+
+.guild-emblem-crest::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1px dashed rgba(201, 162, 39, 0.3);
+  pointer-events: none;
+}
+
+/* Название гильдии и девиз */
+.guild-title-hero {
+  font-family: var(--font-display);
+  font-size: clamp(26px, 3vw, 36px);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--fg);
+  line-height: 1.15;
+  margin: 0;
+}
+
+.guild-motto-ribbon {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--accent);
+  letter-spacing: 0.02em;
+  margin-top: 4px;
+}
+
+/* Прогресс-бар опыта гильдии */
+.guild-exp-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  max-width: 460px;
+}
+
+.guild-exp-track {
+  height: 9px;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(201, 162, 39, 0.25);
+  border-radius: 5px;
+  overflow: hidden;
+  position: relative;
+}
+
+.guild-exp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #8a6d1c, #c9a227, #fef08a);
+  border-radius: 4px;
+  box-shadow: 0 0 10px rgba(201, 162, 39, 0.6);
+  transition: width 0.5s cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* Баннер активного пира */
+.guild-feast-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: linear-gradient(135deg, rgba(234, 179, 8, 0.18), rgba(201, 162, 39, 0.06));
+  border: 1px solid rgba(234, 179, 8, 0.45);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--gold);
+  box-shadow: 0 0 16px rgba(234, 179, 8, 0.25);
+  animation: feast-pulse 3s infinite alternate;
+}
+
+@keyframes feast-pulse {
+  0% { box-shadow: 0 0 10px rgba(234, 179, 8, 0.2); }
+  100% { box-shadow: 0 0 22px rgba(234, 179, 8, 0.45); }
+}
+
+/* Чипы параметров и бафов */
+.guild-buff-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: color-mix(in oklab, var(--surface-raised), transparent 20%);
+  border: 1px solid color-mix(in oklab, var(--border), var(--accent) 30%);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  color: var(--fg);
+}
+
+.guild-buff-chip strong {
+  color: var(--gold);
+}
+
+/* ── Навигация по залам гильдии (Chamber Tabs) ───────────────── */
+.guild-chambers-nav {
+  display: flex;
+  gap: 10px;
+  margin: 22px 0 18px;
+  border-bottom: 1px solid color-mix(in oklab, var(--border), var(--accent) 25%);
+  padding-bottom: 4px;
+  overflow-x: auto;
+  width: 100%;
+}
+
+.guild-chamber-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 20px;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid transparent;
+  border-bottom: none;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.guild-chamber-tab:hover {
+  color: var(--fg);
+  background: color-mix(in oklab, var(--surface-raised), transparent 50%);
+}
+
+.guild-chamber-tab.active {
+  color: var(--gold);
+  background: linear-gradient(180deg, color-mix(in oklab, var(--accent), transparent 85%) 0%, var(--surface) 100%);
+  border: 1px solid color-mix(in oklab, var(--border), var(--accent) 40%);
+  border-bottom: 2px solid var(--accent);
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.guild-tab-badge {
+  padding: 2px 7px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  background: color-mix(in oklab, var(--accent), transparent 80%);
+  color: var(--gold);
+  border: 1px solid color-mix(in oklab, var(--accent), transparent 60%);
+}
+
+.guild-tab-badge.badge-danger {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+/* ── Карточки Лавки Соратников ──────────────────────────────── */
+.guild-shop-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 18px;
+  width: 100%;
+}
+
+.guild-shop-card {
+  background: var(--surface);
+  border: 1px solid color-mix(in oklab, var(--border), var(--accent) 25%);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  transition: all 0.22s ease;
+  position: relative;
+}
+
+.guild-shop-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 16px rgba(201, 162, 39, 0.15);
+}
+
+.guild-shop-icon-socket {
+  width: 52px;
+  height: 52px;
+  min-width: 52px;
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+  border: 1px solid color-mix(in oklab, var(--border), var(--accent) 35%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+}
+
+/* ── Пергаментный Чат и Ратуша ──────────────────────────────── */
+.guild-chat-container {
+  max-height: 500px;
+  min-height: 360px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px;
+  background: var(--surface-raised);
+  border: 1px solid color-mix(in oklab, var(--border), var(--accent) 20%);
+  border-radius: var(--radius-md);
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--accent), transparent 60%) transparent;
+}
+
+.guild-chat-msg {
+  padding: 9px 13px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  line-height: 1.5;
+  max-width: 85%;
+  position: relative;
+}
+
+.guild-chat-msg.mine {
+  align-self: flex-end;
+  background: linear-gradient(135deg, color-mix(in oklab, var(--accent), transparent 80%), color-mix(in oklab, var(--accent), transparent 90%));
+  border: 1px solid color-mix(in oklab, var(--accent), transparent 50%);
+  border-bottom-right-radius: 2px;
+  color: var(--fg);
+}
+
+.guild-chat-msg.theirs {
+  align-self: flex-start;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-bottom-left-radius: 2px;
+  color: var(--fg);
+}
+
+.guild-chat-msg.system {
+  align-self: center;
+  max-width: 95%;
+  text-align: center;
+  background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--accent), transparent 85%), transparent);
+  border-top: 1px solid color-mix(in oklab, var(--accent), transparent 70%);
+  border-bottom: 1px solid color-mix(in oklab, var(--accent), transparent 70%);
+  border-radius: 0;
+  color: var(--gold);
+  font-style: italic;
+  font-size: 12px;
+  padding: 6px 16px;
+}
+
+/* ── Зал Соратников (Табель о рангах) ────────────────────────── */
+.guild-roster-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  transition: all 0.15s ease;
+}
+
+.guild-roster-row:hover {
+  background: var(--surface-raised);
+  border-color: color-mix(in oklab, var(--border), var(--accent) 35%);
+}
+
+.guild-role-badge {
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-family: var(--font-mono);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.guild-role-badge.role-leader {
+  background: rgba(234, 179, 8, 0.18);
+  color: var(--gold);
+  border: 1px solid rgba(234, 179, 8, 0.4);
+}
+
+.guild-role-badge.role-officer {
+  background: rgba(56, 189, 248, 0.18);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.4);
+}
+
+.guild-role-badge.role-member {
+  background: rgba(156, 163, 175, 0.12);
+  color: var(--muted);
+  border: 1px solid rgba(156, 163, 175, 0.25);
+}
+
+/* ── Щиты гильдий в Зале Поиска (Landing) ────────────────────── */
+.guild-shield-card {
+  background: var(--surface);
+  border: 1px solid color-mix(in oklab, var(--border), var(--accent) 25%);
+  border-radius: var(--radius-md);
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  transition: all 0.22s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.guild-shield-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-3px);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.45), 0 0 20px rgba(201, 162, 39, 0.15);
+}
+
+.guild-shield-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  border-top: 2px solid var(--accent);
+  border-left: 2px solid var(--accent);
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+/* Имперская хартия основания */
+.imperial-charter-modal {
+  background: var(--surface);
+  border: 1px solid color-mix(in oklab, var(--border), var(--accent) 45%);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(201, 162, 39, 0.3);
+  position: relative;
+  width: 100%;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Светлая тема («Пергамент») — переопределения для Guild Bastion
+   ═══════════════════════════════════════════════════════════════════ */
+[data-theme="light"] .guild-bastion-banner {
+  background:
+    linear-gradient(135deg, rgba(201, 162, 39, 0.08) 0%, rgba(250, 246, 236, 0.95) 50%, rgba(243, 236, 220, 0.98) 100%),
+    var(--surface);
+  border-color: color-mix(in oklab, var(--accent), var(--border) 50%);
+  box-shadow:
+    0 8px 24px -4px rgba(43, 33, 20, 0.08),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.8);
+}
+
+[data-theme="light"] .guild-title-hero {
+  color: var(--fg);
+  text-shadow: none;
+}
+
+[data-theme="light"] .guild-emblem-crest {
+  background: radial-gradient(circle at 35% 35%, rgba(201, 162, 39, 0.2), var(--surface-raised));
+  border-color: var(--accent);
+  box-shadow:
+    0 0 16px rgba(201, 162, 39, 0.15),
+    inset 0 0 10px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .guild-exp-track {
+  background: rgba(0, 0, 0, 0.08);
+  border-color: var(--border);
+}
+
+[data-theme="light"] .guild-chamber-tab.active {
+  background: color-mix(in oklab, var(--accent), var(--surface) 12%);
+  border-color: color-mix(in oklab, var(--accent), var(--border) 60%);
+  border-bottom: 2px solid var(--accent);
+  color: var(--accent);
+  box-shadow: 0 -2px 8px rgba(43, 33, 20, 0.05);
+}
+
+[data-theme="light"] .guild-shop-card,
+[data-theme="light"] .guild-shield-card {
+  background: var(--surface);
+  border-color: var(--border);
+  box-shadow: 0 4px 14px rgba(43, 33, 20, 0.06);
+}
+
+[data-theme="light"] .guild-shop-card:hover,
+[data-theme="light"] .guild-shield-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 8px 24px rgba(43, 33, 20, 0.12), 0 0 16px rgba(138, 109, 28, 0.15);
+}
+
+[data-theme="light"] .guild-chat-container {
+  background: var(--surface-raised);
+  border-color: var(--border);
+}
+
+[data-theme="light"] .guild-chat-msg.theirs {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--fg);
+}
+
+[data-theme="light"] .guild-chat-msg.mine {
+  background: color-mix(in oklab, var(--accent), var(--surface) 85%);
+  border-color: color-mix(in oklab, var(--accent), transparent 50%);
+  color: var(--fg);
+}
+
+[data-theme="light"] .guild-chat-msg.system {
+  color: var(--accent);
+  border-color: color-mix(in oklab, var(--accent), transparent 70%);
+}
+
+[data-theme="light"] .guild-roster-row {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+[data-theme="light"] .guild-roster-row:hover {
+  background: var(--surface-raised);
+  border-color: var(--accent);
+}
+
+[data-theme="light"] .imperial-charter-modal {
+  background: var(--surface);
+  border-color: color-mix(in oklab, var(--accent), var(--border) 50%);
+  box-shadow: 0 16px 40px rgba(43, 33, 20, 0.12);
+}

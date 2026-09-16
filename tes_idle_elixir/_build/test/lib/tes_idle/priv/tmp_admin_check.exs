@@ -1,0 +1,1 @@
+alias TesIdle.Repo; alias TesIdle.Schemas.User; import Ecto.Query; from(u in User, where: u.username == "qa_full_1788520207249") |> Repo.update_all(set: [is_admin: true]); IO.puts("done")
