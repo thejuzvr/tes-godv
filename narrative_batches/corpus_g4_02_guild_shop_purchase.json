@@ -1,0 +1,130 @@
+﻿{
+    "activation_policy":  "pending",
+    "templates":  [
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "{hero_name} взял «{item_name}» в гильдейской лавке за {price} очков. Писарь занёс этот миг в книгу без помарок."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "{price} очков гильдии превратились для {hero_name} в «{item_name}». Дорога приняла решение и не стала возражать."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "Гильдейская лавка выдала {hero_name} «{item_name}» за {price} очков. Сумерки легли на Скайрим особенно спокойно."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "{hero_name} взял «{item_name}» в гильдейской лавке за {price} очков. Эта весть дошла до ближайшего костра."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "{price} очков гильдии превратились для {hero_name} в «{item_name}». Старый камень у дороги сохранил молчаливую память."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "Гильдейская лавка выдала {hero_name} «{item_name}» за {price} очков. Поступок оказался тише славы, но весомее слухов."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "{hero_name} взял «{item_name}» в гильдейской лавке за {price} очков. Холодный воздух словно стал немного добрее."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "{price} очков гильдии превратились для {hero_name} в «{item_name}». В истории края появилась ещё одна честная строка."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "Гильдейская лавка выдала {hero_name} «{item_name}» за {price} очков. Путники взглянули вслед с уважением."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "{hero_name} взял «{item_name}» в гильдейской лавке за {price} очков. Далёкий колокол будто отметил этот час."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "{price} очков гильдии превратились для {hero_name} в «{item_name}». Рассвет найдёт эту историю уже известной."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "Гильдейская лавка выдала {hero_name} «{item_name}» за {price} очков. Север помнит дела лучше громких обещаний."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "{hero_name} взял «{item_name}» в гильдейской лавке за {price} очков. Ворона проверила карманы взглядом и улетела довольной."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "{price} очков гильдии превратились для {hero_name} в «{item_name}». Бард уже ищет рифму, и это немного тревожит."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "Гильдейская лавка выдала {hero_name} «{item_name}» за {price} очков. Стражник одобрил всё настолько, насколько позволяет шлем."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "{hero_name} взял «{item_name}» в гильдейской лавке за {price} очков. Кот из таверны сделал вид, что это его заслуга."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "{price} очков гильдии превратились для {hero_name} в «{item_name}». Снег скрипнул так торжественно, будто был свидетелем."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "Гильдейская лавка выдала {hero_name} «{item_name}» за {price} очков. Один сыр в лавке созрел от важности момента."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "{hero_name} взял «{item_name}» в гильдейской лавке за {price} очков. Скелет в крипте не сказал ничего, как всегда по делу."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "{price} очков гильдии превратились для {hero_name} в «{item_name}». Грязекраб прислушался и решил не вмешиваться."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "Гильдейская лавка выдала {hero_name} «{item_name}» за {price} очков. Кузнечный молот отозвался с лишним энтузиазмом."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "{hero_name} взял «{item_name}» в гильдейской лавке за {price} очков. Уличный петух объявил событие без спроса."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "{price} очков гильдии превратились для {hero_name} в «{item_name}». Мешок с репой выглядел удивительно вдохновлённым."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "Гильдейская лавка выдала {hero_name} «{item_name}» за {price} очков. Три септима под лавкой решили остаться на месте."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "{hero_name} взял «{item_name}» в гильдейской лавке за {price} очков. Даже лошадь кивнула, хотя могла просто чесаться."
+                      }
+                  ]
+}

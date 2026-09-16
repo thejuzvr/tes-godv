@@ -5,520 +5,269 @@ import {
   TEMPLATE_TYPE_GROUPS, TEMPLATE_TYPES, VAR_GROUPS, EXAMPLE_JSON,
   previewTemplate, insertVariable,
 } from "@/components/narrativeData"
-
-// Мастерская нарративов (/narratives) — полноэкранная замена словника-модалки.
-// Словник, создание шаблонов, предложения на модерацию (для авторов),
-// база шаблонов и импорт JSON (для админа).
+import "./narratives-observatory.css"
 
 type Tab = "vars" | "create" | "suggest" | "browse" | "import"
+type Notice = { kind: "success" | "error"; text: string } | null
 
-const chipStyle = (highlight = false) => ({
-  padding: "3px 8px",
-  borderRadius: "var(--radius-sm)",
-  border: `1px solid ${highlight ? "var(--accent)" : "var(--border)"}`,
-  background: "var(--bg-elevated)",
-  cursor: "pointer",
-  fontSize: "var(--text-xs)",
-  fontFamily: "var(--font-mono)",
-  color: "var(--mp)",
-  whiteSpace: "nowrap" as const,
-})
+const STATUS_COPY: Record<string, { label: string; detail: string; tone: string }> = {
+  approved: { label: "Одобрено", detail: "Шаблон уже может попасть в игровую ротацию.", tone: "success" },
+  rejected: { label: "Нужна доработка", detail: "Посмотрите комментарий редактора и попробуйте снова.", tone: "danger" },
+  pending: { label: "На рассмотрении", detail: "Редактор проверит тип, переменные и тон текста.", tone: "warning" },
+}
 
-function VarSidebar({ onInsert }: { onInsert: (v: string, ta: HTMLTextAreaElement | null) => void }) {
+function TypeSelect({ value, onChange, id, includeAll = false }: { value: string; onChange: (value: string) => void; id: string; includeAll?: boolean }) {
+  return <select id={id} value={value} onChange={e => onChange(e.target.value)}>
+    {includeAll && <option value="">Все типы</option>}
+    {TEMPLATE_TYPE_GROUPS.map(group => <optgroup key={group.group} label={group.group}>
+      {group.types.map(type => <option key={type.id} value={type.id}>{type.label}</option>)}
+    </optgroup>)}
+  </select>
+}
+
+function VariableRail({ onInsert }: { onInsert: (value: string) => void }) {
   const [copied, setCopied] = useState<string | null>(null)
-  const copy = (v: string) => {
-    navigator.clipboard?.writeText(v).then(() => {
-      setCopied(v)
-      setTimeout(() => setCopied(null), 1200)
-    })
+  const copy = async (value: string) => {
+    try {
+      await navigator.clipboard?.writeText(value)
+      setCopied(value)
+      window.setTimeout(() => setCopied(null), 1400)
+    } catch { /* insertion remains available when clipboard permission is denied */ }
   }
-  return (
-    <aside style={{ position: "sticky", top: 12, maxHeight: "calc(100vh - 140px)", overflowY: "auto", minWidth: 0 }}>
-      <div className="panel">
-        <div className="panel-header" style={{ fontSize: "var(--text-sm)" }}>Словник переменных</div>
-        <div className="panel-body">
-          <p style={{ fontSize: "var(--text-xs)", color: "var(--muted)", marginTop: 0, lineHeight: 1.5 }}>
-            Клик по чипу — вставить в текст. Клик по «⧉» — скопировать.
-          </p>
-          {VAR_GROUPS.map(g => (
-            <div key={g.title} style={{ marginBottom: "var(--space-3)" }}>
-              <div style={{ fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--muted)", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 4 }}>
-                {g.title}
-              </div>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
-                {g.vars.map(v => (
-                  <span key={v.var} style={{ display: "inline-flex", alignItems: "center", gap: 2 }}>
-                    <button onClick={() => onInsert(v.var, null)} title={`${v.label}${v.caseHint ? ` · ${v.caseHint}` : ""}: ${v.example}`} style={chipStyle()}>
-                      {v.var}
-                    </button>
-                    <button onClick={() => copy(v.var)} title="Скопировать" aria-label={`Скопировать ${v.var}`}
-                      style={{ ...chipStyle(), padding: "3px 5px", color: copied === v.var ? "var(--success)" : "var(--muted)", fontSize: 10 }}>
-                      {copied === v.var ? "✓" : "⧉"}
-                    </button>
-                  </span>
-                ))}
-              </div>
-            </div>
-          ))}
+
+  return <aside className="narrative-variable-rail" aria-label="Инструменты словника">
+    <div className="narrative-rail-heading">
+      <span className="narrative-kicker">Палитра слов</span>
+      <h2>Переменные движка</h2>
+      <p>Вставляйте чип в точку курсора. Копия пригодится для заметок.</p>
+    </div>
+    <div className="narrative-variable-groups">
+      {VAR_GROUPS.map(group => <section key={group.title} className="narrative-variable-group" aria-label={group.title}>
+        <div className="narrative-variable-group-title"><strong>{group.title}</strong><span>{group.hint}</span></div>
+        <div className="narrative-chip-list">
+          {group.vars.map(variable => <div className="narrative-variable-chip" key={variable.var}>
+            <button type="button" onClick={() => onInsert(variable.var)} title={`${variable.label}${variable.caseHint ? ` · ${variable.caseHint}` : ""}. Пример: ${variable.example}`}>
+              <code>{variable.var}</code>
+            </button>
+            <button type="button" className="narrative-copy" onClick={() => copy(variable.var)} aria-label={`Скопировать ${variable.var}`} title="Скопировать переменную">
+              {copied === variable.var ? "✓" : "⧉"}
+            </button>
+          </div>)}
         </div>
-      </div>
-    </aside>
-  )
+      </section>)}
+    </div>
+  </aside>
+}
+
+function NoticeBox({ notice }: { notice: Notice }) {
+  if (!notice) return null
+  return <div className={`narrative-notice ${notice.kind}`} role={notice.kind === "error" ? "alert" : "status"} aria-live="polite">{notice.text}</div>
 }
 
 function GlossaryTab() {
-  const [copied, setCopied] = useState<string | null>(null)
   const [query, setQuery] = useState("")
-  const copy = (v: string) => {
-    navigator.clipboard?.writeText(v).then(() => {
-      setCopied(v)
-      setTimeout(() => setCopied(null), 1200)
-    })
-  }
+  const [copied, setCopied] = useState<string | null>(null)
   const q = query.trim().toLowerCase()
-  const groups = q
-    ? VAR_GROUPS.map(g => ({
-        ...g,
-        vars: g.vars.filter(v =>
-          v.var.toLowerCase().includes(q) || v.label.toLowerCase().includes(q) ||
-          (v.caseHint || "").toLowerCase().includes(q) || v.example.toLowerCase().includes(q)),
-      })).filter(g => g.vars.length > 0)
-    : VAR_GROUPS
+  const groups = q ? VAR_GROUPS.map(group => ({ ...group, vars: group.vars.filter(variable =>
+    variable.var.toLowerCase().includes(q) || variable.label.toLowerCase().includes(q) ||
+    (variable.caseHint || "").toLowerCase().includes(q) || variable.example.toLowerCase().includes(q),
+  ) })).filter(group => group.vars.length) : VAR_GROUPS
+  const count = groups.reduce((total, group) => total + group.vars.length, 0)
+  const copy = async (value: string) => {
+    try { await navigator.clipboard?.writeText(value); setCopied(value); window.setTimeout(() => setCopied(null), 1400) } catch { /* no-op */ }
+  }
 
-  return (
-    <div>
-      <div className="panel" style={{ marginBottom: "var(--space-4)" }}>
-        <div className="panel-header">Как это работает</div>
-        <div className="panel-body" style={{ fontSize: "var(--text-sm)", lineHeight: 1.7, color: "var(--muted)" }}>
-          <div style={{ color: "var(--fg)", marginBottom: "var(--space-1)" }}>
-            Переменные в фигурных скобках движок подставляет при генерации нарратива.
-          </div>
-          <div>• У каждой переменной есть падеж или форма — соблюдайте её, иначе текст будет корявым («зашёл в Вайтран» вместо «зашёл в Вайтран»). Пример рядом с переменной показывает нужную форму.</div>
-          <div>• Написали «{`{hero_name}`}» с опечаткой или несуществующее имя — переменная останется в тексте как есть. Это честный сигнал, что что-то не так.</div>
-          <div>• Смотрите на контекст типа: «Смерть и возрождение» — переменные только для типа <code style={{ fontFamily: "var(--font-mono)", color: "var(--mp)" }}>death_respawn</code>, «Активности» — для рыбацких/воровских типов и т.д.</div>
-        </div>
+  return <div className="narrative-glossary">
+    <section className="narrative-guidance" aria-labelledby="glossary-guide-title">
+      <div><span className="narrative-kicker">Как читать хронику</span><h2 id="glossary-guide-title">Слово в скобках — место для живого мира</h2></div>
+      <div className="narrative-guidance-steps">
+        <p><b>1. Выберите тип.</b> Он определяет, какие события и переменные встретятся.</p>
+        <p><b>2. Проверьте форму.</b> Подсказка падежа рядом с переменной важнее красивой фразы.</p>
+        <p><b>3. Копируйте точно.</b> Неизвестная переменная останется в тексте — это сигнал ошибки.</p>
       </div>
-
-      <div style={{ display: "flex", alignItems: "center", gap: "var(--space-2)", marginBottom: "var(--space-3)" }}>
-        <input
-          value={query}
-          onChange={e => setQuery(e.target.value)}
-          placeholder="Поиск по переменным: имя, падеж, пример…"
-          style={{ width: 320, padding: "7px 12px", border: "1px solid var(--border)", borderRadius: "var(--radius-md)", fontSize: "var(--text-sm)", background: "var(--bg)", color: "var(--fg)" }}
-        />
-        <span style={{ fontSize: "var(--text-xs)", color: "var(--muted)", fontFamily: "var(--font-mono)" }}>
-          {groups.reduce((n, g) => n + g.vars.length, 0)} переменных
-        </span>
-      </div>
-
-      {groups.map(g => (
-        <div key={g.title} className="panel" style={{ marginBottom: "var(--space-3)" }}>
-          <div className="panel-header">
-            <span>{g.title}</span>
-            <span style={{ color: "var(--muted)", fontSize: "var(--text-xs)", fontFamily: "var(--font-mono)" }}>{g.hint}</span>
-          </div>
-          <div className="panel-body" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "var(--space-2)" }}>
-            {g.vars.map(v => (
-              <button key={v.var} onClick={() => copy(v.var)}
-                style={{ display: "flex", alignItems: "baseline", gap: "var(--space-2)", padding: "var(--space-2) var(--space-3)", border: "1px solid var(--border)", borderRadius: "var(--radius-md)", background: "var(--bg-elevated)", cursor: "pointer", textAlign: "left" }}
-                title="Клик — скопировать переменную">
-                <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", color: copied === v.var ? "var(--success)" : "var(--mp)", whiteSpace: "nowrap", fontWeight: 600 }}>
-                  {copied === v.var ? "✓ скопировано" : v.var}
-                </span>
-                <span style={{ fontSize: "var(--text-xs)", color: "var(--fg)", flex: "0 1 auto", minWidth: 0 }}>
-                  {v.label}
-                  {v.caseHint && <span style={{ color: "var(--warn)", marginLeft: 4, fontSize: 10, fontFamily: "var(--font-mono)" }}>{v.caseHint}</span>}
-                </span>
-                <span style={{ fontSize: "var(--text-xs)", color: "var(--muted)", fontStyle: "italic", marginLeft: "auto", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 130 }} title={`Пример: ${v.example}`}>
-                  {v.example}
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
-      ))}
+    </section>
+    <div className="narrative-search-row">
+      <label htmlFor="narrative-variable-search">Найти переменную</label>
+      <input id="narrative-variable-search" value={query} onChange={e => setQuery(e.target.value)} placeholder="Имя, падеж или пример…" />
+      <output aria-live="polite">{count} {count === 1 ? "переменная" : "переменных"}</output>
     </div>
-  )
+    {groups.length ? groups.map(group => <section className="narrative-glossary-group" key={group.title}>
+      <header><h2>{group.title}</h2><span>{group.hint}</span></header>
+      <div className="narrative-glossary-grid">
+        {group.vars.map(variable => <button type="button" key={variable.var} onClick={() => copy(variable.var)} className="narrative-glossary-card" title="Скопировать переменную">
+          <code>{copied === variable.var ? "✓ скопировано" : variable.var}</code>
+          <span><b>{variable.label}</b>{variable.caseHint && <em>{variable.caseHint}</em>}</span>
+          <small>{variable.example}</small>
+        </button>)}
+      </div>
+    </section>) : <div className="narrative-empty">По этому запросу переменных нет. Попробуйте название, падеж или пример.</div>}
+  </div>
 }
 
-function CreateTab() {
+function TemplateEditor({ mode }: { mode: "create" | "suggest" }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const [type, setType] = useState("explore")
   const [text, setText] = useState("")
   const [loading, setLoading] = useState(false)
-  const [result, setResult] = useState<string | null>(null)
+  const [notice, setNotice] = useState<Notice>(null)
+  const [mySuggestions, setMySuggestions] = useState<any[] | null>(mode === "suggest" ? null : [])
+  const isSuggestion = mode === "suggest"
+  const typeLabel = TEMPLATE_TYPES.find(item => item.id === type)?.label || type
+  const preview = previewTemplate(text || "Здесь появится ваш текст — с примерами вместо переменных.", [{ var: "{hero_name}", example: "Дракенфел" }, ...VAR_GROUPS.flatMap(group => group.vars)])
 
-  const submit = async () => {
-    if (!text.trim()) return
-    setLoading(true)
-    setResult(null)
-    try {
-      const res = await api.adminNarrativesImport([{
-        template_type: type,
-        text_template: text.trim(),
-        source: "community",
-      }])
-      setResult(res.imported > 0 ? "Шаблон отправлен на модерацию" : `Ошибка: ${JSON.stringify(res)}`)
-      if (res.imported > 0) setText("")
-    } catch (e: any) {
-      setResult(`Ошибка: ${e.message}`)
-    }
-    setLoading(false)
+  const refreshSuggestions = useCallback(() => {
+    if (isSuggestion) api.getMySuggestions().then(setMySuggestions).catch(() => setMySuggestions([]))
+  }, [isSuggestion])
+  useEffect(() => { refreshSuggestions() }, [refreshSuggestions])
+
+  const insert = (value: string) => {
+    if (textareaRef.current) insertVariable(textareaRef.current, value, setText)
+    else setText(previous => previous + value)
   }
-
-  const insert = (v: string, ta: HTMLTextAreaElement | null) => {
-    const target = ta ?? textareaRef.current
-    if (target) insertVariable(target, v, setText)
-  }
-
-  const preview = previewTemplate(text || "Здесь появится превью…", [{ var: "{hero_name}", example: "Дракенфел" }, ...VAR_GROUPS.flatMap(g => g.vars)])
-
-  return (
-    <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) 380px", gap: "var(--space-4)", alignItems: "start" }}>
-      <div>
-        <div className="panel">
-          <div className="panel-header">Новый шаблон</div>
-          <div className="panel-body">
-            <label style={{ fontSize: "var(--text-xs)", fontFamily: "var(--font-mono)", color: "var(--muted)", textTransform: "uppercase", display: "block", marginBottom: 4 }}>Тип шаблона</label>
-            <select value={type} onChange={e => setType(e.target.value)}
-              style={{ padding: "7px 10px", border: "1px solid var(--border)", borderRadius: "var(--radius-md)", fontSize: "var(--text-sm)", background: "var(--bg)", color: "var(--fg)", marginBottom: "var(--space-3)" }}>
-              {TEMPLATE_TYPE_GROUPS.map(g => (
-                <optgroup key={g.group} label={g.group}>
-                  {g.types.map(t => <option key={t.id} value={t.id}>{t.label}</option>)}
-                </optgroup>
-              ))}
-            </select>
-
-            <label style={{ fontSize: "var(--text-xs)", fontFamily: "var(--font-mono)", color: "var(--muted)", textTransform: "uppercase", display: "block", marginBottom: 4 }}>Текст шаблона</label>
-            <textarea ref={textareaRef} value={text} onChange={e => setText(e.target.value)} rows={6}
-              placeholder="Напишите нарратив. Вставляйте переменные чипами справа, например: Герой {hero_name} нашёл {discovery} у {landmark}."
-              style={{ width: "100%", padding: "var(--space-2) var(--space-3)", border: "1px solid var(--border)", borderRadius: "var(--radius-md)", fontSize: "var(--text-sm)", background: "var(--bg)", color: "var(--fg)", resize: "vertical", lineHeight: 1.6, marginBottom: "var(--space-3)" }} />
-
-            {text.trim() && (
-              <div style={{ padding: "var(--space-2) var(--space-3)", background: "var(--bg-elevated)", borderRadius: "var(--radius-md)", borderLeft: "3px solid var(--accent)", marginBottom: "var(--space-3)" }}>
-                <div style={{ fontSize: "var(--text-xs)", fontFamily: "var(--font-mono)", color: "var(--muted)", textTransform: "uppercase", marginBottom: 4 }}>Превью (примеры вместо переменных)</div>
-                <div style={{ fontSize: "var(--text-sm)", color: "var(--fg)", lineHeight: 1.5 }}>{preview}</div>
-              </div>
-            )}
-
-            <button onClick={submit} disabled={loading || !text.trim()}
-              style={{ padding: "8px 20px", background: "var(--accent)", color: "var(--accent-on)", borderRadius: "var(--radius-md)", fontSize: "var(--text-sm)", border: "none", cursor: loading ? "wait" : "pointer", fontWeight: 600, opacity: loading || !text.trim() ? 0.5 : 1 }}>
-              {loading ? "Отправка…" : "Отправить на модерацию"}
-            </button>
-            {result && (
-              <div role="status" style={{ marginTop: "var(--space-3)", padding: "var(--space-2) var(--space-3)", background: result.startsWith("Ошибка") ? "color-mix(in oklab, var(--danger), transparent 90%)" : "color-mix(in oklab, var(--success), transparent 90%)", borderRadius: "var(--radius-md)", fontSize: "var(--text-xs)", color: result.startsWith("Ошибка") ? "var(--danger)" : "var(--success)" }}>
-                {result}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-      <VarSidebar onInsert={(v) => insert(v, null)} />
-    </div>
-  )
-}
-
-function SuggestTab() {
-  const textareaRef = useRef<HTMLTextAreaElement>(null)
-  const isAdmin = useGameStore((s) => s.isAdmin)
-  const [type, setType] = useState("explore")
-  const [text, setText] = useState("")
-  const [loading, setLoading] = useState(false)
-  const [result, setResult] = useState<string | null>(null)
-  const [mySuggestions, setMySuggestions] = useState<any[] | null>(null)
-
-  useEffect(() => {
-    if (mySuggestions === null) {
-      api.getMySuggestions().then(setMySuggestions).catch(() => setMySuggestions([]))
-    }
-  }, [mySuggestions])
-
   const submit = async () => {
-    if (!text.trim()) return
-    setLoading(true)
-    setResult(null)
+    if (!text.trim()) { setNotice({ kind: "error", text: "Напишите текст шаблона перед отправкой." }); textareaRef.current?.focus(); return }
+    setLoading(true); setNotice(null)
     try {
-      await api.createSuggestion("narrative", `Шаблон: ${TEMPLATE_TYPES.find(t => t.id === type)?.label || type}`, text.trim())
-      setResult("Предложение отправлено — попадёт в модерацию админа.")
+      if (isSuggestion) {
+        await api.createSuggestion("narrative", `Шаблон: ${typeLabel}`, text.trim())
+        setNotice({ kind: "success", text: "Предложение принято. Оно ждёт проверки редактором в разделе модерации." })
+        refreshSuggestions()
+      } else {
+        const result = await api.adminNarrativesImport([{ template_type: type, text_template: text.trim(), source: "community" }])
+        if (!result.imported) throw new Error("Сервер не добавил шаблон. Проверьте текст и повторите попытку.")
+        setNotice({ kind: "success", text: "Шаблон отправлен на модерацию. После одобрения он появится в ротации." })
+      }
       setText("")
-      api.getMySuggestions().then(setMySuggestions).catch(() => {})
-    } catch (e: any) {
-      setResult(`Ошибка: ${e.message}`)
-    }
-    setLoading(false)
+    } catch (error: any) { setNotice({ kind: "error", text: `Не удалось отправить: ${error.message || "неизвестная ошибка"}` }) }
+    finally { setLoading(false) }
   }
 
-  const insert = (v: string) => {
-    const ta = textareaRef.current
-    if (ta) insertVariable(ta, v, setText)
-    else setText(prev => prev + v)
-  }
-
-  return (
-    <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) 380px", gap: "var(--space-4)", alignItems: "start" }}>
-      <div>
-        <div className="panel">
-          <div className="panel-header">Предложить нарратив</div>
-          <div className="panel-body">
-            <p style={{ fontSize: "var(--text-xs)", color: "var(--muted)", marginTop: 0, lineHeight: 1.6 }}>
-              Ваш текст попадёт на модерацию к админу и после одобрения появится в ротации игры.
-              Пользуйтесь словником справа — переменные подставятся движком автоматически.
-            </p>
-
-            <label style={{ fontSize: "var(--text-xs)", fontFamily: "var(--font-mono)", color: "var(--muted)", textTransform: "uppercase", display: "block", marginBottom: 4 }}>Тип шаблона</label>
-            <select value={type} onChange={e => setType(e.target.value)}
-              style={{ padding: "7px 10px", border: "1px solid var(--border)", borderRadius: "var(--radius-md)", fontSize: "var(--text-sm)", background: "var(--bg)", color: "var(--fg)", marginBottom: "var(--space-3)" }}>
-              {TEMPLATE_TYPE_GROUPS.map(g => (
-                <optgroup key={g.group} label={g.group}>
-                  {g.types.map(t => <option key={t.id} value={t.id}>{t.label}</option>)}
-                </optgroup>
-              ))}
-            </select>
-
-            <label style={{ fontSize: "var(--text-xs)", fontFamily: "var(--font-mono)", color: "var(--muted)", textTransform: "uppercase", display: "block", marginBottom: 4 }}>Текст</label>
-            <textarea ref={textareaRef} value={text} onChange={e => setText(e.target.value)} rows={6}
-              placeholder="Например: Герой {hero_name} заметил {discovery} у старого тракта."
-              style={{ width: "100%", padding: "var(--space-2) var(--space-3)", border: "1px solid var(--border)", borderRadius: "var(--radius-md)", fontSize: "var(--text-sm)", background: "var(--bg)", color: "var(--fg)", resize: "vertical", lineHeight: 1.6, marginBottom: "var(--space-3)" }} />
-
-            <button onClick={submit} disabled={loading || !text.trim()}
-              style={{ padding: "8px 20px", background: "var(--accent)", color: "var(--accent-on)", borderRadius: "var(--radius-md)", fontSize: "var(--text-sm)", border: "none", cursor: loading ? "wait" : "pointer", fontWeight: 600, opacity: loading || !text.trim() ? 0.5 : 1 }}>
-              {loading ? "Отправка…" : "Предложить"}
-            </button>
-            {result && (
-              <div role="status" style={{ marginTop: "var(--space-3)", padding: "var(--space-2) var(--space-3)", background: result.startsWith("Ошибка") ? "color-mix(in oklab, var(--danger), transparent 90%)" : "color-mix(in oklab, var(--success), transparent 90%)", borderRadius: "var(--radius-md)", fontSize: "var(--text-xs)", color: result.startsWith("Ошибка") ? "var(--danger)" : "var(--success)" }}>
-                {result}
-              </div>
-            )}
-          </div>
+  return <div className="narrative-workbench">
+    <div className="narrative-editor-column">
+      <section className="narrative-editor-card" aria-labelledby={`${mode}-form-title`}>
+        <header>
+          <span className="narrative-kicker">{isSuggestion ? "Письмо в редакцию" : "Редакторская запись"}</span>
+          <h2 id={`${mode}-form-title`}>{isSuggestion ? "Предложите строку для летописи" : "Создайте новый шаблон"}</h2>
+          <p>{isSuggestion ? "Текст сначала проходит модерацию: редактор проверяет событие, переменные и читаемость. Одобренный вариант становится частью живой хроники." : "Добавьте шаблон в очередь модерации. Используйте палитру переменных, чтобы текст получил данные события."}</p>
+        </header>
+        <div className="narrative-form-grid">
+          <div><label htmlFor={`${mode}-type`}>Событие</label><TypeSelect id={`${mode}-type`} value={type} onChange={setType} /></div>
+          <div className="narrative-selected-type"><span>Вы выбрали</span><strong>{typeLabel}</strong></div>
         </div>
-
-        {mySuggestions !== null && mySuggestions.length > 0 && (
-          <div className="panel" style={{ marginTop: "var(--space-4)" }}>
-            <div className="panel-header">Мои предложения <span style={{ color: "var(--muted)", fontSize: "var(--text-xs)", fontFamily: "var(--font-mono)" }}>{mySuggestions.length}</span></div>
-            <div className="panel-body" style={{ paddingTop: 0 }}>
-              {mySuggestions.map((s) => (
-                <div key={s.id} style={{ padding: "var(--space-2) 0", borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", gap: "var(--space-3)" }}>
-                  <span style={{ padding: "2px 6px", borderRadius: "var(--radius-pill)", fontSize: 10, fontFamily: "var(--font-mono)", whiteSpace: "nowrap",
-                    background: s.status === "approved" ? "color-mix(in oklab, var(--success), transparent 85%)" : s.status === "rejected" ? "color-mix(in oklab, var(--danger), transparent 85%)" : "color-mix(in oklab, var(--warn), transparent 85%)",
-                    color: s.status === "approved" ? "var(--success)" : s.status === "rejected" ? "var(--danger)" : "var(--warn)" }}>
-                    {s.status === "approved" ? "одобрено" : s.status === "rejected" ? "отклонено" : "на модерации"}
-                  </span>
-                  <span style={{ flex: 1, fontSize: "var(--text-sm)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.content}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-        {mySuggestions !== null && mySuggestions.length === 0 && !isAdmin && (
-          <div style={{ marginTop: "var(--space-3)", fontSize: "var(--text-xs)", color: "var(--muted)" }}>
-            Пока предложений нет — самое время написать первое.
-          </div>
-        )}
-      </div>
-      <VarSidebar onInsert={insert} />
+        <label htmlFor={`${mode}-text`}>Текст шаблона</label>
+        <textarea ref={textareaRef} id={`${mode}-text`} value={text} onChange={e => setText(e.target.value)} rows={7}
+          aria-describedby={`${mode}-help ${mode}-preview`} placeholder="Например: Герой {hero_name} заметил {discovery} у старого тракта." />
+        <p id={`${mode}-help`} className="narrative-field-help">Переменные вставляются в фигурных скобках. Выбирайте только те, что подходят событию.</p>
+        <div className="narrative-preview" id={`${mode}-preview`} aria-live="polite"><span>Пробный оттиск</span><p>{preview}</p></div>
+        <div className="narrative-submit-row"><button type="button" className="narrative-primary" onClick={submit} disabled={loading || !text.trim()}>{loading ? "Отправляем…" : isSuggestion ? "Отправить редактору" : "Передать на модерацию"}</button><span>{isSuggestion ? "Вы сможете следить за статусом ниже." : "Шаблон не станет активным без проверки."}</span></div>
+        <NoticeBox notice={notice} />
+      </section>
+      {isSuggestion && <SuggestionLedger suggestions={mySuggestions} />}
     </div>
-  )
+    <VariableRail onInsert={insert} />
+  </div>
+}
+
+function SuggestionLedger({ suggestions }: { suggestions: any[] | null }) {
+  const readableFeedback = (suggestion: any) => suggestion.admin_comment || suggestion.comment
+  return <section className="narrative-ledger" aria-labelledby="suggestion-ledger-title">
+    <header><div><span className="narrative-kicker">Мой архив</span><h2 id="suggestion-ledger-title">Статусы предложений</h2></div>{suggestions && <span className="narrative-count">{suggestions.length}</span>}</header>
+    {suggestions === null ? <p className="narrative-loading">Загружаем ваш архив…</p> : suggestions.length === 0 ? <div className="narrative-empty"><b>Архив пока пуст.</b><br />Первое предложение появится здесь вместе с его статусом.</div> : <ul>
+      {suggestions.map(suggestion => {
+        const status = STATUS_COPY[suggestion.status] || STATUS_COPY.pending
+        return <li key={suggestion.id}>
+          <div className="narrative-suggestion-meta"><span className={`narrative-status ${status.tone}`}>{status.label}</span><span>{status.detail}</span></div>
+          <p>{suggestion.content}</p>
+          {readableFeedback(suggestion) && <div className="narrative-editor-feedback"><b>Комментарий редактора</b><span>{readableFeedback(suggestion)}</span></div>}
+        </li>
+      })}
+    </ul>}
+  </section>
 }
 
 function BrowseTab() {
   const [data, setData] = useState<any>(null)
   const [page, setPage] = useState(1)
   const [typeFilter, setTypeFilter] = useState("")
-
+  const [error, setError] = useState("")
   const load = useCallback(async () => {
-    try {
-      const d = await api.adminNarrativeTemplates(page, 50, typeFilter || undefined)
-      setData(d)
-    } catch {}
+    try { setError(""); setData(await api.adminNarrativeTemplates(page, 50, typeFilter || undefined)) }
+    catch (e: any) { setError(`Не удалось загрузить шаблоны: ${e.message || "неизвестная ошибка"}`) }
   }, [page, typeFilter])
-
   useEffect(() => { load() }, [load])
+  const pages = data ? Math.max(1, Math.ceil(data.total / 50)) : 1
 
-  return (
-    <div className="panel">
-      <div className="panel-header">
-        <span>Шаблоны в базе</span>
-        {data && <span style={{ color: "var(--muted)", fontSize: "var(--text-xs)", fontFamily: "var(--font-mono)" }}>{data.total} всего</span>}
-      </div>
-      <div style={{ display: "flex", alignItems: "center", gap: "var(--space-2)", padding: "var(--space-2) var(--space-3)", borderBottom: "1px solid var(--border)" }}>
-        <select value={typeFilter} onChange={(e) => { setTypeFilter(e.target.value); setPage(1) }}
-          style={{ padding: "4px 8px", border: "1px solid var(--border)", borderRadius: "var(--radius-md)", fontSize: "var(--text-xs)", fontFamily: "var(--font-mono)", background: "var(--bg)", color: "var(--fg)", cursor: "pointer" }}>
-          <option value="">Все типы</option>
-          {TEMPLATE_TYPE_GROUPS.map(g => (
-            <optgroup key={g.group} label={g.group}>
-              {g.types.map(t => <option key={t.id} value={t.id}>{t.label}</option>)}
-            </optgroup>
-          ))}
-        </select>
-      </div>
-      <div className="panel-body" style={{ maxHeight: "55vh", overflowY: "auto", paddingTop: 0 }}>
-        {!data ? (
-          <div style={{ color: "var(--muted)", padding: 16, textAlign: "center" }}>Загрузка…</div>
-        ) : data.templates.length === 0 ? (
-          <div style={{ color: "var(--muted)", padding: 16, textAlign: "center" }}>Нет шаблонов</div>
-        ) : (
-          data.templates.map((t: any) => (
-            <div key={t.id} style={{ padding: "var(--space-2) 0", borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", gap: "var(--space-3)" }}>
-              <span style={{ padding: "2px 6px", borderRadius: "var(--radius-pill)", fontSize: 10, fontFamily: "var(--font-mono)", background: t.is_active ? "color-mix(in oklab, var(--success), transparent 85%)" : "color-mix(in oklab, var(--warn), transparent 85%)", color: t.is_active ? "var(--success)" : "var(--warn)", whiteSpace: "nowrap" }}>
-                {t.is_active ? "Активен" : "Ожидает"}
-              </span>
-              <span style={{ padding: "2px 6px", borderRadius: "var(--radius-pill)", fontSize: 10, fontFamily: "var(--font-mono)", background: "color-mix(in oklab, var(--fg), transparent 90%)", color: "var(--muted)", whiteSpace: "nowrap" }}>{t.source}</span>
-              <span style={{ padding: "2px 6px", borderRadius: "var(--radius-pill)", fontSize: 10, fontFamily: "var(--font-mono)", background: "color-mix(in oklab, var(--mp), transparent 85%)", color: "var(--mp)", whiteSpace: "nowrap" }}>{t.template_type}</span>
-              <span style={{ flex: 1, fontSize: "var(--text-sm)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{t.text_template}</span>
-            </div>
-          ))
-        )}
-        {data && data.total > 50 && (
-          <div style={{ display: "flex", justifyContent: "center", gap: "var(--space-2)", padding: "var(--space-3)" }}>
-            <button onClick={() => setPage(Math.max(1, page - 1))} disabled={page === 1} style={{ padding: "4px 12px", borderRadius: "var(--radius-sm)", border: "1px solid var(--border)", background: page === 1 ? "transparent" : "var(--panel-bg)", cursor: page === 1 ? "default" : "pointer", fontSize: "var(--text-xs)" }}>Назад</button>
-            <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", color: "var(--muted)" }}>{page}</span>
-            <button onClick={() => setPage(page + 1)} disabled={data.templates.length < 50} style={{ padding: "4px 12px", borderRadius: "var(--radius-sm)", border: "1px solid var(--border)", background: data.templates.length < 50 ? "transparent" : "var(--panel-bg)", cursor: data.templates.length < 50 ? "default" : "pointer", fontSize: "var(--text-xs)" }}>Вперёд</button>
-          </div>
-        )}
-      </div>
-    </div>
-  )
+  return <section className="narrative-database" aria-labelledby="database-title">
+    <header><div><span className="narrative-kicker">Редакторский фонд</span><h2 id="database-title">Шаблоны в базе</h2></div>{data && <span className="narrative-count">{data.total} всего</span>}</header>
+    <div className="narrative-database-tools"><label htmlFor="template-filter">Событие</label><TypeSelect id="template-filter" value={typeFilter} includeAll onChange={value => { setTypeFilter(value); setPage(1) }} /></div>
+    {error ? <NoticeBox notice={{ kind: "error", text: error }} /> : !data ? <p className="narrative-loading">Открываем хранилище…</p> : data.templates.length === 0 ? <div className="narrative-empty">В этом разделе пока нет шаблонов.</div> : <div className="narrative-template-list">
+      {data.templates.map((template: any) => <article key={template.id}>
+        <div><span className={`narrative-status ${template.is_active ? "success" : "warning"}`}>{template.is_active ? "Активен" : "Ожидает"}</span><code>{template.template_type}</code><span className="narrative-source">{template.source}</span></div>
+        <p>{template.text_template}</p>
+      </article>)}
+    </div>}
+    {data && data.total > 50 && <nav className="narrative-pagination" aria-label="Страницы шаблонов"><button type="button" onClick={() => setPage(current => Math.max(1, current - 1))} disabled={page === 1}>Назад</button><span>Страница {page} из {pages}</span><button type="button" onClick={() => setPage(current => current + 1)} disabled={data.templates.length < 50}>Вперёд</button></nav>}
+  </section>
 }
 
 function ImportTab() {
-  const importTextareaRef = useRef<HTMLTextAreaElement>(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
   const [jsonText, setJsonText] = useState("")
   const [defaultType, setDefaultType] = useState("explore")
   const [loading, setLoading] = useState(false)
-  const [result, setResult] = useState<any>(null)
-  const [error, setError] = useState("")
-
+  const [notice, setNotice] = useState<Notice>(null)
   const applyExample = (example: object[]) => {
     const current = jsonText.trim()
     if (!current) { setJsonText(JSON.stringify(example, null, 2)); return }
-    try {
-      const parsed = JSON.parse(current)
-      if (Array.isArray(parsed)) { setJsonText(JSON.stringify([...parsed, ...example], null, 2)); return }
-    } catch { /* fall through to replace */ }
+    try { const parsed = JSON.parse(current); if (Array.isArray(parsed)) { setJsonText(JSON.stringify([...parsed, ...example], null, 2)); return } } catch { /* replace invalid draft below */ }
     setJsonText(JSON.stringify(example, null, 2))
   }
-
-  const handleImport = async () => {
-    setError("")
-    setResult(null)
+  const submit = async () => {
+    setNotice(null)
     let parsed: any[]
-    try {
-      parsed = JSON.parse(jsonText)
-      if (!Array.isArray(parsed)) throw new Error("Ожидается JSON массив")
-    } catch (e: any) {
-      setError(`Ошибка JSON: ${e.message}`)
-      return
-    }
-    const templates = parsed.map(t => ({
-      template_type: t.template_type || defaultType,
-      text_template: t.text_template || t.text || "",
-      source: t.source || "community",
-    }))
+    try { parsed = JSON.parse(jsonText); if (!Array.isArray(parsed)) throw new Error("ожидается JSON-массив") }
+    catch (error: any) { setNotice({ kind: "error", text: `Проверьте JSON: ${error.message}` }); return }
     setLoading(true)
     try {
-      const res = await api.adminNarrativesImport(templates)
-      setResult(res)
-      if (res.imported > 0) setJsonText("")
-    } catch (e: any) {
-      setError(e.message || "Ошибка импорта")
-    }
-    setLoading(false)
+      const result = await api.adminNarrativesImport(parsed.map(item => ({ template_type: item.template_type || defaultType, text_template: item.text_template || item.text || "", source: item.source || "community" })))
+      setNotice({ kind: "success", text: `Импорт передан на модерацию: добавлено ${result.imported}.` })
+      if (result.imported > 0) setJsonText("")
+    } catch (error: any) { setNotice({ kind: "error", text: `Не удалось импортировать: ${error.message || "неизвестная ошибка"}` }) }
+    finally { setLoading(false) }
   }
-
-  return (
-    <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) 380px", gap: "var(--space-4)", alignItems: "start" }}>
-      <div className="panel">
-        <div className="panel-header">Импорт JSON</div>
-        <div className="panel-body">
-          <p style={{ fontSize: "var(--text-xs)", color: "var(--muted)", marginTop: 0 }}>
-            Массив шаблонов: <code>{'{"template_type": "...", "text_template": "..."}'}</code>. Шаблоны идут в модерацию.
-          </p>
-
-          <label style={{ fontSize: "var(--text-xs)", fontFamily: "var(--font-mono)", color: "var(--muted)", textTransform: "uppercase", display: "block", marginBottom: 6 }}>
-            Примеры (клик — заполнит поле, повторный — добавит к существующему)
-          </label>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(190px, 1fr))", gap: "var(--space-2)", marginBottom: "var(--space-3)" }}>
-            {EXAMPLE_JSON.map(ex => (
-              <button key={ex.title} onClick={() => applyExample(ex.json)}
-                style={{ textAlign: "left", padding: "var(--space-2) var(--space-3)", border: "1px solid var(--border)", borderRadius: "var(--radius-md)", background: "var(--bg-elevated)", cursor: "pointer" }}>
-                <div style={{ fontSize: "var(--text-sm)", fontWeight: 600, color: "var(--fg)", marginBottom: 2 }}>{ex.title}</div>
-                <div style={{ fontSize: "var(--text-xs)", color: "var(--muted)", lineHeight: 1.4 }}>{ex.desc}</div>
-              </button>
-            ))}
-          </div>
-
-          <label style={{ fontSize: "var(--text-xs)", fontFamily: "var(--font-mono)", color: "var(--muted)", textTransform: "uppercase", display: "block", marginBottom: 4 }}>Тип по умолчанию (если не указан в JSON)</label>
-          <select value={defaultType} onChange={e => setDefaultType(e.target.value)}
-            style={{ padding: "6px 10px", border: "1px solid var(--border)", borderRadius: "var(--radius-md)", fontSize: "var(--text-sm)", background: "var(--bg)", color: "var(--fg)", marginBottom: "var(--space-3)" }}>
-            {TEMPLATE_TYPE_GROUPS.map(g => (
-              <optgroup key={g.group} label={g.group}>
-                {g.types.map(t => <option key={t.id} value={t.id}>{t.label}</option>)}
-              </optgroup>
-            ))}
-          </select>
-
-          <textarea ref={importTextareaRef} value={jsonText} onChange={e => setJsonText(e.target.value)} rows={10}
-            placeholder='[{"template_type": "explore", "text_template": "Герой нашёл {discovery}."}]'
-            style={{ width: "100%", padding: "var(--space-2) var(--space-3)", border: "1px solid var(--border)", borderRadius: "var(--radius-md)", fontSize: "var(--text-xs)", fontFamily: "var(--font-mono)", background: "var(--bg)", color: "var(--fg)", resize: "vertical", lineHeight: 1.5 }} />
-
-          <div style={{ marginTop: "var(--space-3)" }}>
-            <button onClick={handleImport} disabled={loading || !jsonText.trim()}
-              style={{ padding: "8px 20px", background: "var(--accent)", color: "var(--accent-on)", borderRadius: "var(--radius-md)", fontSize: "var(--text-sm)", border: "none", cursor: loading ? "wait" : "pointer", fontWeight: 600, opacity: loading || !jsonText.trim() ? 0.5 : 1 }}>
-              {loading ? "Импорт…" : "Отправить на модерацию"}
-            </button>
-          </div>
-          {error && <div role="status" style={{ marginTop: "var(--space-3)", padding: "var(--space-2) var(--space-3)", background: "color-mix(in oklab, var(--danger), transparent 90%)", borderRadius: "var(--radius-md)", color: "var(--danger)", fontSize: "var(--text-xs)" }}>{error}</div>}
-          {result && <div role="status" style={{ marginTop: "var(--space-3)", padding: "var(--space-2) var(--space-3)", background: "color-mix(in oklab, var(--success), transparent 90%)", borderRadius: "var(--radius-md)", fontSize: "var(--text-xs)" }}>Импортировано: {result.imported}</div>}
-        </div>
-      </div>
-      <VarSidebar onInsert={(v) => { const ta = importTextareaRef.current; if (ta) insertVariable(ta, v, setJsonText) }} />
-    </div>
-  )
+  return <section className="narrative-import" aria-labelledby="import-title">
+    <header><span className="narrative-kicker">Пакетная передача</span><h2 id="import-title">Импорт JSON</h2><p>Массив объектов с <code>template_type</code> и <code>text_template</code>. Каждый шаблон идёт в очередь модерации.</p></header>
+    <div className="narrative-example-grid">{EXAMPLE_JSON.map(example => <button type="button" key={example.title} onClick={() => applyExample(example.json)}><b>{example.title}</b><span>{example.desc}</span><small>Добавить пример</small></button>)}</div>
+    <div className="narrative-import-form"><div><label htmlFor="import-type">Тип по умолчанию</label><TypeSelect id="import-type" value={defaultType} onChange={setDefaultType} /></div><div><label htmlFor="import-json">JSON-массив</label><textarea ref={textareaRef} id="import-json" value={jsonText} onChange={e => setJsonText(e.target.value)} rows={12} spellCheck={false} placeholder={'[{"template_type": "explore", "text_template": "Герой {hero_name} нашёл {discovery}."}]'} /></div></div>
+    <VariableRail onInsert={value => { if (textareaRef.current) insertVariable(textareaRef.current, value, setJsonText) }} />
+    <button type="button" className="narrative-primary" onClick={submit} disabled={loading || !jsonText.trim()}>{loading ? "Импортируем…" : "Передать на модерацию"}</button>
+    <NoticeBox notice={notice} />
+  </section>
 }
 
 export function NarrativesPage() {
-  const isAdmin = useGameStore((s) => s.isAdmin)
+  const isAdmin = useGameStore(state => state.isAdmin)
   const [tab, setTab] = useState<Tab>("vars")
-
-  const tabBtn = (id: Tab, label: string) => (
-    <button onClick={() => setTab(id)}
-      style={{
-        padding: "7px 16px",
-        borderRadius: "var(--radius-pill)",
-        border: `1px solid ${tab === id ? "var(--accent)" : "var(--border)"}`,
-        cursor: "pointer",
-        background: tab === id ? "var(--accent)" : "var(--bg)",
-        color: tab === id ? "var(--accent-on)" : "var(--fg)",
-        fontSize: "var(--text-sm)",
-        fontWeight: tab === id ? 600 : 400,
-        transition: "background 150ms, color 150ms",
-      }}>
-      {label}
-    </button>
-  )
-
-  return (
-    <div style={{ padding: "var(--space-4) 0" }}>
-      <div style={{ display: "flex", alignItems: "baseline", gap: "var(--space-3)", marginBottom: "var(--space-2)" }}>
-        <h1 style={{ margin: 0, fontSize: "var(--text-xl)", fontWeight: 700 }}>🖋️ Мастерская нарративов</h1>
-        <span style={{ fontSize: "var(--text-xs)", color: "var(--muted)" }}>
-          словник переменных, создание и предложение шаблонов — одобренные тексты попадают в ротацию игры
-        </span>
-      </div>
-
-      <div style={{ display: "flex", gap: "var(--space-2)", flexWrap: "wrap", marginBottom: "var(--space-4)" }}>
-        {tabBtn("vars", "📖 Словник")}
-        {tabBtn("create", "✍️ Создать шаблон")}
-        {tabBtn("suggest", "📨 Предложить")}
-        {isAdmin && tabBtn("browse", "🗄️ Шаблоны в базе")}
-        {isAdmin && tabBtn("import", "📥 Импорт JSON")}
-      </div>
-
+  const tabs: { id: Tab; label: string; description: string; admin?: boolean }[] = [
+    { id: "vars", label: "Словник", description: "переменные" }, { id: "create", label: "Создать", description: "шаблон" },
+    { id: "suggest", label: "Предложить", description: "редактору" }, { id: "browse", label: "База", description: "шаблоны", admin: true }, { id: "import", label: "Импорт", description: "JSON", admin: true },
+  ]
+  const visibleTabs = tabs.filter(item => !item.admin || isAdmin)
+  return <main className="narratives-observatory">
+    <header className="narrative-masthead">
+      <div className="narrative-masthead-mark" aria-hidden="true"><span>✦</span><i /></div>
+      <div><span className="narrative-kicker">Обсерватория хроник · мастерская летописца</span><h1>Дайте миру фразу,<br /><em>которую он запомнит.</em></h1></div>
+      <p>Здесь слова становятся событиями: выберите материал, соберите шаблон и передайте его в летопись.</p>
+    </header>
+    <nav className="narrative-tabs" aria-label="Разделы мастерской" role="tablist">
+      {visibleTabs.map(item => <button key={item.id} type="button" role="tab" aria-selected={tab === item.id} aria-controls={`narrative-panel-${item.id}`} id={`narrative-tab-${item.id}`} onClick={() => setTab(item.id)} className={tab === item.id ? "active" : ""}><b>{item.label}</b><span>{item.description}</span></button>)}
+    </nav>
+    <section id={`narrative-panel-${tab}`} role="tabpanel" aria-labelledby={`narrative-tab-${tab}`} className="narrative-tab-panel">
       {tab === "vars" && <GlossaryTab />}
-      {tab === "create" && <CreateTab />}
-      {tab === "suggest" && <SuggestTab />}
+      {tab === "create" && <TemplateEditor mode="create" />}
+      {tab === "suggest" && <TemplateEditor mode="suggest" />}
       {tab === "browse" && isAdmin && <BrowseTab />}
       {tab === "import" && isAdmin && <ImportTab />}
-    </div>
-  )
+    </section>
+  </main>
 }

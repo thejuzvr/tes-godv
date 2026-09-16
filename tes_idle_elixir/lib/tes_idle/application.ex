@@ -3,13 +3,14 @@ defmodule TesIdle.Application do
 
   @impl true
   def start(_type, _args) do
-    children = [
-      TesIdle.Repo,
-      {DNSCluster, query: Application.get_env(:tes_idle, :dns_cluster_query) || :ignore},
-      {Phoenix.PubSub, name: TesIdle.PubSub},
-      {Task.Supervisor, name: TesIdle.TaskSupervisor},
-      TesIdleWeb.Endpoint,
-    ] ++ background_children()
+    children =
+      [
+        TesIdle.Repo,
+        {DNSCluster, query: Application.get_env(:tes_idle, :dns_cluster_query) || :ignore},
+        {Phoenix.PubSub, name: TesIdle.PubSub},
+        {Task.Supervisor, name: TesIdle.TaskSupervisor},
+        TesIdleWeb.Endpoint
+      ] ++ background_children()
 
     opts = [strategy: :one_for_one, name: TesIdle.Supervisor]
     Supervisor.start_link(children, opts)
@@ -20,8 +21,10 @@ defmodule TesIdle.Application do
     [
       maybe_child(TesIdle.Worker.GameTickWorker, :game_tick_enabled),
       maybe_child(TesIdle.Worker.ActivityFlushWorker, :activity_flush_enabled),
+      maybe_child(TesIdle.Worker.EncounterWorker, :encounter_worker_enabled),
+      maybe_child(TesIdle.Worker.OutboxDispatcher, :outbox_dispatcher_enabled),
       maybe_child(TesIdle.World.Kernel, :world_kernel_enabled),
-      maybe_child(TesIdle.World.Aggregator, :world_aggregator_enabled),
+      maybe_child(TesIdle.World.Aggregator, :world_aggregator_enabled)
     ]
     |> Enum.reject(&is_nil/1)
   end

@@ -118,6 +118,26 @@ defmodule TesIdleWeb.Admin.NarrativeController do
     conn |> put_status(:bad_request) |> json(%{detail: "ids (list) and action are required"})
   end
 
+  # Explicitly destructive moderation cleanup. The optional type/source scope
+  # mirrors the visible filter; absent filters require `all=true`.
+  def delete_pending(conn, params) do
+    template_type = blank_to_nil(params["template_type"])
+    source = blank_to_nil(params["source"])
+    all = truthy(params["all"])
+
+    if not all and is_nil(template_type) and is_nil(source) do
+      conn
+      |> put_status(:bad_request)
+      |> json(%{detail: "Уточните template_type, source или передайте all=true"})
+    else
+      query = from t in NarrativeTemplate, where: t.is_active == false
+      query = if template_type, do: from(t in query, where: t.template_type == ^template_type), else: query
+      query = if source, do: from(t in query, where: t.source == ^source), else: query
+      {deleted, _} = Repo.delete_all(query)
+      json(conn, %{deleted: deleted})
+    end
+  end
+
   def create(conn, params) do
     template = Repo.insert!(%NarrativeTemplate{
       template_type: params["template_type"],

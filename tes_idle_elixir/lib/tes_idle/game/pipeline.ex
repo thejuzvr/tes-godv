@@ -5,7 +5,7 @@ defmodule TesIdle.Game.Pipeline do
   """
 
   alias TesIdle.Repo
-  alias TesIdle.Game.{ContextBuilder, AutoEquip, FSMExecutor}
+  alias TesIdle.Game.{ContextBuilder, AutoEquip, FSMExecutor, Memory}
   alias TesIdle.Game.Narrative.{TemplateEngine, NarrativeDirector, NarrativeContext}
   alias TesIdle.Schemas.{Hero, JournalEntry}
   import Ecto.Query
@@ -34,120 +34,179 @@ defmodule TesIdle.Game.Pipeline do
         # 3. FSM tick (Utility AI → GOAP → Execute)
         {_fsm_state, action_module, result, new_state_data} = FSMExecutor.tick(ctx)
 
-      if result do
-        # 4. Update hero state (needs, mood, time, regen) + мозг учится на результате
-        {updated_hero, brain_state} = apply_result(ctx.hero, result, ctx.configs, ctx.guild_buff)
+        if result do
+          # 4. Update hero state (needs, mood, time, regen) + мозг учится на результате
+          {updated_hero, brain_state} =
+            apply_result(ctx.hero, result, ctx.configs, ctx.guild_buff)
 
-        # 5. Auto-consume potions/food/soul stones
-        updated_hero = auto_consume(updated_hero)
+          # 5. Auto-consume potions/food/soul stones
+          updated_hero = auto_consume(updated_hero)
 
-        # 5b-2. Quest progress tracking — возвращает true, если квест завершён
-        # (Фаза 2: маркер «окна активностей» ставим в merged_sd ниже, правило 2.1)
-        quest_done? = check_quest_progress(updated_hero, action_module, result)
+          # 5b-2. Quest progress tracking — возвращает true, если квест завершён
+          # (Фаза 2: маркер «окна активностей» ставим в merged_sd ниже, правило 2.1)
+          quest_done? = check_quest_progress(updated_hero, action_module, result)
 
-        # 5b-1. P-3: репутация — позитивные источники (убийство монстра в регионе)
-        reputation_tick(ctx, action_module, result)
+          # 5b-1. P-3: репутация — позитивные источники (убийство монстра в регионе)
+          reputation_tick(ctx, action_module, result)
 
-        # 5b-2. Питомцы: голод/лояльность, уход, возрождение по revive_at
-        pet_events = pet_tick(updated_hero, ctx.configs)
+          # 5b-2. Питомцы: голод/лояльность, уход, возрождение по revive_at
+          pet_events = pet_tick(updated_hero, ctx.configs)
 
-        # 5c. Memory tracking — returns updated state_data with memories
-        {_updated_hero, final_state_data} = track_memories(updated_hero, action_module, result, new_state_data)
+          # 5c. Memory tracking — returns updated state_data with memories
+          {_updated_hero, final_state_data} =
+            track_memories(updated_hero, action_module, result, new_state_data, ctx.configs)
 
-        # 5e. Prepare merged state_data for saving
-        merged_sd = final_state_data |> Map.merge(result[:state_data_update] || %{})
+          # 5e. Prepare merged state_data for saving
+          merged_sd = final_state_data |> Map.merge(result[:state_data_update] || %{})
 
-        # Фаза 2: окно активностей после завершения квеста — маркер идёт
-        # через merged_sd (единый save, правило 2.1), а не отдельный changeset.
-        merged_sd = if quest_done?,
-          do: Map.put(merged_sd, "activity_break_until_tick", current_tick() + activity_break_ticks()),
-          else: merged_sd
+          # Фаза 2: окно активностей после завершения квеста — маркер идёт
+          # через merged_sd (единый save, правило 2.1), а не отдельный changeset.
+          merged_sd =
+            if quest_done?,
+              do:
+                Map.put(
+                  merged_sd,
+                  "activity_break_until_tick",
+                  current_tick() + activity_break_ticks()
+                ),
+              else: merged_sd
 
-        # Мозг: связи/бюджет от Learner, но decision_log берём свежий — его только что
-        # дописал FSMExecutor при создании плана (Learner читал снимок до тика)
-        merged_sd = if brain_state do
-          fsm_brain = final_state_data["brain"] || %{}
-          brain = Map.merge(brain_state, Map.take(fsm_brain, ["decision_log"]))
-          Map.put(merged_sd, "brain", brain)
+          # Мозг: связи/бюджет от Learner, но decision_log берём свежий — его только что
+          # дописал FSMExecutor при создании плана (Learner читал снимок до тика)
+          merged_sd =
+            if brain_state do
+              fsm_brain = final_state_data["brain"] || %{}
+              brain = Map.merge(brain_state, Map.take(fsm_brain, ["decision_log", "intent"]))
+              Map.put(merged_sd, "brain", brain)
+            else
+              merged_sd
+            end
+
+          # Мозг v2: фрустрация меняется только по явному исходу действия.
+          # Чистое обновление merged_sd сохраняется единым writer-ом ниже.
+          outcome = intent_outcome(result, quest_done?)
+
+          merged_sd =
+            TesIdle.Game.Brain.Intent.record_outcome(
+              merged_sd,
+              outcome,
+              ctx.configs
+            )
+
+          # Audit is append-only and independent of the Pipeline state_data writer.
+          TesIdle.Game.Brain.Audit.record_action(ctx, merged_sd, action_module, result, outcome)
+
+          # Sync combat hero_max_hp if hero leveled up mid-combat
+          merged_sd =
+            if merged_sd["combat"] &&
+                 updated_hero.max_hp > (merged_sd["combat"]["hero_max_hp"] || 0) do
+              combat =
+                merged_sd["combat"]
+                |> Map.put("hero_max_hp", updated_hero.max_hp)
+                |> Map.put("hero_hp", updated_hero.hp)
+
+              Map.put(merged_sd, "combat", combat)
+            else
+              merged_sd
+            end
+
+          # 6. S-3: глава дневника — смена дня или перелом (мир/арест/уровень)
+          level_up? = updated_hero.level > ctx.hero.level
+
+          breaks =
+            ["world"] ++
+              if(level_up?, do: ["level_up"], else: []) ++
+              if merged_sd["jail"], do: ["arrest"], else: []
+
+          {chapter, chapter_title, journal_state} =
+            TesIdle.Game.Journal.Chapters.ensure(ctx.hero, merged_sd, ctx, breaks)
+
+          merged_sd = Map.put(merged_sd, "journal", journal_state)
+
+          # 6a. S-3: «Новости мира» — до единственного сохранения state_data
+          {world_news_entry, merged_sd} =
+            case TesIdle.Game.Journal.Chapters.world_news_candidate(updated_hero, merged_sd, ctx) do
+              nil ->
+                {nil, merged_sd}
+
+              {event, jstate} ->
+                {create_world_news_entry(updated_hero, event, chapter, chapter_title),
+                 Map.put(merged_sd, "journal", jstate)}
+            end
+
+          # 6b. P-4: сны при долгом отдыхе — до единственного сохранения state_data
+          {merged_sd, dream_template} =
+            TesIdle.Game.Sleep.step(merged_sd, updated_hero, result, ctx.configs)
+
+          dream_entry =
+            if dream_template,
+              do: create_dream_entry(updated_hero, dream_template, chapter, chapter_title),
+              else: nil
+
+          # 6c. Periodic auto-equip check (saves state_data as single point)
+          equip_events = check_auto_equip(updated_hero, merged_sd)
+
+          # 7. Generate narrative via NarrativeDirector
+          # Build context, select event, format via TemplateEngine
+          narrative_ctx = NarrativeContext.build(ctx, result)
+
+          journal_entry =
+            if result[:combat_progress] do
+              nil
+            else
+              event = NarrativeDirector.select(narrative_ctx, updated_hero.state_data)
+              template_type = event.name
+              text = TemplateEngine.format(template_type, narrative_ctx)
+              NarrativeDirector.track_used(updated_hero, event.name)
+
+              create_journal_entry(
+                updated_hero,
+                %{type: template_type, text: text},
+                result,
+                chapter,
+                chapter_title,
+                decision_motive(ctx, merged_sd)
+              )
+            end
+
+          # Питомцы: усыновление/уход/возрождение — отдельные записи в журнале
+          pet_journal_entries =
+            pet_journal(updated_hero, result, pet_events, chapter, chapter_title)
+
+          # 9. Return result for WS push
+          {:ok,
+           %{
+             state_from: ctx.hero.state,
+             state_to: result.state_to,
+             narrative: %{
+               type: if(journal_entry, do: journal_entry.entry_type, else: nil),
+               text: if(journal_entry, do: journal_entry.text, else: nil)
+             },
+             journal_entry: journal_entry,
+             world_news_entry: world_news_entry,
+             dream_entry: dream_entry,
+             pet_journal_entries: pet_journal_entries,
+             combat_progress: result[:combat_progress],
+             combat_start: result[:combat_start],
+             combat_result: result[:combat_result],
+             equip_events: equip_events,
+             gold_change: result[:gold_change] || 0
+           }}
         else
-          merged_sd
+          # FSM returned nil result (plan empty, already done).
+          # S-2 верификация: state_data (план + decision_log) всё равно нужно
+          # сохранять — иначе create_and_execute-тик с мгновенным первым шагом
+          # терял и новый план, и запись решения (герой «не помнил» выбор).
+          save_state_data(ctx.hero, new_state_data)
+
+          {:ok,
+           %{
+             state_from: ctx.hero.state,
+             state_to: ctx.hero.state,
+             narrative: nil,
+             journal_entry: nil
+           }}
         end
-
-        # Sync combat hero_max_hp if hero leveled up mid-combat
-        merged_sd = if merged_sd["combat"] && updated_hero.max_hp > (merged_sd["combat"]["hero_max_hp"] || 0) do
-          combat = merged_sd["combat"]
-          |> Map.put("hero_max_hp", updated_hero.max_hp)
-          |> Map.put("hero_hp", updated_hero.hp)
-          Map.put(merged_sd, "combat", combat)
-        else
-          merged_sd
-        end
-
-        # 6. S-3: глава дневника — смена дня или перелом (мир/арест/уровень)
-        level_up? = updated_hero.level > ctx.hero.level
-        breaks = ["world"] ++
-          (if level_up?, do: ["level_up"], else: []) ++
-          (if merged_sd["jail"], do: ["arrest"], else: [])
-
-        {chapter, chapter_title, journal_state} = TesIdle.Game.Journal.Chapters.ensure(ctx.hero, merged_sd, ctx, breaks)
-        merged_sd = Map.put(merged_sd, "journal", journal_state)
-
-        # 6a. S-3: «Новости мира» — до единственного сохранения state_data
-        {world_news_entry, merged_sd} =
-          case TesIdle.Game.Journal.Chapters.world_news_candidate(updated_hero, merged_sd, ctx) do
-            nil -> {nil, merged_sd}
-            {event, jstate} ->
-              {create_world_news_entry(updated_hero, event, chapter, chapter_title), Map.put(merged_sd, "journal", jstate)}
-          end
-
-        # 6b. P-4: сны при долгом отдыхе — до единственного сохранения state_data
-        {merged_sd, dream_template} = TesIdle.Game.Sleep.step(merged_sd, updated_hero, result, ctx.configs)
-        dream_entry = if dream_template, do: create_dream_entry(updated_hero, dream_template, chapter, chapter_title), else: nil
-
-        # 6c. Periodic auto-equip check (saves state_data as single point)
-        equip_events = check_auto_equip(updated_hero, merged_sd)
-
-        # 7. Generate narrative via NarrativeDirector
-        # Build context, select event, format via TemplateEngine
-        narrative_ctx = NarrativeContext.build(ctx, result)
-
-        journal_entry = if result[:combat_progress] do
-          nil
-        else
-          event = NarrativeDirector.select(narrative_ctx, updated_hero.state_data)
-          template_type = event.name
-          text = TemplateEngine.format(template_type, narrative_ctx)
-          NarrativeDirector.track_used(updated_hero, event.name)
-
-          create_journal_entry(updated_hero, %{type: template_type, text: text}, result, chapter, chapter_title, decision_motive(ctx, merged_sd))
-        end
-
-        # Питомцы: усыновление/уход/возрождение — отдельные записи в журнале
-        pet_journal_entries = pet_journal(updated_hero, result, pet_events, chapter, chapter_title)
-
-        # 9. Return result for WS push
-        {:ok, %{
-          state_from: ctx.hero.state,
-          state_to: result.state_to,
-          narrative: %{type: if(journal_entry, do: journal_entry.entry_type, else: nil), text: if(journal_entry, do: journal_entry.text, else: nil)},
-          journal_entry: journal_entry,
-          world_news_entry: world_news_entry,
-          dream_entry: dream_entry,
-          pet_journal_entries: pet_journal_entries,
-          combat_progress: result[:combat_progress],
-          combat_start: result[:combat_start],
-          combat_result: result[:combat_result],
-          equip_events: equip_events,
-          gold_change: result[:gold_change] || 0,
-        }}
-      else
-        # FSM returned nil result (plan empty, already done).
-        # S-2 верификация: state_data (план + decision_log) всё равно нужно
-        # сохранять — иначе create_and_execute-тик с мгновенным первым шагом
-        # терял и новый план, и запись решения (герой «не помнил» выбор).
-        save_state_data(ctx.hero, new_state_data)
-        {:ok, %{state_from: ctx.hero.state, state_to: ctx.hero.state, narrative: nil, journal_entry: nil}}
-      end
     end
   end
 
@@ -165,7 +224,7 @@ defmodule TesIdle.Game.Pipeline do
   """
   def apply_progression(result, configs, guild_buff \\ nil) do
     prog = (configs || %{})["progression"] || %{}
-    guild_xp_mult = if is_map(guild_buff), do: (guild_buff["xp_mult"] || 0), else: 0
+    guild_xp_mult = if is_map(guild_buff), do: guild_buff["xp_mult"] || 0, else: 0
 
     xp_gain = trunc((result[:xp] || 0) * (prog["xp_multiplier"] || 1.0) * (1 + guild_xp_mult))
 
@@ -182,7 +241,8 @@ defmodule TesIdle.Game.Pipeline do
   defp apply_result(hero, result, configs, guild_buff) do
     # S-4: средний темп — множители из game_configs["progression"] (пустой конфиг → старый темп)
     result = apply_progression(result, configs, guild_buff)
-    _needs_delta = configs["needs_delta"] || %{}  # used by mood_cfg indirectly
+    # used by mood_cfg indirectly
+    _needs_delta = configs["needs_delta"] || %{}
     mood_cfg = configs["mood"] || %{}
 
     # Advance game hour (each tick = 0.5-1.5 hours)
@@ -192,9 +252,12 @@ defmodule TesIdle.Game.Pipeline do
     new_hour = if new_hour >= 24, do: new_hour - 24, else: new_hour
 
     # Update needs
-    hunger_inc = Enum.random(50..200) / 100.0  # 0.5-2.0
-    fatigue_inc = Enum.random(30..100) / 100.0  # 0.3-1.0
-    morale_drift = (Enum.random(-50..50)) / 100.0  # -0.5 to 0.5
+    # 0.5-2.0
+    hunger_inc = Enum.random(50..200) / 100.0
+    # 0.3-1.0
+    fatigue_inc = Enum.random(30..100) / 100.0
+    # -0.5 to 0.5
+    morale_drift = Enum.random(-50..50) / 100.0
 
     new_hunger = min(100, hero.hunger + hunger_inc)
     new_fatigue = min(100, hero.fatigue + fatigue_inc)
@@ -228,127 +291,161 @@ defmodule TesIdle.Game.Pipeline do
       game_day: new_day,
       total_play_time_seconds: hero.total_play_time_seconds + Enum.random(15..60),
       total_gold_earned: hero.total_gold_earned + max(0, result[:gold_change] || 0),
-      total_kills: hero.total_kills + if(result[:combat_result] && result[:combat_result][:victory], do: 1, else: 0),
-      xp: hero.xp + (result[:xp] || 0),
+      total_kills:
+        hero.total_kills +
+          if(result[:combat_result] && result[:combat_result][:victory], do: 1, else: 0),
+      xp: hero.xp + (result[:xp] || 0)
     }
 
     # Apply HP change if present
-    updates = if result[:hp_change] do
-      Map.put(updates, :hp, min(hero.max_hp, max(1, hero.hp + result[:hp_change])))
-    else
-      updates
-    end
-
-    # Sync HP from combat state_data during multi-round combat
-    updates = if result[:combat_progress] do
-      combat_hp = get_in(result, [:combat_progress, :hero_hp])
-      if combat_hp do
-        new_hp = max(1, combat_hp)
-        # Never decrease max_hp — hero may have leveled up
-        Map.put(updates, :hp, new_hp)
+    updates =
+      if result[:hp_change] do
+        Map.put(updates, :hp, min(hero.max_hp, max(1, hero.hp + result[:hp_change])))
       else
         updates
       end
-    else
-      updates
-    end
+
+    # Sync HP from combat state_data during multi-round combat
+    updates =
+      if result[:combat_progress] do
+        combat_hp = get_in(result, [:combat_progress, :hero_hp])
+
+        if combat_hp do
+          new_hp = max(1, combat_hp)
+          # Never decrease max_hp — hero may have leveled up
+          Map.put(updates, :hp, new_hp)
+        else
+          updates
+        end
+      else
+        updates
+      end
 
     # Apply MP change if present
-    updates = if result[:mp_change] do
-      Map.put(updates, :mp, min(hero.max_mp, max(0, hero.mp + result[:mp_change])))
-    else
-      updates
-    end
+    updates =
+      if result[:mp_change] do
+        Map.put(updates, :mp, min(hero.max_mp, max(0, hero.mp + result[:mp_change])))
+      else
+        updates
+      end
 
     # Apply hunger change if present (e.g. window shopping)
-    updates = if result[:hunger_change] do
-      Map.put(updates, :hunger, max(0, min(100, hero.hunger + result[:hunger_change])))
-    else
-      updates
-    end
+    updates =
+      if result[:hunger_change] do
+        Map.put(updates, :hunger, max(0, min(100, hero.hunger + result[:hunger_change])))
+      else
+        updates
+      end
 
     # Фаза 2 (аудит): fatigue_change никогда не применялся — RestAction/TravelAction
     # возвращали снижение усталости в пустоту, fatigue только рос (+0.3–1.0/тик)
     # и застывал на 100 → герой вечно «отдыхал» без эффекта.
-    updates = if result[:fatigue_change] do
-      Map.put(updates, :fatigue, max(0, min(100, new_fatigue + result[:fatigue_change])))
-    else
-      updates
-    end
+    updates =
+      if result[:fatigue_change] do
+        Map.put(updates, :fatigue, max(0, min(100, new_fatigue + result[:fatigue_change])))
+      else
+        updates
+      end
 
     # Apply SP change (travel, combat)
-    updates = if result[:sp_change] do
-      Map.put(updates, :sp, max(0, min(hero.max_sp, hero.sp + result[:sp_change])))
-    else
-      updates
-    end
+    updates =
+      if result[:sp_change] do
+        Map.put(updates, :sp, max(0, min(hero.max_sp, hero.sp + result[:sp_change])))
+      else
+        updates
+      end
 
     # Apply morale change (socializing)
-    updates = if result[:morale_change] do
-      Map.put(updates, :morale, max(0, min(100, hero.morale + result[:morale_change])))
-    else
-      updates
-    end
+    updates =
+      if result[:morale_change] do
+        Map.put(updates, :morale, max(0, min(100, hero.morale + result[:morale_change])))
+      else
+        updates
+      end
 
     # Apply location change (travel arrival)
-    updates = if result[:location_change] do
-      Map.put(updates, :location_id, result[:location_change])
-    else
-      updates
-    end
+    updates =
+      if result[:location_change] do
+        Map.put(updates, :location_id, result[:location_change])
+      else
+        updates
+      end
 
     # NOTE: state_data is NOT saved here — pipeline handles it as a single save at the end
 
     # Apply level up
-    updates = if updates[:xp] do
-      xp = updates[:xp]
-      if xp >= hero.xp_to_next do
-        new_level = hero.level + 1
-        remaining_xp = xp - hero.xp_to_next
-        new_xp_to_next = trunc(hero.xp_to_next * (configs["leveling"]["xp_multiplier"] || 1.5))
-        attack_base = configs["leveling"]["attack_base"] || 2
-        attack_decay = configs["leveling"]["attack_decay"] || 0.01
-        defense_base = configs["leveling"]["defense_base"] || 1
-        defense_decay = configs["leveling"]["defense_decay"] || 0.01
+    updates =
+      if updates[:xp] do
+        xp = updates[:xp]
 
-        updates
-        |> Map.put(:level, new_level)
-        |> Map.put(:xp, remaining_xp)
-        |> Map.put(:xp_to_next, new_xp_to_next)
-        |> Map.put(:max_hp, hero.max_hp + (configs["leveling"]["hp_per_level"] || 10))
-        |> Map.put(:hp, hero.max_hp + (configs["leveling"]["hp_per_level"] || 10))
-        |> Map.put(:attack, hero.attack + max(1, trunc(attack_base / (1 + new_level * attack_decay))))
-        |> Map.put(:defense, hero.defense + max(1, trunc(defense_base / (1 + new_level * defense_decay))))
+        if xp >= hero.xp_to_next do
+          new_level = hero.level + 1
+          remaining_xp = xp - hero.xp_to_next
+          new_xp_to_next = trunc(hero.xp_to_next * (configs["leveling"]["xp_multiplier"] || 1.5))
+          attack_base = configs["leveling"]["attack_base"] || 2
+          attack_decay = configs["leveling"]["attack_decay"] || 0.01
+          defense_base = configs["leveling"]["defense_base"] || 1
+          defense_decay = configs["leveling"]["defense_decay"] || 0.01
+
+          updates
+          |> Map.put(:level, new_level)
+          |> Map.put(:xp, remaining_xp)
+          |> Map.put(:xp_to_next, new_xp_to_next)
+          |> Map.put(:max_hp, hero.max_hp + (configs["leveling"]["hp_per_level"] || 10))
+          |> Map.put(:hp, hero.max_hp + (configs["leveling"]["hp_per_level"] || 10))
+          |> Map.put(
+            :attack,
+            hero.attack + max(1, trunc(attack_base / (1 + new_level * attack_decay)))
+          )
+          |> Map.put(
+            :defense,
+            hero.defense + max(1, trunc(defense_base / (1 + new_level * defense_decay)))
+          )
+        else
+          updates
+        end
       else
         updates
       end
-    else
-      updates
-    end
 
     # Мозг: пластичность черт (бюджет) + дрейф связей + возврат к гено-базе
     {personality_update, brain_state} = TesIdle.Game.Brain.Learner.learn(hero, result, configs)
-    updates = if personality_update, do: Map.put(updates, :personality, personality_update), else: updates
+
+    updates =
+      if personality_update, do: Map.put(updates, :personality, personality_update), else: updates
 
     updated = Repo.update!(Hero.changeset(hero, updates))
     {updated, brain_state}
   end
 
   defp create_journal_entry(hero, narrative, result, chapter, chapter_title, motive) do
-    is_combat_event = narrative.type in ["hero_victory", "hero_defeat", "enemy_ambush", "spot_bandits", "find_loot", "discover_treasure"]
+    is_combat_event =
+      narrative.type in [
+        "hero_victory",
+        "hero_defeat",
+        "enemy_ambush",
+        "spot_bandits",
+        "find_loot",
+        "discover_treasure"
+      ]
 
-    entry = Repo.insert!(%JournalEntry{
-      hero_id: hero.id,
-      entry_type: narrative.type,
-      text: narrative.text,
-      xp_gained: if(is_combat_event, do: result[:xp] || 0, else: 0),
-      gold_gained: if(is_combat_event, do: result[:gold_change] || 0, else: 0),
-      monster_name: get_in(result, [:combat_result, :monster_name]) || get_in(result, [:combat_start, :monster_name]),
-      location_name: if(Ecto.assoc_loaded?(hero.location) && hero.location, do: hero.location.name, else: ""),
-      chapter: chapter,
-      chapter_title: chapter_title,
-      motive: motive,
-    })
+    entry =
+      Repo.insert!(%JournalEntry{
+        hero_id: hero.id,
+        entry_type: narrative.type,
+        text: narrative.text,
+        xp_gained: if(is_combat_event, do: result[:xp] || 0, else: 0),
+        gold_gained: if(is_combat_event, do: result[:gold_change] || 0, else: 0),
+        monster_name:
+          get_in(result, [:combat_result, :monster_name]) ||
+            get_in(result, [:combat_start, :monster_name]),
+        location_name:
+          if(Ecto.assoc_loaded?(hero.location) && hero.location, do: hero.location.name, else: ""),
+        chapter: chapter,
+        chapter_title: chapter_title,
+        motive: motive
+      })
+
     entry
   end
 
@@ -373,7 +470,7 @@ defmodule TesIdle.Game.Pipeline do
       entry_type: "world_news",
       text: text,
       chapter: chapter,
-      chapter_title: chapter_title,
+      chapter_title: chapter_title
     })
   end
 
@@ -387,7 +484,7 @@ defmodule TesIdle.Game.Pipeline do
     text =
       TesIdle.Game.Narrative.TemplateEngine.render_vars(template.text_template, %{
         "hero_name" => hero.name,
-        "location_name" => location_name,
+        "location_name" => location_name
       })
 
     Repo.insert!(%JournalEntry{
@@ -396,16 +493,17 @@ defmodule TesIdle.Game.Pipeline do
       text: text,
       location_name: location_name,
       chapter: chapter,
-      chapter_title: chapter_title,
+      chapter_title: chapter_title
     })
   end
 
   # S-3: мотив решения — только когда план создан в этом тике (цель изменилась).
   defp decision_motive(ctx, merged_sd) do
-    old_goal = case Jason.decode(ctx.hero.state_data || "{}") do
-      {:ok, %{"plan" => p}} when is_map(p) -> p["goal"]
-      _ -> nil
-    end
+    old_goal =
+      case Jason.decode(ctx.hero.state_data || "{}") do
+        {:ok, %{"plan" => p}} when is_map(p) -> p["goal"]
+        _ -> nil
+      end
 
     new_goal = merged_sd["plan"] && merged_sd["plan"]["goal"]
 
@@ -428,10 +526,11 @@ defmodule TesIdle.Game.Pipeline do
 
     city = nearest_city(ctx.hero.location_id)
 
-    state_data = case Jason.decode(ctx.hero.state_data || "{}") do
-      {:ok, sd} when is_map(sd) -> sd
-      _ -> %{}
-    end
+    state_data =
+      case Jason.decode(ctx.hero.state_data || "{}") do
+        {:ok, sd} when is_map(sd) -> sd
+        _ -> %{}
+      end
 
     respawn_at =
       NaiveDateTime.utc_now()
@@ -441,7 +540,7 @@ defmodule TesIdle.Game.Pipeline do
     death_block = %{
       "respawn_at" => NaiveDateTime.to_iso8601(respawn_at),
       "city_id" => city && city.id,
-      "city_name" => city && city.name,
+      "city_name" => city && city.name
     }
 
     new_state_data = state_data |> Map.put("death", death_block) |> Jason.encode!()
@@ -451,29 +550,31 @@ defmodule TesIdle.Game.Pipeline do
         state: "dead",
         hp: 0,
         gold: max(0, ctx.hero.gold - gold_loss),
-        state_data: new_state_data,
+        state_data: new_state_data
       })
       |> Repo.update!()
 
-    {:ok, %{
-      state_from: ctx.hero.state,
-      state_to: "dead",
-      narrative: nil,
-      journal_entry: nil,
-      combat_progress: nil,
-      combat_start: nil,
-      combat_result: nil,
-      equip_events: [],
-      gold_change: -gold_loss,
-    }}
+    {:ok,
+     %{
+       state_from: ctx.hero.state,
+       state_to: "dead",
+       narrative: nil,
+       journal_entry: nil,
+       combat_progress: nil,
+       combat_start: nil,
+       combat_result: nil,
+       equip_events: [],
+       gold_change: -gold_loss
+     }}
   end
 
   # Тик мёртвого героя: до respawn_at — тишина, после — возрождение.
   defp handle_dead_tick(ctx) do
-    state_data = case Jason.decode(ctx.hero.state_data || "{}") do
-      {:ok, sd} when is_map(sd) -> sd
-      _ -> %{}
-    end
+    state_data =
+      case Jason.decode(ctx.hero.state_data || "{}") do
+        {:ok, sd} when is_map(sd) -> sd
+        _ -> %{}
+      end
 
     case state_data["death"] do
       %{"respawn_at" => iso} = death_block when is_binary(iso) ->
@@ -499,17 +600,18 @@ defmodule TesIdle.Game.Pipeline do
   end
 
   defp dead_silence do
-    {:ok, %{
-      state_from: "dead",
-      state_to: "dead",
-      narrative: nil,
-      journal_entry: nil,
-      combat_progress: nil,
-      combat_start: nil,
-      combat_result: nil,
-      equip_events: [],
-      gold_change: 0,
-    }}
+    {:ok,
+     %{
+       state_from: "dead",
+       state_to: "dead",
+       narrative: nil,
+       journal_entry: nil,
+       combat_progress: nil,
+       combat_start: nil,
+       combat_result: nil,
+       equip_events: [],
+       gold_change: 0
+     }}
   end
 
   # Возрождение: поколение +1 (Learner), телепорт в ближайший город, 20% HP,
@@ -541,23 +643,25 @@ defmodule TesIdle.Game.Pipeline do
         hp: max(1, respawn_hp),
         location_id: city_id || ctx.hero.location_id,
         personality: new_personality,
-        state_data: new_state_data,
+        state_data: new_state_data
       })
       |> Repo.update!()
 
     journal_entry = respawn_journal(ctx, generation, death_block, chapter, chapter_title)
 
-    {:ok, %{
-      state_from: "dead",
-      state_to: "resting",
-      narrative: if(journal_entry, do: %{type: "death_respawn", text: journal_entry.text}, else: nil),
-      journal_entry: journal_entry,
-      combat_progress: nil,
-      combat_start: nil,
-      combat_result: nil,
-      equip_events: [],
-      gold_change: 0,
-    }}
+    {:ok,
+     %{
+       state_from: "dead",
+       state_to: "resting",
+       narrative:
+         if(journal_entry, do: %{type: "death_respawn", text: journal_entry.text}, else: nil),
+       journal_entry: journal_entry,
+       combat_progress: nil,
+       combat_start: nil,
+       combat_result: nil,
+       equip_events: [],
+       gold_change: 0
+     }}
   end
 
   defp respawn_journal(ctx, generation, death_block, chapter, chapter_title) do
@@ -577,7 +681,7 @@ defmodule TesIdle.Game.Pipeline do
         vars = %{
           "hero_name" => ctx.hero.name,
           "location" => death_block["city_name"] || "",
-          "generation" => Integer.to_string(generation),
+          "generation" => Integer.to_string(generation)
         }
 
         text = TesIdle.Game.Narrative.TemplateEngine.render_vars(template.text_template, vars)
@@ -588,7 +692,7 @@ defmodule TesIdle.Game.Pipeline do
           text: text,
           location_name: death_block["city_name"] || "",
           chapter: chapter,
-          chapter_title: chapter_title,
+          chapter_title: chapter_title
         })
     end
   end
@@ -596,13 +700,16 @@ defmodule TesIdle.Game.Pipeline do
   # Ближайший город по map_x/map_y; без координат — первый по алфавиту.
   defp nearest_city(current_location_id) do
     current =
-      if current_location_id, do: Repo.get(TesIdle.Schemas.Location, current_location_id), else: nil
+      if current_location_id,
+        do: Repo.get(TesIdle.Schemas.Location, current_location_id),
+        else: nil
 
     TesIdle.Schemas.Location
     |> where([l], l.location_type == "city")
     |> Repo.all()
     |> case do
-      [] -> nil
+      [] ->
+        nil
 
       cities ->
         cities
@@ -616,7 +723,8 @@ defmodule TesIdle.Game.Pipeline do
   defp city_distance(_city, nil), do: 999_999
 
   defp city_distance(city, current) do
-    if is_number(city.map_x) and is_number(city.map_y) and is_number(current.map_x) and is_number(current.map_y) do
+    if is_number(city.map_x) and is_number(city.map_y) and is_number(current.map_x) and
+         is_number(current.map_y) do
       dx = city.map_x - current.map_x
       dy = city.map_y - current.map_y
       dx * dx + dy * dy
@@ -624,7 +732,6 @@ defmodule TesIdle.Game.Pipeline do
       999_999
     end
   end
-
 
   # Питомцы: пассивный тик (голод, лояльность, уход, возрождение)
   defp pet_tick(hero, configs) do
@@ -641,27 +748,43 @@ defmodule TesIdle.Game.Pipeline do
     entries =
       case result[:pet_adopted] do
         %{name: name, species: species} ->
-          entry = Repo.insert!(%JournalEntry{
-            hero_id: hero.id,
-            entry_type: "pet_adopted",
-            text: "#{hero.name} приютил #{species_ru(species)}. Назвал его #{name}. Теперь их двое.",
-            chapter: chapter,
-            chapter_title: chapter_title,
-          })
+          entry =
+            Repo.insert!(%JournalEntry{
+              hero_id: hero.id,
+              entry_type: "pet_adopted",
+              text:
+                "#{hero.name} приютил #{species_ru(species)}. Назвал его #{name}. Теперь их двое.",
+              chapter: chapter,
+              chapter_title: chapter_title
+            })
+
           entries ++ [entry]
 
-        _ -> entries
+        _ ->
+          entries
       end
 
     Enum.map(pet_events, fn ev ->
-      text = case ev.type do
-        "pet_left" -> "#{ev.pet_name} больше не вернулся. Лояльность закончилась — питомец ушёл навсегда."
-        "pet_revived" -> "#{ev.pet_name} снова на ногах! Раны затянулись, и он догнал героя."
-        _ -> nil
-      end
+      text =
+        case ev.type do
+          "pet_left" ->
+            "#{ev.pet_name} больше не вернулся. Лояльность закончилась — питомец ушёл навсегда."
+
+          "pet_revived" ->
+            "#{ev.pet_name} снова на ногах! Раны затянулись, и он догнал героя."
+
+          _ ->
+            nil
+        end
 
       if text do
-        Repo.insert!(%JournalEntry{hero_id: hero.id, entry_type: ev.type, text: text, chapter: chapter, chapter_title: chapter_title})
+        Repo.insert!(%JournalEntry{
+          hero_id: hero.id,
+          entry_type: ev.type,
+          text: text,
+          chapter: chapter,
+          chapter_title: chapter_title
+        })
       else
         nil
       end
@@ -702,7 +825,9 @@ defmodule TesIdle.Game.Pipeline do
           new_hp = min(hero.max_hp, hero.hp + (item.heal_hp || 0))
           hero |> Ecto.Changeset.change(%{hp: new_hp}) |> Repo.update!()
           %{hero | hp: new_hp}
-        _ -> hero
+
+        _ ->
+          hero
       end
     else
       hero
@@ -715,7 +840,9 @@ defmodule TesIdle.Game.Pipeline do
             new_hunger = max(0, hero.hunger - (item.reduce_hunger || 0))
             hero |> Ecto.Changeset.change(%{hunger: new_hunger}) |> Repo.update!()
             %{hero | hunger: new_hunger}
-          _ -> hero
+
+          _ ->
+            hero
         end
       else
         hero
@@ -729,7 +856,9 @@ defmodule TesIdle.Game.Pipeline do
             new_se = min(hero.max_soul_energy || 100, hero.soul_energy + (item.soul_restore || 0))
             hero |> Ecto.Changeset.change(%{soul_energy: new_se}) |> Repo.update!()
             %{hero | soul_energy: new_se}
-          _ -> hero
+
+          _ ->
+            hero
         end
       else
         hero
@@ -743,20 +872,23 @@ defmodule TesIdle.Game.Pipeline do
 
     base_query = from i in Item, where: i.item_type == "consumable" and i.is_active == true
 
-    filtered = case field do
-      :heal_hp -> from i in base_query, where: i.heal_hp > 0
-      :reduce_hunger -> from i in base_query, where: i.reduce_hunger > 0.0
-      :soul_restore -> from i in base_query, where: i.soul_restore > 0.0
-      _ -> base_query
-    end
+    filtered =
+      case field do
+        :heal_hp -> from i in base_query, where: i.heal_hp > 0
+        :reduce_hunger -> from i in base_query, where: i.reduce_hunger > 0.0
+        :soul_restore -> from i in base_query, where: i.soul_restore > 0.0
+        _ -> base_query
+      end
 
-    inv = Repo.one(
-      from ii in InventoryItem,
-        join: i in ^filtered, on: i.id == ii.item_id,
-        where: ii.hero_id == ^hero_id and ii.quantity > 0,
-        limit: 1,
-        select: %{inv: ii, item: i}
-    )
+    inv =
+      Repo.one(
+        from ii in InventoryItem,
+          join: i in ^filtered,
+          on: i.id == ii.item_id,
+          where: ii.hero_id == ^hero_id and ii.quantity > 0,
+          limit: 1,
+          select: %{inv: ii, item: i}
+      )
 
     if inv do
       if inv.inv.quantity > 1 do
@@ -764,6 +896,7 @@ defmodule TesIdle.Game.Pipeline do
       else
         Repo.delete!(inv.inv)
       end
+
       {:ok, inv.item, inv.inv}
     else
       :error
@@ -795,6 +928,7 @@ defmodule TesIdle.Game.Pipeline do
   # fallback: грубая оценка по игровому дню (1 день ≈ 24 тика).
   defp current_tick do
     snap = TesIdle.World.Kernel.snapshot()
+
     if is_map(snap) and is_number(snap["tick"]) do
       snap["tick"]
     else
@@ -806,11 +940,16 @@ defmodule TesIdle.Game.Pipeline do
     alias TesIdle.Schemas.{Quest, QuestStep, ActiveQuest}
 
     # Find a random quest
-    quest = Repo.one(from q in Quest, where: q.is_active == true, order_by: fragment("RANDOM()"), limit: 1)
+    quest =
+      Repo.one(
+        from q in Quest, where: q.is_active == true, order_by: fragment("RANDOM()"), limit: 1
+      )
+
     if quest do
       case Repo.insert(%ActiveQuest{hero_id: ctx.hero.id, quest_id: quest.id}) do
         {:ok, aq} ->
           %{ctx | active_quest: aq}
+
         _ ->
           ctx
       end
@@ -819,57 +958,23 @@ defmodule TesIdle.Game.Pipeline do
     end
   end
 
-  defp track_memories(hero, action_module, result, state_data) do
-    sd = state_data || %{}
-    memories = Map.get(sd, "memories", [])
+  defp track_memories(hero, action_module, result, state_data, configs) do
+    {hero, Memory.track_action(state_data || %{}, hero, action_module, result, configs)}
+  end
 
-    new_memories = case action_module do
-      TesIdle.Game.Actions.FightAction ->
-        if result[:combat_result] do
-          combat = result[:combat_result]
-          entry = if combat[:victory] do
-            %{"type" => "victory", "monster" => combat[:monster_name] || "враг",
-              "day" => hero.game_day, "gold_earned" => combat[:gold] || 0, "mood_impact" => 10}
-          else
-            %{"type" => "defeat", "monster" => combat[:monster_name] || "враг",
-              "day" => hero.game_day, "gold_lost" => 0, "mood_impact" => -20}
-          end
-          memories ++ [entry]
-        else
-          memories
-        end
+  # Только явные исходы влияют на frustration: обычный тик не считается успехом.
+  defp intent_outcome(result, quest_done?) do
+    combat = result[:combat_result]
 
-      TesIdle.Game.Actions.ExploreAction ->
-        if result[:gold_change] && result[:gold_change] > 0 do
-          memories ++ [%{"type" => "discovery", "what" => "здесь было найдено золото", "day" => hero.game_day, "mood_impact" => 15}]
-        else
-          memories
-        end
-
-      TesIdle.Game.Actions.SocialAction ->
-        memories ++ [%{"type" => "social", "npc" => "спутник", "day" => hero.game_day, "mood_impact" => 8}]
-
-      TesIdle.Game.Actions.ShopAction ->
-        if result[:item_name] do
-          memories ++ [%{"type" => "shop", "item" => result[:item_name], "day" => hero.game_day, "gold_spent" => result[:gold_spent] || 0, "mood_impact" => 5}]
-        else
-          memories
-        end
-
-      TesIdle.Game.Actions.TravelAction ->
-        if result[:events] && Enum.any?(result[:events] || [], &String.starts_with?(&1, "arrived_")) do
-          memories ++ [%{"type" => "travel", "destination" => "arrived", "day" => hero.game_day, "mood_impact" => 3}]
-        else
-          memories
-        end
-
-      _ ->
-        memories
+    cond do
+      quest_done? -> :progress
+      result[:activity_complete] == true -> :progress
+      combat && combat[:victory] == true -> :progress
+      combat && (combat[:hero_defeated] == true or combat[:victory] == false) -> :failure
+      result[:success] == false -> :failure
+      result[:progress] == true -> :progress
+      true -> :unknown
     end
-
-    new_memories = Enum.take(new_memories, -20)
-    updated_sd = Map.put(sd, "memories", new_memories)
-    {hero, updated_sd}
   end
 
   # 5b. Quest progress tracking. true — квест завершён полностью (Фаза 2:
@@ -878,6 +983,7 @@ defmodule TesIdle.Game.Pipeline do
     alias TesIdle.Schemas.{ActiveQuest, QuestStep, Quest}
 
     aq = Repo.one(from aq in ActiveQuest, where: aq.hero_id == ^hero.id, limit: 1)
+
     if aq do
       progress_quest(hero, aq, action_module, result)
     else
@@ -888,11 +994,12 @@ defmodule TesIdle.Game.Pipeline do
   defp progress_quest(hero, aq, action_module, result) do
     alias TesIdle.Schemas.{QuestStep, Quest}
 
-    step = Repo.one(
-      from s in QuestStep,
-        where: s.quest_id == ^aq.quest_id and s.step_order == ^aq.current_step,
-        limit: 1
-    )
+    step =
+      Repo.one(
+        from s in QuestStep,
+          where: s.quest_id == ^aq.quest_id and s.step_order == ^aq.current_step,
+          limit: 1
+      )
 
     if step do
       # Map action modules to step types
@@ -900,7 +1007,7 @@ defmodule TesIdle.Game.Pipeline do
         TesIdle.Game.Actions.FightAction => "kill",
         TesIdle.Game.Actions.ExploreAction => "explore",
         TesIdle.Game.Actions.ShopAction => "collect",
-        TesIdle.Game.Actions.TravelAction => "travel",
+        TesIdle.Game.Actions.TravelAction => "travel"
       }
 
       expected_type = Map.get(action_to_step, action_module)
@@ -910,8 +1017,9 @@ defmodule TesIdle.Game.Pipeline do
         # шаг kill выполнялся за один multi-tick. Раунды приходят с
         # combat_progress и без combat_result — их пропускаем; победу
         # (combat_result) и не-боевые действия считаем как раньше.
-        round_only? = action_module == TesIdle.Game.Actions.FightAction and
-                      result[:combat_result] == nil and result[:combat_progress] != nil
+        round_only? =
+          action_module == TesIdle.Game.Actions.FightAction and
+            result[:combat_result] == nil and result[:combat_progress] != nil
 
         if round_only? do
           false
@@ -920,41 +1028,69 @@ defmodule TesIdle.Game.Pipeline do
 
           if new_progress >= step.target_count do
             # Step complete — advance to next or complete quest
-            total_steps = Repo.one(
-              from s in QuestStep,
-                where: s.quest_id == ^aq.quest_id,
-                select: count()
-            )
+            total_steps =
+              Repo.one(
+                from s in QuestStep,
+                  where: s.quest_id == ^aq.quest_id,
+                  select: count()
+              )
+
             if aq.current_step >= total_steps do
               # Quest complete — all steps done
               quest = Repo.one(from q in Quest, where: q.id == ^aq.quest_id)
+
               if quest do
                 # Award rewards
                 updated_quest_hero =
                   hero
                   |> Hero.changeset(%{
                     xp: hero.xp + quest.xp_reward,
-                    gold: hero.gold + quest.gold_reward,
+                    gold: hero.gold + quest.gold_reward
                   })
                   |> Repo.update!()
 
                 # P-3: репутация фракции региона растёт от завершённых квестов
-                reputation_reward(updated_quest_hero, configs_hero_location(hero), "quest_complete")
+                reputation_reward(
+                  updated_quest_hero,
+                  configs_hero_location(hero),
+                  "quest_complete"
+                )
 
                 # Bonus item reward for harder quests
                 if quest.difficulty >= 3 do
                   alias TesIdle.Schemas.{Item, InventoryItem}
-                  heal_item = Repo.one(from i in Item, where: i.name == "Healing Potion" or i.name == "Зелье здоровья" or i.item_type == "potion", limit: 1)
+
+                  heal_item =
+                    Repo.one(
+                      from i in Item,
+                        where:
+                          i.name == "Healing Potion" or i.name == "Зелье здоровья" or
+                            i.item_type == "potion",
+                        limit: 1
+                    )
+
                   if heal_item do
-                    existing = Repo.one(from ii in InventoryItem, where: ii.hero_id == ^hero.id and ii.item_id == ^heal_item.id)
+                    existing =
+                      Repo.one(
+                        from ii in InventoryItem,
+                          where: ii.hero_id == ^hero.id and ii.item_id == ^heal_item.id
+                      )
+
                     if existing do
-                      existing |> Ecto.Changeset.change(%{quantity: existing.quantity + 2}) |> Repo.update!()
+                      existing
+                      |> Ecto.Changeset.change(%{quantity: existing.quantity + 2})
+                      |> Repo.update!()
                     else
-                      Repo.insert!(%InventoryItem{hero_id: hero.id, item_id: heal_item.id, quantity: 2})
+                      Repo.insert!(%InventoryItem{
+                        hero_id: hero.id,
+                        item_id: heal_item.id,
+                        quantity: 2
+                      })
                     end
                   end
                 end
               end
+
               Repo.delete!(aq)
               true
             else
@@ -962,6 +1098,7 @@ defmodule TesIdle.Game.Pipeline do
               aq
               |> Ecto.Changeset.change(%{current_step: aq.current_step + 1, current_progress: 0})
               |> Repo.update!()
+
               false
             end
           else
@@ -969,6 +1106,7 @@ defmodule TesIdle.Game.Pipeline do
             aq
             |> Ecto.Changeset.change(%{current_progress: new_progress})
             |> Repo.update!()
+
             false
           end
         end
@@ -999,6 +1137,7 @@ defmodule TesIdle.Game.Pipeline do
   defp reputation_reward(hero, ctx_like, kind) do
     rep_cfg = TesIdle.Game.Law.rep_cfg(ctx_like.configs)
     delta = rep_cfg[kind] || 0
+
     if is_number(delta) and delta > 0 and hero.location_id do
       faction = TesIdle.Game.Law.faction_for(ctx_like)
       TesIdle.Game.Law.adjust_reputation(hero.id, faction, delta, ctx_like.configs, hero.name)
@@ -1007,7 +1146,11 @@ defmodule TesIdle.Game.Pipeline do
 
   # Внутри check_quest_progress у нас нет ctx — собираем минимальный аналог
   defp configs_hero_location(hero) do
-    location = if hero.location_id, do: Repo.one(from l in TesIdle.Schemas.Location, where: l.id == ^hero.location_id, limit: 1)
+    location =
+      if hero.location_id,
+        do:
+          Repo.one(from l in TesIdle.Schemas.Location, where: l.id == ^hero.location_id, limit: 1)
+
     %{configs: ContextBuilder.load_configs(), location: location, hero: hero}
   end
 end

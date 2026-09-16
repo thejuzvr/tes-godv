@@ -17,14 +17,189 @@ defmodule TesIdle.Game.Brain.Intent do
 
   alias TesIdle.Game.{Goal, Personality, Law}
 
-  @doc "Полная оценка целей: base → enrich → world. Отсортировано по utility."
+  @intent_defaults %{
+    "enabled" => true,
+    "switch_margin" => 0.08,
+    "min_hold_decisions" => 2,
+    "repeat_window" => 5,
+    "repeat_penalty" => 0.025,
+    "frustration_step" => 0.08,
+    "frustration_max" => 0.32,
+    "novelty" => 0.0001
+  }
+
+  @doc "Полная оценка целей: base → enrich → world → continuity. Отсортировано по выбору."
   def evaluate(ctx) do
-    ctx
-    |> Goal.base_goals()
-    |> enrich_stage(ctx)
-    |> world_stage(ctx)
-    |> Enum.sort_by(&(-&1.utility))
+    goals =
+      ctx
+      |> Goal.base_goals()
+      |> enrich_stage(ctx)
+      |> world_stage(ctx)
+
+    apply_continuity(goals, ctx)
   end
+
+  @doc "Чисто записывает известный исход текущего intent; Pipeline подключит это отдельно."
+  def record_outcome(state_data, result, configs) when is_map(state_data) do
+    cfg = intent_cfg(configs)
+
+    if cfg["enabled"] == true do
+      brain = state_data["brain"] || %{}
+      intent = brain["intent"] || %{}
+      old = numeric(intent["frustration"], 0.0)
+
+      {frustration, outcome} =
+        case outcome_kind(result) do
+          :failure -> {min(cfg["frustration_max"], old + cfg["frustration_step"]), "failure"}
+          :progress -> {0.0, "progress"}
+          :unknown -> {old, "unknown"}
+        end
+
+      updated =
+        intent
+        |> Map.put("frustration", round4(frustration))
+        |> Map.put("last_outcome", outcome)
+
+      Map.put(state_data, "brain", Map.put(brain, "intent", updated))
+    else
+      state_data
+    end
+  end
+
+  def record_outcome(state_data, _result, _configs), do: state_data
+
+  defp apply_continuity(goals, ctx) do
+    cfg = intent_cfg(ctx.configs || %{})
+
+    if cfg["enabled"] != true do
+      Enum.sort_by(goals, &(-&1.utility))
+    else
+      intent = current_intent(ctx.state_data || %{})
+      current_name = parse_goal(intent["goal"])
+      held = integer(intent["held_decisions"], 0)
+      frustration = numeric(intent["frustration"], 0.0)
+      recent = recent_goals(ctx.state_data || %{}, cfg["repeat_window"])
+
+      adjusted =
+        Enum.map(goals, fn goal ->
+          repeats = Enum.count(recent, &(&1 == to_string(goal.name)))
+          repeat_delta = repeats * cfg["repeat_penalty"]
+          frustration_delta = if goal.name == current_name, do: frustration, else: 0.0
+          jitter = stable_jitter(ctx, goal.name, cfg["novelty"])
+          delta = jitter - repeat_delta - frustration_delta
+
+          traces =
+            []
+            |> add_trace(repeat_delta > 0, "анти-повтор: #{repeats} в последних #{cfg["repeat_window"]} (−#{fmt(repeat_delta)})")
+            |> add_trace(frustration_delta > 0, "фрустрация текущего намерения (−#{fmt(frustration_delta)})")
+            |> add_trace(jitter != 0.0, "детерминированная новизна (#{signed(jitter)})")
+
+          %{goal |
+            utility: goal.utility |> Kernel.+(delta) |> max(0.0) |> min(1.0),
+            brain_reasons: (goal.brain_reasons || []) ++ traces}
+        end)
+        |> Enum.sort_by(fn goal -> {-goal.utility, to_string(goal.name)} end)
+
+      choose_with_hysteresis(adjusted, current_name, held, cfg, ctx)
+    end
+  end
+
+  defp choose_with_hysteresis([], _current, _held, _cfg, _ctx), do: []
+
+  defp choose_with_hysteresis([challenger | _] = goals, current_name, held, cfg, ctx) do
+    current = Enum.find(goals, &(&1.name == current_name))
+    critical = Enum.find(goals, &critical_override?(&1, ctx))
+
+    cond do
+      not is_nil(critical) and (is_nil(current) or current.name != critical.name) ->
+        promote(goals, critical, "критическая цель прерывает текущее намерение")
+
+      is_nil(current) or current.name == challenger.name ->
+        goals
+
+      critical_override?(challenger, ctx) ->
+        promote(goals, challenger, "критическая цель прерывает текущее намерение")
+
+      held < cfg["min_hold_decisions"] ->
+        promote(goals, current, "удержание намерения: #{held}/#{cfg["min_hold_decisions"]} решений")
+
+      challenger.utility - current.utility < cfg["switch_margin"] ->
+        promote(goals, current, "гистерезис: преимущество соперника меньше #{fmt(cfg["switch_margin"])}")
+
+      true ->
+        promote(goals, challenger, "смена намерения: преимущество прошло порог #{fmt(cfg["switch_margin"])}")
+    end
+  end
+
+  defp promote(goals, selected, trace) do
+    selected = %{selected | brain_reasons: (selected.brain_reasons || []) ++ [trace]}
+    [selected | Enum.reject(goals, &(&1.name == selected.name))]
+  end
+
+  defp critical_override?(%{name: :fight}, ctx), do: not is_nil(ctx.combat_state)
+
+  defp critical_override?(%{name: name}, ctx) when name in [:heal, :rest] do
+    urgent = get_in(ctx.configs || %{}, ["needs_urgent"]) || %{}
+    hp_ratio = ctx.hero.hp / max(1, ctx.hero.max_hp)
+    hp_ratio < numeric(urgent["hp_ratio"], 0.5) or
+      ctx.needs.fatigue > numeric(urgent["fatigue"], 75)
+  end
+
+  defp critical_override?(_goal, _ctx), do: false
+
+  defp current_intent(state_data), do: get_in(state_data, ["brain", "intent"]) || %{}
+
+  defp recent_goals(state_data, window) do
+    state_data
+    |> get_in(["brain", "decision_log"])
+    |> case do
+      log when is_list(log) -> log |> Enum.take(-max(0, integer(window, 0))) |> Enum.map(& &1["goal"])
+      _ -> []
+    end
+  end
+
+  defp stable_jitter(_ctx, _goal, novelty) when novelty <= 0, do: 0.0
+
+  defp stable_jitter(ctx, goal, novelty) do
+    hero_key = ctx.hero.id || ctx.hero.name || "hero"
+    bucket = "#{hero_key}|#{ctx.hero.game_day}|#{trunc(ctx.hour)}|#{goal}"
+    <<number::unsigned-32, _::binary>> = :crypto.hash(:sha256, bucket)
+    ((number / 4_294_967_295) * 2.0 - 1.0) * novelty
+  end
+
+  defp intent_cfg(configs) do
+    brain = configs["brain"] || %{}
+    supplied = brain["intent"] || %{}
+    Map.merge(@intent_defaults, supplied)
+  end
+
+  defp outcome_kind(result) when result in [:error, :failure, :failed], do: :failure
+  defp outcome_kind(result) when result in [:ok, :success, :progress], do: :progress
+  defp outcome_kind(%{progress: true}), do: :progress
+  defp outcome_kind(%{"progress" => true}), do: :progress
+  defp outcome_kind(%{success: false}), do: :failure
+  defp outcome_kind(%{"success" => false}), do: :failure
+  defp outcome_kind(_), do: :unknown
+
+  defp parse_goal(goal) when is_binary(goal) do
+    try do
+      String.to_existing_atom(goal)
+    rescue
+      ArgumentError -> nil
+    end
+  end
+
+  defp parse_goal(goal) when is_atom(goal), do: goal
+  defp parse_goal(_), do: nil
+
+  defp add_trace(traces, true, trace), do: traces ++ [trace]
+  defp add_trace(traces, false, _trace), do: traces
+  defp numeric(value, _fallback) when is_number(value), do: value * 1.0
+  defp numeric(_value, fallback), do: fallback * 1.0
+  defp integer(value, _fallback) when is_integer(value), do: value
+  defp integer(_value, fallback), do: fallback
+  defp signed(value) when value >= 0, do: "+#{fmt(value)}"
+  defp signed(value), do: fmt(value)
 
   # --- Стадия 2: причуды/связи (прозрачно проксируем Graph.enrich) ----------
 

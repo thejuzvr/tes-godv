@@ -1,11 +1,11 @@
 defmodule TesIdle.Game.Skills do
   @moduledoc """
-  Навыки героя (heroes.skills JSONB): fishing, gathering, stealth, lockpicking.
+  Навыки героя (heroes.skills JSONB): fishing, gathering, mining, stealth, lockpicking.
   Растут от повторения (0..100), замедляясь к верху. Читаются экшенами как
   шанс успеха / бонус, пишутся после соответствующих активностей.
   """
 
-  @known [:fishing, :gathering, :stealth, :lockpicking]
+  @known [:fishing, :gathering, :mining, :stealth, :lockpicking]
 
   @doc "Карта навыков героя (атомные ключи, 0..100)."
   def all(hero) do

@@ -1,0 +1,164 @@
+/* Slate observatory: a province atlas with a quiet, readable field dossier.
+   Stage/frame geometry and overlay positioning belong to map-atlas.css. */
+.map-shell .map-dossier {
+  --dossier-line: color-mix(in srgb, var(--muted) 22%, transparent);
+  --dossier-positive: #9ec7b0;
+  --dossier-negative: #f0a69b;
+  padding: 0;
+  gap: 0;
+  color: var(--fg);
+  background: var(--surface);
+  border-color: var(--dossier-line);
+  border-radius: 0;
+  box-shadow: none;
+  font-family: var(--font-body, "Inter", sans-serif);
+  font-size: 13px;
+  line-height: 1.55;
+}
+[data-theme="light"] .map-shell .map-dossier {
+  --dossier-positive: #28654b;
+  --dossier-negative: #a13d31;
+}
+.map-shell .map-dossier svg { flex-shrink: 0; }
+.map-shell .map-dossier-toggle {
+  justify-content: space-between;
+  padding: 15px 20px;
+  min-height: 48px;
+  border: 0;
+  border-bottom: 1px solid var(--dossier-line);
+  border-radius: 0;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: .09em;
+  color: var(--muted);
+}
+.map-shell .map-dossier-toggle > span { display: flex; align-items: center; gap: 8px; }
+.map-shell .map-dossier-toggle:hover { color: var(--fg); background: color-mix(in srgb, var(--fg) 4%, transparent); }
+.map-shell #map-dossier-content[hidden] { display: none; }
+.map-shell .atlas-location-picker { padding: 18px 20px 0; }
+.map-shell .atlas-location-picker label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 7px; }
+.map-shell .atlas-location-picker select {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 10px 30px 10px 11px;
+  font: inherit;
+  font-size: 12px;
+  color: var(--fg);
+  background: var(--bg);
+  border: 1px solid var(--dossier-line);
+  border-radius: 7px;
+  text-overflow: ellipsis;
+}
+.map-shell .atlas-location-picker select:disabled { opacity: .55; }
+.map-shell .map-dossier-section {
+  padding: 21px 20px;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--dossier-line);
+  border-radius: 0;
+  margin: 0;
+}
+.map-shell .map-dossier-section + .map-dossier-section { margin-top: 0; }
+.map-shell .map-dossier-section:last-child { border-bottom: 0; }
+.map-shell .atlas-eyebrow { display: block; margin: 0; color: var(--muted); font-family: var(--font-mono, monospace); font-size: 12px; line-height: 1.5; letter-spacing: .12em; text-transform: uppercase; }
+.map-shell .atlas-location-name { margin: 4px 0 10px; font-family: var(--font-display, "Cormorant Garamond", serif); font-size: 35px; line-height: 1.06; font-weight: 600; letter-spacing: -.025em; overflow-wrap: anywhere; }
+.map-shell .atlas-here { display: flex; align-items: center; gap: 5px; color: var(--dossier-positive); margin: 0 0 12px; font-size: 12px; }
+.map-shell .atlas-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0; }
+.map-shell .atlas-tags > span { display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--dossier-line); border-radius: 4px; padding: 3px 6px; font-size: 12px; color: var(--muted); }
+.map-shell .atlas-tags .atlas-danger { color: var(--accent); }
+.map-shell .atlas-tags .atlas-danger[data-danger="Низкая"] { color: var(--dossier-positive); }
+.map-shell .atlas-tags .atlas-danger[data-danger="Высокая"],
+.map-shell .atlas-tags .atlas-danger[data-danger="Экстремальная"] { color: var(--dossier-negative); }
+.map-shell .atlas-description { color: var(--muted); margin: 14px 0 16px; font-size: 12px; line-height: 1.75; }
+.map-shell .atlas-amenities, .map-shell .atlas-activities { display: flex; flex-wrap: wrap; gap: 8px 14px; font-size: 12px; }
+.map-shell .atlas-amenities > span, .map-shell .atlas-activities > span { display: inline-flex; gap: 6px; align-items: center; }
+.map-shell .atlas-amenities > span[data-available="false"] { color: var(--muted); }
+.map-shell .atlas-activities { margin-top: 11px; color: var(--muted); }
+.map-shell .atlas-activities:empty { display: none; }
+.map-shell .atlas-travel-action { margin-top: 21px; }
+.map-shell .atlas-travel-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 9px;
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 14px;
+  border: 1px solid var(--accent);
+  border-radius: 7px;
+  color: var(--bg);
+  background: var(--accent);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 650;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.map-shell .atlas-travel-button span { flex: 1; text-align: left; overflow-wrap: anywhere; }
+.map-shell .atlas-travel-button:hover:not(:disabled) { filter: brightness(1.1); }
+.map-shell .atlas-travel-button:disabled { color: var(--muted); background: color-mix(in srgb, var(--muted) 10%, transparent); border-color: var(--dossier-line); cursor: not-allowed; }
+.map-shell .atlas-travel-reason { margin: 9px 0 0; font-size: 12px; color: var(--muted); }
+.map-shell .atlas-current { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; border: 1px solid color-mix(in srgb, var(--dossier-positive) 30%, transparent); border-radius: 7px; color: var(--dossier-positive); font-size: 12px; }
+.map-shell .atlas-notice { display: flex; align-items: flex-start; gap: 8px; margin-top: 12px; padding: 11px; color: var(--dossier-positive); background: color-mix(in srgb, var(--dossier-positive) 8%, transparent); border-left: 2px solid currentColor; font-size: 12px; overflow-wrap: anywhere; }
+.map-shell .atlas-notice[data-kind="error"] { color: var(--dossier-negative); background: color-mix(in srgb, var(--dossier-negative) 8%, transparent); }
+.map-shell .atlas-notice > svg { margin-top: 2px; }
+.map-shell #map-dossier-content > .atlas-notice { margin: 16px 20px 0; }
+.map-shell .atlas-section-heading { display: flex; align-items: center; gap: 8px; margin: 0 0 16px; font-family: var(--font-body, "Inter", sans-serif); font-size: 12px; font-weight: 600; color: var(--muted); letter-spacing: .025em; }
+.map-shell .atlas-weather { display: flex; align-items: center; gap: 12px; }
+.map-shell .atlas-weather > svg { color: var(--accent); }
+.map-shell .atlas-weather strong { font-size: 14px; font-weight: 500; }
+.map-shell .atlas-weather p { margin: 3px 0 0; font-size: 12px; color: var(--muted); }
+.map-shell .atlas-density { display: flex; align-items: center; gap: 7px; margin-top: 17px; font-size: 12px; color: var(--muted); }
+.map-shell .atlas-density b { margin-left: auto; color: var(--fg); font: 11px var(--font-mono, monospace); }
+.map-shell .atlas-prices { margin-top: 16px; padding-top: 13px; border-top: 1px solid var(--dossier-line); }
+.map-shell .atlas-prices h4 { margin: 0 0 9px; font-size: 12px; font-weight: 500; color: var(--muted); }
+.map-shell .atlas-prices dl { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px; margin: 0; }
+.map-shell .atlas-prices dl > div { display: flex; justify-content: space-between; gap: 5px; font-size: 12px; }
+.map-shell .atlas-prices dt { color: var(--muted); }
+.map-shell .atlas-prices dd { margin: 0; font-family: var(--font-mono, monospace); font-variant-numeric: tabular-nums; }
+.map-shell .atlas-event-count { margin-left: auto; font-family: var(--font-mono, monospace); font-size: 12px; }
+.map-shell .atlas-events { display: grid; gap: 10px; }
+.map-shell .atlas-event { display: flex; align-items: flex-start; gap: 9px; padding: 11px; border: 1px solid var(--dossier-line); border-radius: 6px; font-size: 12px; }
+.map-shell .atlas-event > svg { color: var(--accent); margin-top: 2px; }
+.map-shell .atlas-event p { margin: 0; flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.map-shell .atlas-event p > span { display: block; color: var(--muted); margin-top: 4px; }
+.map-shell .atlas-event b { font-weight: 550; }
+.map-shell .atlas-war > svg { color: var(--dossier-negative); }
+.map-shell .atlas-event-ttl { white-space: nowrap; font-family: var(--font-mono, monospace); font-size: 12px; color: var(--muted); }
+.map-shell .atlas-peace { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 12px; }
+.map-shell .atlas-peace p { margin: 0; }
+.map-shell .atlas-peace span { font-size: 12px; }
+.map-shell .atlas-muted, .map-shell .atlas-empty { color: var(--muted); font-size: 12px; }
+.map-shell .atlas-empty p { margin-bottom: 0; }
+.map-shell .map-title-chip { display: block; padding: 14px 18px; color: var(--fg); background: color-mix(in srgb, var(--surface) 94%, transparent); border-color: color-mix(in srgb, var(--muted) 22%, transparent); border-radius: 10px; }
+.map-shell .atlas-title-row { display: flex; align-items: center; gap: 12px; }
+.map-shell .atlas-title-mark { color: var(--accent); flex-shrink: 0; }
+.map-shell .map-title { margin: 0; font-family: var(--font-display, "Cormorant Garamond", serif); font-size: 34px; line-height: 1; font-weight: 600; letter-spacing: -.025em; }
+.map-shell .atlas-back { display: inline-flex; align-items: center; gap: 5px; margin-left: auto; min-height: 36px; padding-left: 16px; font-family: var(--font-body, "Inter", sans-serif); font-size: 12px; text-decoration: none; color: var(--muted); white-space: nowrap; }
+.map-shell .atlas-back:hover { color: var(--accent); }
+.map-shell .map-meta { display: flex; flex-wrap: wrap; gap: 5px 12px; margin-top: 9px; font-size: 12px; line-height: 1.6; text-transform: none; letter-spacing: 0; }
+.map-shell .map-meta > span { display: inline-flex; align-items: center; gap: 5px; }
+.map-shell .map-travel-pill { display: flex; align-items: center; gap: 9px; white-space: normal; color: var(--accent); font-size: 12px; }
+.map-shell .map-load-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; min-height: 300px; padding: 130px 24px 40px; text-align: center; color: var(--muted); }
+.map-shell .map-load-state > svg { color: var(--accent); }
+.map-shell .map-load-state h2 { margin: 14px 0 4px; font-family: var(--font-display, serif); font-size: 28px; color: var(--fg); }
+.map-shell .map-load-state p { max-width: 350px; font-size: 12px; }
+.map-shell .map-retry { display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 9px 11px; min-height: 40px; margin-top: 8px; border: 1px solid currentColor; border-radius: 6px; color: inherit; background: transparent; font: inherit; font-size: 12px; cursor: pointer; }
+.map-shell .map-retry:disabled { opacity: .6; cursor: wait; }
+.map-shell :is(.map-dossier button, .map-dossier select, .atlas-back, .map-retry):focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+@media (max-width: 800px) {
+  .map-shell .map-dossier-section { padding: 20px; }
+  .map-shell .map-title-chip { padding: 11px 13px; }
+  .map-shell .map-title { font-size: 29px; }
+  .map-shell .atlas-title-mark { width: 26px; height: 26px; }
+  .map-shell .atlas-back { padding-left: 4px; }
+  .map-shell .atlas-location-name { font-size: 36px; }
+  .map-shell .atlas-location-picker select { font-size: 16px; }
+}
+@media (max-width: 380px) {
+  .map-shell .atlas-title-row { gap: 8px; }
+  .map-shell .atlas-back span { display: none; }
+  .map-shell .atlas-prices dl { grid-template-columns: 1fr; }
+}

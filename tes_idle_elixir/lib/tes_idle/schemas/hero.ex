@@ -38,6 +38,7 @@ defmodule TesIdle.Schemas.Hero do
     field :last_activity, :utc_datetime
     field :max_weight, :float, default: 160.0
     field :personality, :map
+
     # Паспорт мозга (ROADMAP: Часть I) — SHA256(user_id:hero:ordinal), постоянен
     field :brain_hash, :string
     # Навыки активностей: %{"fishing" => 1, "stealth" => 3, ...}
@@ -48,28 +49,64 @@ defmodule TesIdle.Schemas.Hero do
     has_one :equipment, TesIdle.Schemas.Equipment
     has_many :inventory_items, TesIdle.Schemas.InventoryItem
     has_many :journal_entries, TesIdle.Schemas.JournalEntry
+    has_many :encounter_participations, TesIdle.Schemas.EncounterParticipant
+    has_many :encounter_claims, TesIdle.Schemas.EncounterClaim
+    has_one :social_settings, TesIdle.Schemas.HeroSocialSetting
+    has_many :blocks_created, TesIdle.Schemas.HeroBlock, foreign_key: :blocker_id
+    has_many :blocks_received, TesIdle.Schemas.HeroBlock, foreign_key: :blocked_id
     has_many :reputations, TesIdle.Schemas.Reputation
     has_one :active_quest, TesIdle.Schemas.ActiveQuest
-
   end
 
   def changeset(hero, attrs) do
     hero
     |> cast(attrs, [
-      :name, :race, :hero_class, :level, :hp, :max_hp, :mp, :max_mp,
-      :sp, :max_sp, :attack, :defense, :xp, :xp_to_next, :gold,
-      :state, :mood, :hunger, :fatigue, :morale, :soul_energy, :max_soul_energy,
-      :game_hour, :game_day, :game_era, :state_data, :mood_history,
-      :total_play_time_seconds, :total_gold_earned, :total_kills,
-      :is_online, :last_activity, :max_weight, :personality,
-      :brain_hash, :skills,
-      :user_id, :location_id,
+      :name,
+      :race,
+      :hero_class,
+      :level,
+      :hp,
+      :max_hp,
+      :mp,
+      :max_mp,
+      :sp,
+      :max_sp,
+      :attack,
+      :defense,
+      :xp,
+      :xp_to_next,
+      :gold,
+      :state,
+      :mood,
+      :hunger,
+      :fatigue,
+      :morale,
+      :soul_energy,
+      :max_soul_energy,
+      :game_hour,
+      :game_day,
+      :game_era,
+      :state_data,
+      :mood_history,
+      :total_play_time_seconds,
+      :total_gold_earned,
+      :total_kills,
+      :is_online,
+      :last_activity,
+      :max_weight,
+      :personality,
+      :brain_hash,
+      :skills,
+      :user_id,
+      :location_id
     ])
     |> validate_required([:name, :race, :hero_class])
     # Моджибейка-грабля: имя из cp1251-источника доходит до Postgres как
     # «???????» — каждую непечатаемую букву замещает '?'. Такие имена
     # расползаются по всей хронике ({hero_name} подставит «???????»).
     # Легитимные имена '?' не содержат — запрещаем его целиком.
-    |> validate_format(:name, ~r/^[^?]+$/, message: "не может содержать '?' (потерянная кодировка)")
+    |> validate_format(:name, ~r/^[^?]+$/,
+      message: "не может содержать '?' (потерянная кодировка)"
+    )
   end
 end

@@ -38,6 +38,12 @@ defmodule TesIdleWeb.Router do
     get "/hero/brain", HeroController, :brain
     post "/hero/heartbeat", HeroController, :heartbeat
     post "/hero/offline", HeroController, :offline
+    get "/hero/encounters", HeroSocialController, :encounters
+    get "/hero/relationships", HeroSocialController, :relationships
+    get "/hero/social-settings", HeroSocialController, :settings
+    patch "/hero/social-settings", HeroSocialController, :update_settings
+    put "/hero/blocks/:id", HeroSocialController, :block
+    delete "/hero/blocks/:id", HeroSocialController, :unblock
 
     # World (W-7): снапшот мира для мировой плашки + C-1 стройка
     get "/world", WorldController, :show
@@ -127,7 +133,10 @@ defmodule TesIdleWeb.Router do
     get "/narrative-templates", NarrativeController, :index
     get "/narrative-templates/stats", NarrativeController, :stats
     get "/narrative-stats", NarrativeController, :usage
+    post "/narrative-batches/validate", NarrativeBatchController, :validate
+    post "/narrative-batches/import", NarrativeBatchController, :import
     post "/narrative-templates/bulk", NarrativeController, :bulk
+    post "/narrative-templates/delete-pending", NarrativeController, :delete_pending
     post "/narrative-templates", NarrativeController, :create
     patch "/narrative-templates/:id", NarrativeController, :update
     patch "/narrative-templates/:id/approve", NarrativeController, :approve
@@ -147,7 +156,10 @@ defmodule TesIdleWeb.Router do
     post "/simulation/generate-monsters", SimulationController, :generate_monsters
     post "/simulation/generate-items", SimulationController, :generate_items
     post "/simulation/generate-all", SimulationController, :generate_all
-    post "/simulation/generate-narratives-moderated", SimulationController, :generate_narratives_moderated
+
+    post "/simulation/generate-narratives-moderated",
+         SimulationController,
+         :generate_narratives_moderated
 
     get "/tests/last", TestController, :last
     post "/tests/run", TestController, :run

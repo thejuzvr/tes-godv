@@ -22,9 +22,10 @@ defmodule TesIdle.Game.Goal do
       eval_loot(ctx),
       eval_fish(ctx),
       eval_gather(ctx),
+      eval_mining(ctx),
       eval_steal(ctx),
       eval_break_in(ctx),
-      eval_pet_care(ctx),
+      eval_pet_care(ctx)
     ]
     |> Enum.reject(fn g -> g.utility <= 0 end)
   end
@@ -65,6 +66,7 @@ defmodule TesIdle.Game.Goal do
     boost = urg["rest_boost"] || 0.35
 
     hp_ratio = ctx.hero.hp / max(1, ctx.hero.max_hp)
+
     cond do
       hp_ratio < (urg["hp_ratio"] || 0.5) -> boost
       ctx.needs.fatigue > (urg["fatigue"] || 75) -> boost
@@ -76,6 +78,7 @@ defmodule TesIdle.Game.Goal do
     case ctx.active_quest do
       nil ->
         %__MODULE__{name: :complete_quest, utility: 0.0, reason: "Нет активного квеста"}
+
       _aq ->
         # Фаза 2: base 0.7 → 0.45 (квест не должен автоматически выигрывать
         # у всех активностей). Близость шага возвращает до +0.25.
@@ -85,13 +88,28 @@ defmodule TesIdle.Game.Goal do
 
         # Quest step type bonus (награда за правильное место/шаг)
         step_type = get_quest_step_type(ctx)
-        location_match = case step_type do
-          "explore" -> if(ctx.location_type in ["wilderness", "dungeon", "village"], do: 0.15, else: 0.0)
-          "kill" -> if(ctx.location_type in ["wilderness", "dungeon"], do: 0.2, else: 0.0)
-          "collect" -> if(ctx.location_type in ["city", "village"] && ctx.location && ctx.location.has_shop, do: 0.25, else: -0.2)
-          "travel" -> 0.2
-          _ -> 0.0
-        end
+
+        location_match =
+          case step_type do
+            "explore" ->
+              if(ctx.location_type in ["wilderness", "dungeon", "village"], do: 0.15, else: 0.0)
+
+            "kill" ->
+              if(ctx.location_type in ["wilderness", "dungeon"], do: 0.2, else: 0.0)
+
+            "collect" ->
+              if(
+                ctx.location_type in ["city", "village"] && ctx.location && ctx.location.has_shop,
+                do: 0.25,
+                else: -0.2
+              )
+
+            "travel" ->
+              0.2
+
+            _ ->
+              0.0
+          end
 
         # Критические нужды: квест подождёт (запас после Graph-кэпа ±0.15 —
         # quest всё равно не вернётся выше ~0.3+0.15 < rest 0.4+0.35).
@@ -99,22 +117,30 @@ defmodule TesIdle.Game.Goal do
 
         utility = base + tenacity_mod + location_match + urgent_cut
         reason_suffix = if urgent_needs?(ctx), do: " · сил нет, потом", else: ""
+
         %__MODULE__{
           name: :complete_quest,
           utility: min(1.0, max(0.0, utility)),
-          reason: "Квест: #{get_quest_name(ctx)}#{reason_suffix}",
+          reason: "Квест: #{get_quest_name(ctx)}#{reason_suffix}"
         }
     end
   end
 
   defp eval_heal(ctx) do
     hp_ratio = ctx.hero.hp / max(1, ctx.hero.max_hp)
+
     if hp_ratio < 0.5 do
       caution = Personality.trait(ctx.personality, :caution)
+
       # Фаза 2: лечение — тот же жёсткий приоритет, что и сон (см. rest_boost):
       # герой с hp < 50% сначала лечится, а не завершает квест.
       utility = (1.0 - hp_ratio) * 0.8 + caution * 0.005 + rest_boost(ctx)
-      %__MODULE__{name: :heal, utility: min(1.0, utility), reason: "HP низкий: #{trunc(hp_ratio * 100)}%"}
+
+      %__MODULE__{
+        name: :heal,
+        utility: min(1.0, utility),
+        reason: "HP низкий: #{trunc(hp_ratio * 100)}%"
+      }
     else
       %__MODULE__{name: :heal, utility: 0.0, reason: "HP достаточный"}
     end
@@ -134,7 +160,11 @@ defmodule TesIdle.Game.Goal do
     # Фаза 2: критические нужды → жёсткий приоритет сна/лечения
     utility = utility + rest_boost(ctx)
 
-    %__MODULE__{name: :rest, utility: min(1.0, utility), reason: "Усталость: #{trunc(needs.fatigue)}%"}
+    %__MODULE__{
+      name: :rest,
+      utility: min(1.0, utility),
+      reason: "Усталость: #{trunc(needs.fatigue)}%"
+    }
   end
 
   defp eval_explore(ctx) do
@@ -166,7 +196,7 @@ defmodule TesIdle.Game.Goal do
       if hp_ratio > 0.45 and monsters_here?(ctx) do
         base = 0.4
         bravery_mod = bravery * 0.004
-        caution_mod = caution * (-0.002)
+        caution_mod = caution * -0.002
         memory_mod = Memory.fight_modifier(ctx.hero) * 0.01
         location_bonus = if ctx.location_type in ["dungeon", "wilderness"], do: 0.15, else: 0.0
 
@@ -199,7 +229,9 @@ defmodule TesIdle.Game.Goal do
     import Ecto.Query
 
     if ctx.hero.location_id do
-      Repo.exists?(from m in Monster, where: m.location_id == ^ctx.hero.location_id and m.is_active == true)
+      Repo.exists?(
+        from m in Monster, where: m.location_id == ^ctx.hero.location_id and m.is_active == true
+      )
     else
       false
     end
@@ -211,7 +243,7 @@ defmodule TesIdle.Game.Goal do
     has_shop = ctx.location && ctx.location.has_shop
 
     if has_shop && hunger > 50 do
-      utility = hunger * 0.002 + greed * 0.004 + (if ctx.hero.gold > 0, do: 0.1, else: 0.0)
+      utility = hunger * 0.002 + greed * 0.004 + if ctx.hero.gold > 0, do: 0.1, else: 0.0
       %__MODULE__{name: :shop, utility: min(1.0, utility), reason: "Магазин"}
     else
       %__MODULE__{name: :shop, utility: 0.0, reason: "Нет магазина"}
@@ -263,11 +295,20 @@ defmodule TesIdle.Game.Goal do
   # Текущий шаг квеста нельзя сделать на этой локации → пора в путь.
   defp quest_step_needs_move?(ctx) do
     case get_quest_step_type(ctx) do
-      "explore" -> not (ctx.location_type in ["wilderness", "dungeon", "village"])
-      "kill" -> not (ctx.location_type in ["wilderness", "dungeon"])
-      "collect" -> not (ctx.location_type in ["city", "village"] && ctx.location && ctx.location.has_shop)
-      "travel" -> needs_different_location?(ctx)
-      _ -> false
+      "explore" ->
+        ctx.location_type not in ["wilderness", "dungeon", "village"]
+
+      "kill" ->
+        ctx.location_type not in ["wilderness", "dungeon"]
+
+      "collect" ->
+        not (ctx.location_type in ["city", "village"] && ctx.location && ctx.location.has_shop)
+
+      "travel" ->
+        needs_different_location?(ctx)
+
+      _ ->
+        false
     end
   end
 
@@ -307,10 +348,35 @@ defmodule TesIdle.Game.Goal do
       curiosity = Personality.trait(ctx.personality, :curiosity)
       patience = Personality.trait(ctx.personality, :patience)
 
-      utility = 0.25 + curiosity * 0.002 + patience * 0.002 + if(flags["gather_nodes"], do: 0.1, else: 0.0)
+      utility =
+        0.25 + curiosity * 0.002 + patience * 0.002 +
+          if(flags["gather_nodes"], do: 0.1, else: 0.0)
+
       %__MODULE__{name: :gather, utility: min(1.0, utility), reason: "Собирательство"}
     else
       %__MODULE__{name: :gather, utility: 0.0, reason: "Нечего собирать"}
+    end
+  end
+
+  defp eval_mining(ctx) do
+    flags = (ctx.location && ctx.location.flags) || %{}
+
+    if flags["ore_nodes"] == true do
+      patience = Personality.trait(ctx.personality, :patience)
+      dexterity = Personality.trait(ctx.personality, :dexterity)
+      curiosity = Personality.trait(ctx.personality, :curiosity)
+      mining_cfg = get_in(ctx.configs || %{}, ["activities", "mining"]) || %{}
+
+      utility =
+        (mining_cfg["goal_base"] || 0.15) +
+          patience * (mining_cfg["patience_weight"] || 0.003) +
+          dexterity * (mining_cfg["dexterity_weight"] || 0.003) +
+          curiosity * (mining_cfg["curiosity_weight"] || 0.002) +
+          (mining_cfg["ore_nodes_bonus"] || 0.1)
+
+      %__MODULE__{name: :mining, utility: min(1.0, utility), reason: "Рудная жила"}
+    else
+      %__MODULE__{name: :mining, utility: 0.0, reason: "Рудных жил нет"}
     end
   end
 
@@ -328,7 +394,12 @@ defmodule TesIdle.Game.Goal do
         if caution > 60 and TesIdle.Game.Law.total_bounty(ctx.hero) > 100, do: -0.25, else: 0.0
 
       utility = base + night + bounty_penalty
-      %__MODULE__{name: :steal, utility: min(1.0, max(0.0, utility)), reason: "Лёгкие чужие деньги"}
+
+      %__MODULE__{
+        name: :steal,
+        utility: min(1.0, max(0.0, utility)),
+        reason: "Лёгкие чужие деньги"
+      }
     else
       %__MODULE__{name: :steal, utility: 0.0, reason: "Воровать негде"}
     end
@@ -340,7 +411,9 @@ defmodule TesIdle.Game.Goal do
     if flags["locked_buildings"] == true do
       curiosity = Personality.trait(ctx.personality, :curiosity)
       dexterity = Personality.trait(ctx.personality, :dexterity)
-      has_tool = Enum.any?(ctx.inventory || [], fn {_inv, item} -> "lockpick" in (item.tags || []) end)
+
+      has_tool =
+        Enum.any?(ctx.inventory || [], fn {_inv, item} -> "lockpick" in (item.tags || []) end)
 
       base = 0.05 + curiosity * 0.004 + dexterity * 0.003 + if(has_tool, do: 0.15, else: 0.0)
       %__MODULE__{name: :break_in, utility: min(1.0, max(0.0, base)), reason: "Запертые двери"}
@@ -372,12 +445,16 @@ defmodule TesIdle.Game.Goal do
     import Ecto.Query
 
     if ctx.active_quest do
-      step = Repo.one(
-        from s in QuestStep,
-          where: s.quest_id == ^ctx.active_quest.quest_id and s.step_order == ^ctx.active_quest.current_step,
-          limit: 1,
-          select: s.step_type
-      )
+      step =
+        Repo.one(
+          from s in QuestStep,
+            where:
+              s.quest_id == ^ctx.active_quest.quest_id and
+                s.step_order == ^ctx.active_quest.current_step,
+            limit: 1,
+            select: s.step_type
+        )
+
       step || "explore"
     else
       "explore"

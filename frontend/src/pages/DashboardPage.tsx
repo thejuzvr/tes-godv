@@ -1,11 +1,12 @@
 import { useEffect, useState, useCallback, useRef } from "react"
-import { Link, useNavigate } from "react-router-dom"
-import { MapPin, Swords, Compass, Trophy, Skull } from "lucide-react"
+import { Link } from "react-router-dom"
+import { Swords, Compass, Trophy, Skull, ChevronDown, BookOpen, Backpack, Globe, ArrowUpRight } from "lucide-react"
 import "./dashboard-skin.css"
 import { useGameStore } from "@/stores/gameStore"
 import { api } from "@/lib/api"
 import { formatNumber } from "@/lib/utils"
-import { HeroPanel } from "@/components/hero/HeroPanel"
+import { ObservatoryHeader } from "@/components/hero/ObservatoryHeader"
+import { HeroActivityStrip } from "@/components/hero/HeroActivityStrip"
 import { NeedsPanel } from "@/components/hero/NeedsPanel"
 import { ReputationPanel } from "@/components/hero/ReputationPanel"
 import { MoodPanel } from "@/components/hero/MoodPanel"
@@ -74,7 +75,6 @@ function DeathOverlay({ stateData }: { stateData?: string }) {
 
 /* ─── Main Dashboard — обсерватория: герой / хроника / воля бога ─── */
 export function DashboardPage({ onWs }: { onWs?: (type: string, handler: (data: any) => void) => () => void }) {
-  const navigate = useNavigate()
   const { hero, journal, journalCount, setHero, setJournal, setJournalCount, addJournalEntry, setWorld, world } = useGameStore()
   const [loading, setLoading] = useState(true)
   const [equipRefresh, setEquipRefresh] = useState(0)
@@ -172,135 +172,17 @@ export function DashboardPage({ onWs }: { onWs?: (type: string, handler: (data: 
       setJournal(j)
       setJournalCount(c.count)
       return res?.narrative || null
-    } catch (e) { console.error(e); return null }
+    } catch (e) { console.error(e); throw e }
   }
+
+  useEffect(() => () => { if (resultTimer.current) clearTimeout(resultTimer.current) }, [])
 
   if (loading || !hero) return <div className="dashboard"><div style={{ textAlign: "center", color: "var(--muted)", padding: 48 }}>Загрузка…</div></div>
 
   return (
     <>
-      {/* Hero Ribbon: герой · здесь и сейчас · настроение */}
-      <div className="status-ribbon">
-        <HeroPanel hero={hero} />
-        <div className="panel location fantasy-window parchment-glow">
-          <div className="panel-header" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <div className="flex items-center gap-2">
-              <span className="panel-icon" style={{ color: "var(--accent)" }}>
-                <MapPin size={15} />
-              </span>
-              <span style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontWeight: 700, fontSize: 16 }}>
-                Здесь и сейчас
-              </span>
-            </div>
-            <button
-              onClick={() => navigate("/narratives")}
-              style={{
-                padding: "2px 10px",
-                borderRadius: "var(--radius-pill)",
-                fontSize: 10,
-                fontFamily: "var(--font-mono)",
-                textTransform: "uppercase",
-                letterSpacing: "0.06em",
-                border: "1px solid color-mix(in srgb, var(--accent) 40%, var(--border))",
-                background: "color-mix(in srgb, var(--surface-raised) 90%, black)",
-                cursor: "pointer",
-                color: "var(--accent)",
-              }}
-            >
-              Словник
-            </button>
-          </div>
-          <div className="panel-body">
-            <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: "var(--space-3)" }}>
-              <div
-                className="loc-name"
-                style={{
-                  marginBottom: 0,
-                  fontFamily: "var(--font-display)",
-                  fontSize: 20,
-                  fontWeight: 700,
-                  fontStyle: "italic",
-                  color: "var(--fg)",
-                }}
-              >
-                {hero.location?.name || "Неизвестная глушь"}
-              </div>
-              <div
-                style={{
-                  fontFamily: "var(--font-mono)",
-                  fontSize: 13,
-                  fontWeight: 700,
-                  color: "var(--accent)",
-                  fontVariantNumeric: "tabular-nums",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                {Math.floor(hero.game_hour).toString().padStart(2, "0")}:{Math.floor((hero.game_hour % 1) * 60).toString().padStart(2, "0")}
-              </div>
-            </div>
-            <div className="loc-region" style={{ fontSize: 12, color: "var(--muted)", marginTop: 2 }}>
-              {hero.location?.region || "Скайрим"} · {hero.location?.location_type || "Дорога"} · День {hero.game_day} · {hero.game_era}
-            </div>
-            <div className="day-cycle" style={{ marginTop: 8, marginBottom: 10 }}>
-              <div className="cycle-bar" style={{ height: 6, background: "color-mix(in srgb, var(--bg) 90%, black)", borderRadius: "var(--radius-pill)", overflow: "hidden" }}>
-                <div
-                  className="cycle-fill"
-                  style={{
-                    height: "100%",
-                    width: `${(hero.game_hour / 24) * 100}%`,
-                    background: hero.game_hour >= 6 && hero.game_hour < 18 ? "var(--gold)" : "var(--mp)",
-                    boxShadow: hero.game_hour >= 6 && hero.game_hour < 18 ? "0 0 8px var(--gold)" : "0 0 8px var(--mp)",
-                  }}
-                />
-              </div>
-              <span className="cycle-label" style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--muted)" }}>
-                {hero.game_hour >= 6 && hero.game_hour < 18 ? "☀️ День" : "🌙 Ночь"}
-              </span>
-            </div>
-            <div className="loc-details" style={{ display: "flex", gap: 8, flexWrap: "wrap", fontSize: 11 }}>
-              <span
-                style={{
-                  padding: "2px 8px",
-                  borderRadius: "var(--radius-sm)",
-                  background: "color-mix(in srgb, var(--surface-raised) 90%, black)",
-                  border: "1px solid var(--border)",
-                  fontFamily: "var(--font-mono)",
-                  color: hero.location?.danger_level === "Высокая" || hero.location?.danger_level === "Смертельная" ? "var(--danger)" : "var(--muted)",
-                }}
-              >
-                Опасность: {hero.location?.danger_level || "Низкая"}
-              </span>
-              {hero.location?.has_shop && (
-                <span style={{ padding: "2px 6px", borderRadius: "var(--radius-sm)", background: "color-mix(in srgb, var(--gold) 15%, transparent)", color: "var(--gold)", fontFamily: "var(--font-mono)" }}>
-                  🛒 Лавка
-                </span>
-              )}
-              {hero.location?.has_inn && (
-                <span style={{ padding: "2px 6px", borderRadius: "var(--radius-sm)", background: "color-mix(in srgb, var(--accent) 15%, transparent)", color: "var(--accent)", fontFamily: "var(--font-mono)" }}>
-                  🍺 Таверна
-                </span>
-              )}
-            </div>
-            <Link
-              to="/map"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 6,
-                marginTop: 10,
-                fontSize: 12,
-                fontFamily: "var(--font-mono)",
-                color: "var(--accent)",
-                textDecoration: "none",
-                fontWeight: 600,
-              }}
-            >
-              <Compass size={13} /> Карта провинции Скайрим →
-            </Link>
-          </div>
-        </div>
-        <MoodPanel mood={hero.mood} moodHistory={hero.mood_history || []} />
-      </div>
+      <ObservatoryHeader hero={hero} />
+      <HeroActivityStrip hero={hero} />
 
       {/* Combat result banner (WS combat_result) */}
       {combatResult && (
@@ -569,12 +451,19 @@ export function DashboardPage({ onWs }: { onWs?: (type: string, handler: (data: 
         } catch { return null }
       })()}
 
-      {/* Main Grid: состояние | хроника | воля бога */}
-      <div className="main-grid">
-        {/* Left Column: Спутник, Арсенал и Репутация */}
-        <div className="left-col anim-fade-up">
-          {/* Потребности и питомец */}
+      <div className="observatory-workspace">
+        <section className="observatory-story" aria-label="Приключение героя">
+          <div className="observatory-section-heading"><span><BookOpen size={17} aria-hidden="true"/> История продолжается</span><Link to="/narratives">Мастерская <ArrowUpRight size={14} aria-hidden="true"/></Link></div>
+          <QuestPanel refreshTrigger={questRefresh} />
+          <JournalPanel entries={journal} count={journalCount} />
+        </section>
+        <aside className="observatory-sidebar" aria-label="Вмешательство и состояние">
+          <GodPanel onAction={handleGod} hero={hero} />
+          <details className="observatory-dossier">
+            <summary><span><Backpack size={18} aria-hidden="true"/> Досье героя<small>Снаряжение, потребности и спутник</small></span><ChevronDown size={18} aria-hidden="true"/></summary>
+            <div className="observatory-dossier-content">
           <NeedsPanel hero={hero} />
+          <MoodPanel mood={hero.mood} moodHistory={hero.mood_history || []} />
           <PetCard pets={hero.pets} />
 
           {/* Объединённый Арсенал героя: Снаряжение / Сумка */}
@@ -642,19 +531,13 @@ export function DashboardPage({ onWs }: { onWs?: (type: string, handler: (data: 
           </div>
 
           <ReputationPanel refreshTrigger={repRefresh} />
-        </div>
-
-        {/* Middle Column: Квест и Живая Хроника Летописца */}
-        <div className="middle-col anim-fade-up" style={{ animationDelay: "0.1s" }}>
-          <QuestPanel refreshTrigger={questRefresh} />
-          <JournalPanel entries={journal} count={journalCount} />
-        </div>
-
-        {/* Right Column: Небесный Алтарь и Судьба Тамриэля */}
-        <div className="right-col anim-slide-right">
-          <GodPanel onAction={handleGod} hero={hero} />
-          <WorldPanel world={world} heroRegion={hero.location?.region} heroGold={hero.gold} onDonated={fetchData} />
-        </div>
+            </div>
+          </details>
+          <details className="observatory-dossier observatory-world" open>
+            <summary><span><Globe size={18} aria-hidden="true"/> За пределами хроники<small>События и общие дела Скайрима</small></span><ChevronDown size={18} aria-hidden="true"/></summary>
+            <div className="observatory-dossier-content"><WorldPanel world={world} heroRegion={hero.location?.region} heroGold={hero.gold} onDonated={fetchData} /></div>
+          </details>
+        </aside>
       </div>
     </>
   )

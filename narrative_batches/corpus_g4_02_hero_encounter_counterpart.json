@@ -1,0 +1,130 @@
+﻿{
+    "activation_policy":  "pending",
+    "templates":  [
+                      {
+                          "template_type":  "hero_encounter_counterpart",
+                          "source":  "community",
+                          "text_template":  "{other_hero_name} увидел, как {hero_name} подошёл у {location_name}; встреча вышла {encounter_kind}. Писарь занёс этот миг в книгу без помарок."
+                      },
+                      {
+                          "template_type":  "hero_encounter_counterpart",
+                          "source":  "community",
+                          "text_template":  "У {location_name} {other_hero_name} принял приветствие {hero_name}; разговор оказался {encounter_kind}. Дорога приняла решение и не стала возражать."
+                      },
+                      {
+                          "template_type":  "hero_encounter_counterpart",
+                          "source":  "community",
+                          "text_template":  "{other_hero_name} встретил {hero_name} возле {location_name}, и встреча была {encounter_kind}. Сумерки легли на Скайрим особенно спокойно."
+                      },
+                      {
+                          "template_type":  "hero_encounter_counterpart",
+                          "source":  "community",
+                          "text_template":  "{other_hero_name} увидел, как {hero_name} подошёл у {location_name}; встреча вышла {encounter_kind}. Эта весть дошла до ближайшего костра."
+                      },
+                      {
+                          "template_type":  "hero_encounter_counterpart",
+                          "source":  "community",
+                          "text_template":  "У {location_name} {other_hero_name} принял приветствие {hero_name}; разговор оказался {encounter_kind}. Старый камень у дороги сохранил молчаливую память."
+                      },
+                      {
+                          "template_type":  "hero_encounter_counterpart",
+                          "source":  "community",
+                          "text_template":  "{other_hero_name} встретил {hero_name} возле {location_name}, и встреча была {encounter_kind}. Поступок оказался тише славы, но весомее слухов."
+                      },
+                      {
+                          "template_type":  "hero_encounter_counterpart",
+                          "source":  "community",
+                          "text_template":  "{other_hero_name} увидел, как {hero_name} подошёл у {location_name}; встреча вышла {encounter_kind}. Холодный воздух словно стал немного добрее."
+                      },
+                      {
+                          "template_type":  "hero_encounter_counterpart",
+                          "source":  "community",
+                          "text_template":  "У {location_name} {other_hero_name} принял приветствие {hero_name}; разговор оказался {encounter_kind}. В истории края появилась ещё одна честная строка."
+                      },
+                      {
+                          "template_type":  "hero_encounter_counterpart",
+                          "source":  "community",
+                          "text_template":  "{other_hero_name} встретил {hero_name} возле {location_name}, и встреча была {encounter_kind}. Путники взглянули вслед с уважением."
+                      },
+                      {
+                          "template_type":  "hero_encounter_counterpart",
+                          "source":  "community",
+                          "text_template":  "{other_hero_name} увидел, как {hero_name} подошёл у {location_name}; встреча вышла {encounter_kind}. Далёкий колокол будто отметил этот час."
+                      },
+                      {
+                          "template_type":  "hero_encounter_counterpart",
+                          "source":  "community",
+                          "text_template":  "У {location_name} {other_hero_name} принял приветствие {hero_name}; разговор оказался {encounter_kind}. Рассвет найдёт эту историю уже известной."
+                      },
+                      {
+                          "template_type":  "hero_encounter_counterpart",
+                          "source":  "community",
+                          "text_template":  "{other_hero_name} встретил {hero_name} возле {location_name}, и встреча была {encounter_kind}. Север помнит дела лучше громких обещаний."
+                      },
+                      {
+                          "template_type":  "hero_encounter_counterpart",
+                          "source":  "community",
+                          "text_template":  "{other_hero_name} увидел, как {hero_name} подошёл у {location_name}; встреча вышла {encounter_kind}. Ворона проверила карманы взглядом и улетела довольной."
+                      },
+                      {
+                          "template_type":  "hero_encounter_counterpart",
+                          "source":  "community",
+                          "text_template":  "У {location_name} {other_hero_name} принял приветствие {hero_name}; разговор оказался {encounter_kind}. Бард уже ищет рифму, и это немного тревожит."
+                      },
+                      {
+                          "template_type":  "hero_encounter_counterpart",
+                          "source":  "community",
+                          "text_template":  "{other_hero_name} встретил {hero_name} возле {location_name}, и встреча была {encounter_kind}. Стражник одобрил всё настолько, насколько позволяет шлем."
+                      },
+                      {
+                          "template_type":  "hero_encounter_counterpart",
+                          "source":  "community",
+                          "text_template":  "{other_hero_name} увидел, как {hero_name} подошёл у {location_name}; встреча вышла {encounter_kind}. Кот из таверны сделал вид, что это его заслуга."
+                      },
+                      {
+                          "template_type":  "hero_encounter_counterpart",
+                          "source":  "community",
+                          "text_template":  "У {location_name} {other_hero_name} принял приветствие {hero_name}; разговор оказался {encounter_kind}. Снег скрипнул так торжественно, будто был свидетелем."
+                      },
+                      {
+                          "template_type":  "hero_encounter_counterpart",
+                          "source":  "community",
+                          "text_template":  "{other_hero_name} встретил {hero_name} возле {location_name}, и встреча была {encounter_kind}. Один сыр в лавке созрел от важности момента."
+                      },
+                      {
+                          "template_type":  "hero_encounter_counterpart",
+                          "source":  "community",
+                          "text_template":  "{other_hero_name} увидел, как {hero_name} подошёл у {location_name}; встреча вышла {encounter_kind}. Скелет в крипте не сказал ничего, как всегда по делу."
+                      },
+                      {
+                          "template_type":  "hero_encounter_counterpart",
+                          "source":  "community",
+                          "text_template":  "У {location_name} {other_hero_name} принял приветствие {hero_name}; разговор оказался {encounter_kind}. Грязекраб прислушался и решил не вмешиваться."
+                      },
+                      {
+                          "template_type":  "hero_encounter_counterpart",
+                          "source":  "community",
+                          "text_template":  "{other_hero_name} встретил {hero_name} возле {location_name}, и встреча была {encounter_kind}. Кузнечный молот отозвался с лишним энтузиазмом."
+                      },
+                      {
+                          "template_type":  "hero_encounter_counterpart",
+                          "source":  "community",
+                          "text_template":  "{other_hero_name} увидел, как {hero_name} подошёл у {location_name}; встреча вышла {encounter_kind}. Уличный петух объявил событие без спроса."
+                      },
+                      {
+                          "template_type":  "hero_encounter_counterpart",
+                          "source":  "community",
+                          "text_template":  "У {location_name} {other_hero_name} принял приветствие {hero_name}; разговор оказался {encounter_kind}. Мешок с репой выглядел удивительно вдохновлённым."
+                      },
+                      {
+                          "template_type":  "hero_encounter_counterpart",
+                          "source":  "community",
+                          "text_template":  "{other_hero_name} встретил {hero_name} возле {location_name}, и встреча была {encounter_kind}. Три септима под лавкой решили остаться на месте."
+                      },
+                      {
+                          "template_type":  "hero_encounter_counterpart",
+                          "source":  "community",
+                          "text_template":  "{other_hero_name} увидел, как {hero_name} подошёл у {location_name}; встреча вышла {encounter_kind}. Даже лошадь кивнула, хотя могла просто чесаться."
+                      }
+                  ]
+}

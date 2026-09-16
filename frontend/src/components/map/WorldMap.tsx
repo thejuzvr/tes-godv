@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import type { World } from "@/stores/gameStore"
+import { Plus, Minus, LocateFixed, Maximize, Layers, Map as MapIcon, ChevronDown } from "lucide-react"
+import "./map-atlas.css"
 
 /* ─── Карта мира (M-3/M-3c): интерактивная SVG-карта Скайрима.
    Сигнатура «карта-звёздный атлас»: узлы-станции по геометрии типа локации
@@ -165,8 +167,10 @@ export function WorldMap({ locations, selectedId, onSelect, heroLocId, travelDes
       e.preventDefault()
       const rect = svg.getBoundingClientRect()
       // точка курсора в координатах viewBox
-      const px = ((e.clientX - rect.left) / rect.width) * VIEW_W
-      const py = ((e.clientY - rect.top) / rect.height) * VIEW_H
+      const scale = Math.min(rect.width / VIEW_W, rect.height / VIEW_H)
+      if (!scale) return
+      const px = (e.clientX - rect.left - (rect.width - VIEW_W * scale) / 2) / scale
+      const py = (e.clientY - rect.top - (rect.height - VIEW_H * scale) / 2) / scale
       setView((v) => {
         const factor = e.deltaY < 0 ? 1.18 : 1 / 1.18
         const k = Math.min(MAX_K, Math.max(MIN_K, v.k * factor))
@@ -249,10 +253,14 @@ export function WorldMap({ locations, selectedId, onSelect, heroLocId, travelDes
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
-        onPointerLeave={onPointerUp}
+        onPointerCancel={() => { pendingSelectRef.current = null; dragRef.current = null }}
       >
-        {/* канвас карты сливается с фоном страницы */}
-        <rect x={0} y={0} width={VIEW_W} height={VIEW_H} fill="var(--bg)" />
+        <defs>
+          <radialGradient id="atlas-light"><stop stopColor="var(--surface-raised)"/><stop offset="1" stopColor="var(--bg)"/></radialGradient>
+          <pattern id="atlas-grain" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".65" fill="var(--muted)" opacity=".13"/></pattern>
+        </defs>
+        <rect width={VIEW_W} height={VIEW_H} fill="url(#atlas-light)" />
+        <rect width={VIEW_W} height={VIEW_H} fill="url(#atlas-grain)" aria-hidden="true"/>
 
         {/* весь контент — в трансформ-группе вида (зум/пан) */}
         <g transform={`translate(${view.x} ${view.y}) scale(${view.k})`}>
@@ -280,7 +288,7 @@ export function WorldMap({ locations, selectedId, onSelect, heroLocId, travelDes
             ))}
           </g>
 
-          <Terrain />
+          {!substrate && <Terrain />}
           <CompassRose />
 
           {/* кометный след маршрута в пути */}
@@ -306,6 +314,9 @@ export function WorldMap({ locations, selectedId, onSelect, heroLocId, travelDes
                 key={loc.id}
                 className="map-node"
                 data-selected={selected}
+                data-kind={loc.location_type}
+                data-hero={isHero}
+                aria-pressed={selected}
                 data-loc-id={loc.id}
                 role="button"
                 tabIndex={0}
@@ -314,19 +325,17 @@ export function WorldMap({ locations, selectedId, onSelect, heroLocId, travelDes
                 style={{ animationDelay: `${Math.min(idx * 60, 480)}ms` }}
               >
                 {selected && (
-                  <circle cx={loc.map_x!} cy={loc.map_y!} r={19} fill="none" stroke="var(--accent)" strokeWidth={2} strokeDasharray="2 3" />
+                  <g className="atlas-selection" aria-hidden="true">
+                    <circle cx={loc.map_x!} cy={loc.map_y!} r={23} fill="var(--accent)" fillOpacity={0.09} stroke="var(--accent)" strokeWidth={1} />
+                    <path d={`M ${loc.map_x! - 29} ${loc.map_y} h 8 M ${loc.map_x! + 21} ${loc.map_y} h 8 M ${loc.map_x} ${loc.map_y! - 29} v 8 M ${loc.map_x} ${loc.map_y! + 21} v 8`} stroke="var(--accent)" strokeWidth={1.5}/>
+                  </g>
                 )}
                 {/* прозрачная hit-зона: весь узел кликабелен, не только контур */}
                 <circle cx={loc.map_x!} cy={loc.map_y!} r={24} fill="transparent" stroke="none" />
                 <g transform={`translate(${loc.map_x} ${loc.map_y})`}>
                   <NodeShape loc={loc} />
                 </g>
-                {loc.has_shop && (
-                  <text x={loc.map_x! + 15} y={loc.map_y! - 6} className="map-node-badge">🏪</text>
-                )}
-                {loc.has_inn && (
-                  <text x={loc.map_x! + 15} y={loc.map_y! + 8} className="map-node-badge">🍺</text>
-                )}
+
                 <text x={loc.map_x!} y={loc.map_y! + 34} textAnchor="middle" className="map-node-label">
                   {loc.name}
                 </text>
@@ -339,7 +348,7 @@ export function WorldMap({ locations, selectedId, onSelect, heroLocId, travelDes
 
           {/* герой — пульсирующая звезда поверх узла */}
           {heroLoc && (
-            <g transform={`translate(${heroLoc.map_x} ${heroLoc.map_y})`} aria-label="Позиция героя">
+            <g transform={`translate(${heroLoc.map_x} ${heroLoc.map_y})`} aria-label="Позиция героя" pointerEvents="none">
               <circle r={10} className="map-hero-pulse" fill="var(--accent)" opacity={0.5} />
               <path d="M 0 -7 L 2 -2 L 7 0 L 2 2 L 0 7 L -2 2 L -7 0 L -2 -2 Z" fill="var(--accent)" stroke="var(--bg)" strokeWidth={1.5} />
             </g>
@@ -348,7 +357,8 @@ export function WorldMap({ locations, selectedId, onSelect, heroLocId, travelDes
       </svg>
 
       {/* Легенда: геометрия типов + цвета опасности */}
-      <div className="map-overlay map-legend" aria-label="Легенда карты">
+      <details className="map-overlay map-legend">
+        <summary><MapIcon size={15} aria-hidden="true"/> Условные обозначения <ChevronDown size={14} aria-hidden="true"/></summary>
         <div className="map-legend-row">
           <svg viewBox="-14 -14 28 28" width={16} height={16} aria-hidden="true"><circle r={11} fill="none" stroke="var(--muted)" strokeWidth={2} /><circle r={4.5} fill="none" stroke="var(--muted)" strokeWidth={1.5} /></svg>
           <span>Город</span>
@@ -367,21 +377,21 @@ export function WorldMap({ locations, selectedId, onSelect, heroLocId, travelDes
             </span>
           ))}
         </div>
-      </div>
+      </details>
 
       {/* Управление видом: зум ±, центр на герое, сброс */}
       <div className="map-zoom-cluster" role="group" aria-label="Управление видом карты">
-        <button className="map-zoom-btn" onClick={() => zoomBy(1.3)} aria-label="Приблизить" title="Приблизить">＋</button>
-        <button className="map-zoom-btn" onClick={() => zoomBy(1 / 1.3)} aria-label="Отдалить" title="Отдалить">－</button>
-        <button className="map-zoom-btn" onClick={centerOnHero} aria-label="Центрировать на герое" title="Центр на герое" disabled={!heroLoc}>⌖</button>
-        <button className="map-zoom-btn" onClick={() => clampViewSafe({ k: 1, x: 0, y: 0 })} aria-label="Сбросить вид" title="Вся карта">⟲</button>
+        <button className="map-zoom-btn" onClick={() => zoomBy(1.3)} disabled={view.k >= MAX_K} aria-label="Приблизить" title="Приблизить"><Plus size={18} aria-hidden="true"/></button>
+        <button className="map-zoom-btn" onClick={() => zoomBy(1 / 1.3)} disabled={view.k <= MIN_K} aria-label="Отдалить" title="Отдалить"><Minus size={18} aria-hidden="true"/></button>
+        <button className="map-zoom-btn" onClick={centerOnHero} aria-label="Центрировать на герое" title="Центр на герое" disabled={!heroLoc}><LocateFixed size={18} aria-hidden="true"/></button>
+        <button className="map-zoom-btn" onClick={() => clampViewSafe({ k: 1, x: 0, y: 0 })} aria-label="Сбросить вид" title="Вся карта"><Maximize size={17} aria-hidden="true"/></button>
         <button
           className="map-zoom-btn map-substrate-toggle"
           data-on={substrate}
           onClick={() => setSubstrate((on) => { localStorage.setItem(SUBSTRATE_KEY, on ? "off" : "on"); return !on })}
           aria-label="Подложка артвор" aria-pressed={substrate}
           title={substrate ? "Скрыть подложку-артвор" : "Показать подложку-артвор"}
-        >🗺️</button>
+        ><Layers size={18} aria-hidden="true"/></button>
         <span className="map-zoom-scale" aria-hidden="true">×{view.k.toFixed(1)}</span>
       </div>
     </div>

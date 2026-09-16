@@ -43,6 +43,9 @@ defmodule TesIdle.Game.GOAPPlanner do
     gather: %{
       steps: [:gather],
     },
+    mining: %{
+      steps: [:mining],
+    },
     steal: %{
       steps: [:steal],
     },
@@ -64,6 +67,7 @@ defmodule TesIdle.Game.GOAPPlanner do
     loot: TesIdle.Game.Actions.LootAction,
     fish: TesIdle.Game.Actions.FishingAction,
     gather: TesIdle.Game.Actions.GatheringAction,
+    mining: TesIdle.Game.Actions.MiningAction,
     steal: TesIdle.Game.Actions.StealingAction,
     break_in: TesIdle.Game.Actions.BreakInAction,
     pet_care: TesIdle.Game.Actions.PetCareAction,
@@ -85,6 +89,7 @@ defmodule TesIdle.Game.GOAPPlanner do
       :loot -> [:loot]
       :fish -> [:fish]
       :gather -> [:gather]
+      :mining -> [:mining]
       :steal -> [:steal]
       :break_in -> [:break_in]
       :pet_care -> [:pet_care]

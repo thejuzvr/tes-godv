@@ -1,0 +1,130 @@
+﻿{
+    "activation_policy":  "pending",
+    "templates":  [
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "{god_name} указал {hero_name} верное направление без единого слова. Северный ветер отметил этот поступок без лишних слов."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "{hero_name} понял знак {god_name} и изменил путь. Свидетели запомнили этот выбор как достойный рассказ у очага."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "Незримая воля {god_name} повела {hero_name} вперёд. В хронике дня появилась спокойная, но важная строка."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "{god_name} указал {hero_name} верное направление без единого слова. Дорога впереди будто стала немного яснее."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "{hero_name} понял знак {god_name} и изменил путь. Старые камни Скайрима приняли эту весть молча."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "Незримая воля {god_name} повела {hero_name} вперёд. Над делом героя на миг воцарилась редкая ясность."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "{god_name} указал {hero_name} верное направление без единого слова. Такой шаг не приносит славы сразу, зато меняет путь."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "{hero_name} понял знак {god_name} и изменил путь. Вечер сохранил его в памяти города."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "Незримая воля {god_name} повела {hero_name} вперёд. Даже суровый край умеет замечать добрые решения."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "{god_name} указал {hero_name} верное направление без единого слова. Эхо поступка ушло дальше ближайшей площади."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "{hero_name} понял знак {god_name} и изменил путь. Небо над Скайримом не спорило с этим решением."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "Незримая воля {god_name} повела {hero_name} вперёд. Путники ещё долго будут пересказывать эту историю."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "{god_name} указал {hero_name} верное направление без единого слова. Голубь рядом кивнул так серьёзно, будто был главным мастером."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "{hero_name} понял знак {god_name} и изменил путь. Кошелёк вздохнул, но спорить с судьбой не стал."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "Незримая воля {god_name} повела {hero_name} вперёд. Ближайший норд одобрительно хмыкнул и уронил булку."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "{god_name} указал {hero_name} верное направление без единого слова. Даже стражник на миг перестал подозревать всех подряд."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "{hero_name} понял знак {god_name} и изменил путь. Где-то бард уже рифмует это с словом «капуста»."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "Незримая воля {god_name} повела {hero_name} вперёд. Случайный грязекраб выглядел впечатлённым, насколько умеют грязекрабы."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "{god_name} указал {hero_name} верное направление без единого слова. Тавернский кот записал событие лапой в воображаемую книгу."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "{hero_name} понял знак {god_name} и изменил путь. Ветер попытался аплодировать, но вышел обычный сквозняк."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "Незримая воля {god_name} повела {hero_name} вперёд. Один скелет в старой крипте наверняка одобрил бы этот жест."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "{god_name} указал {hero_name} верное направление без единого слова. Торговец рядом немедленно назвал это выгодой для души."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "{hero_name} понял знак {god_name} и изменил путь. Снежный ком с крыши выбрал именно этот момент для поклона."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "Незримая воля {god_name} повела {hero_name} вперёд. Драконов не было видно, но слухи уже начали расти."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "{god_name} указал {hero_name} верное направление без единого слова. Картошка в ближайшем котле закипела с особым смыслом."
+                      }
+                  ]
+}

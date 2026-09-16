@@ -1,0 +1,130 @@
+﻿{
+    "activation_policy":  "pending",
+    "templates":  [
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "{leader} основал гильдию «{guild_name}» под знаком {emblem}. Северный ветер отметил этот поступок без лишних слов."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "Знамя {emblem} взвилось над «{guild_name}»: {leader} собрал новую гильдию. Свидетели запомнили этот выбор как достойный рассказ у очага."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "{leader} объявил «{guild_name}» гильдией; её знаком стало {emblem}. В хронике дня появилась спокойная, но важная строка."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "{leader} основал гильдию «{guild_name}» под знаком {emblem}. Дорога впереди будто стала немного яснее."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "Знамя {emblem} взвилось над «{guild_name}»: {leader} собрал новую гильдию. Старые камни Скайрима приняли эту весть молча."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "{leader} объявил «{guild_name}» гильдией; её знаком стало {emblem}. Над делом героя на миг воцарилась редкая ясность."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "{leader} основал гильдию «{guild_name}» под знаком {emblem}. Такой шаг не приносит славы сразу, зато меняет путь."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "Знамя {emblem} взвилось над «{guild_name}»: {leader} собрал новую гильдию. Вечер сохранил его в памяти города."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "{leader} объявил «{guild_name}» гильдией; её знаком стало {emblem}. Даже суровый край умеет замечать добрые решения."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "{leader} основал гильдию «{guild_name}» под знаком {emblem}. Эхо поступка ушло дальше ближайшей площади."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "Знамя {emblem} взвилось над «{guild_name}»: {leader} собрал новую гильдию. Небо над Скайримом не спорило с этим решением."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "{leader} объявил «{guild_name}» гильдией; её знаком стало {emblem}. Путники ещё долго будут пересказывать эту историю."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "{leader} основал гильдию «{guild_name}» под знаком {emblem}. Голубь рядом кивнул так серьёзно, будто был главным мастером."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "Знамя {emblem} взвилось над «{guild_name}»: {leader} собрал новую гильдию. Кошелёк вздохнул, но спорить с судьбой не стал."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "{leader} объявил «{guild_name}» гильдией; её знаком стало {emblem}. Ближайший норд одобрительно хмыкнул и уронил булку."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "{leader} основал гильдию «{guild_name}» под знаком {emblem}. Даже стражник на миг перестал подозревать всех подряд."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "Знамя {emblem} взвилось над «{guild_name}»: {leader} собрал новую гильдию. Где-то бард уже рифмует это с словом «капуста»."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "{leader} объявил «{guild_name}» гильдией; её знаком стало {emblem}. Случайный грязекраб выглядел впечатлённым, насколько умеют грязекрабы."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "{leader} основал гильдию «{guild_name}» под знаком {emblem}. Тавернский кот записал событие лапой в воображаемую книгу."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "Знамя {emblem} взвилось над «{guild_name}»: {leader} собрал новую гильдию. Ветер попытался аплодировать, но вышел обычный сквозняк."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "{leader} объявил «{guild_name}» гильдией; её знаком стало {emblem}. Один скелет в старой крипте наверняка одобрил бы этот жест."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "{leader} основал гильдию «{guild_name}» под знаком {emblem}. Торговец рядом немедленно назвал это выгодой для души."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "Знамя {emblem} взвилось над «{guild_name}»: {leader} собрал новую гильдию. Снежный ком с крыши выбрал именно этот момент для поклона."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "{leader} объявил «{guild_name}» гильдией; её знаком стало {emblem}. Драконов не было видно, но слухи уже начали расти."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "{leader} основал гильдию «{guild_name}» под знаком {emblem}. Картошка в ближайшем котле закипела с особым смыслом."
+                      }
+                  ]
+}

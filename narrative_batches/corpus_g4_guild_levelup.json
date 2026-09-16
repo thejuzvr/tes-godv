@@ -1,0 +1,130 @@
+﻿{
+    "activation_policy":  "pending",
+    "templates":  [
+                      {
+                          "template_type":  "guild_levelup",
+                          "source":  "community",
+                          "text_template":  "Гильдия «{guild_name}» {emblem} достигла {level} уровня. Северный ветер отметил этот поступок без лишних слов."
+                      },
+                      {
+                          "template_type":  "guild_levelup",
+                          "source":  "community",
+                          "text_template":  "Под знаменем {emblem} «{guild_name}» поднялась до {level} уровня. Свидетели запомнили этот выбор как достойный рассказ у очага."
+                      },
+                      {
+                          "template_type":  "guild_levelup",
+                          "source":  "community",
+                          "text_template":  "«{guild_name}» {emblem} празднует {level} уровень и новые возможности. В хронике дня появилась спокойная, но важная строка."
+                      },
+                      {
+                          "template_type":  "guild_levelup",
+                          "source":  "community",
+                          "text_template":  "Гильдия «{guild_name}» {emblem} достигла {level} уровня. Дорога впереди будто стала немного яснее."
+                      },
+                      {
+                          "template_type":  "guild_levelup",
+                          "source":  "community",
+                          "text_template":  "Под знаменем {emblem} «{guild_name}» поднялась до {level} уровня. Старые камни Скайрима приняли эту весть молча."
+                      },
+                      {
+                          "template_type":  "guild_levelup",
+                          "source":  "community",
+                          "text_template":  "«{guild_name}» {emblem} празднует {level} уровень и новые возможности. Над делом героя на миг воцарилась редкая ясность."
+                      },
+                      {
+                          "template_type":  "guild_levelup",
+                          "source":  "community",
+                          "text_template":  "Гильдия «{guild_name}» {emblem} достигла {level} уровня. Такой шаг не приносит славы сразу, зато меняет путь."
+                      },
+                      {
+                          "template_type":  "guild_levelup",
+                          "source":  "community",
+                          "text_template":  "Под знаменем {emblem} «{guild_name}» поднялась до {level} уровня. Вечер сохранил его в памяти города."
+                      },
+                      {
+                          "template_type":  "guild_levelup",
+                          "source":  "community",
+                          "text_template":  "«{guild_name}» {emblem} празднует {level} уровень и новые возможности. Даже суровый край умеет замечать добрые решения."
+                      },
+                      {
+                          "template_type":  "guild_levelup",
+                          "source":  "community",
+                          "text_template":  "Гильдия «{guild_name}» {emblem} достигла {level} уровня. Эхо поступка ушло дальше ближайшей площади."
+                      },
+                      {
+                          "template_type":  "guild_levelup",
+                          "source":  "community",
+                          "text_template":  "Под знаменем {emblem} «{guild_name}» поднялась до {level} уровня. Небо над Скайримом не спорило с этим решением."
+                      },
+                      {
+                          "template_type":  "guild_levelup",
+                          "source":  "community",
+                          "text_template":  "«{guild_name}» {emblem} празднует {level} уровень и новые возможности. Путники ещё долго будут пересказывать эту историю."
+                      },
+                      {
+                          "template_type":  "guild_levelup",
+                          "source":  "community",
+                          "text_template":  "Гильдия «{guild_name}» {emblem} достигла {level} уровня. Голубь рядом кивнул так серьёзно, будто был главным мастером."
+                      },
+                      {
+                          "template_type":  "guild_levelup",
+                          "source":  "community",
+                          "text_template":  "Под знаменем {emblem} «{guild_name}» поднялась до {level} уровня. Кошелёк вздохнул, но спорить с судьбой не стал."
+                      },
+                      {
+                          "template_type":  "guild_levelup",
+                          "source":  "community",
+                          "text_template":  "«{guild_name}» {emblem} празднует {level} уровень и новые возможности. Ближайший норд одобрительно хмыкнул и уронил булку."
+                      },
+                      {
+                          "template_type":  "guild_levelup",
+                          "source":  "community",
+                          "text_template":  "Гильдия «{guild_name}» {emblem} достигла {level} уровня. Даже стражник на миг перестал подозревать всех подряд."
+                      },
+                      {
+                          "template_type":  "guild_levelup",
+                          "source":  "community",
+                          "text_template":  "Под знаменем {emblem} «{guild_name}» поднялась до {level} уровня. Где-то бард уже рифмует это с словом «капуста»."
+                      },
+                      {
+                          "template_type":  "guild_levelup",
+                          "source":  "community",
+                          "text_template":  "«{guild_name}» {emblem} празднует {level} уровень и новые возможности. Случайный грязекраб выглядел впечатлённым, насколько умеют грязекрабы."
+                      },
+                      {
+                          "template_type":  "guild_levelup",
+                          "source":  "community",
+                          "text_template":  "Гильдия «{guild_name}» {emblem} достигла {level} уровня. Тавернский кот записал событие лапой в воображаемую книгу."
+                      },
+                      {
+                          "template_type":  "guild_levelup",
+                          "source":  "community",
+                          "text_template":  "Под знаменем {emblem} «{guild_name}» поднялась до {level} уровня. Ветер попытался аплодировать, но вышел обычный сквозняк."
+                      },
+                      {
+                          "template_type":  "guild_levelup",
+                          "source":  "community",
+                          "text_template":  "«{guild_name}» {emblem} празднует {level} уровень и новые возможности. Один скелет в старой крипте наверняка одобрил бы этот жест."
+                      },
+                      {
+                          "template_type":  "guild_levelup",
+                          "source":  "community",
+                          "text_template":  "Гильдия «{guild_name}» {emblem} достигла {level} уровня. Торговец рядом немедленно назвал это выгодой для души."
+                      },
+                      {
+                          "template_type":  "guild_levelup",
+                          "source":  "community",
+                          "text_template":  "Под знаменем {emblem} «{guild_name}» поднялась до {level} уровня. Снежный ком с крыши выбрал именно этот момент для поклона."
+                      },
+                      {
+                          "template_type":  "guild_levelup",
+                          "source":  "community",
+                          "text_template":  "«{guild_name}» {emblem} празднует {level} уровень и новые возможности. Драконов не было видно, но слухи уже начали расти."
+                      },
+                      {
+                          "template_type":  "guild_levelup",
+                          "source":  "community",
+                          "text_template":  "Гильдия «{guild_name}» {emblem} достигла {level} уровня. Картошка в ближайшем котле закипела с особым смыслом."
+                      }
+                  ]
+}

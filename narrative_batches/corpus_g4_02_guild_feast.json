@@ -1,0 +1,130 @@
+﻿{
+    "activation_policy":  "pending",
+    "templates":  [
+                      {
+                          "template_type":  "guild_feast",
+                          "source":  "community",
+                          "text_template":  "«{guild_name}» {emblem} открыла пир для тех, кто держит строй. Писарь занёс этот миг в книгу без помарок."
+                      },
+                      {
+                          "template_type":  "guild_feast",
+                          "source":  "community",
+                          "text_template":  "Под знаком {emblem} гильдия «{guild_name}» разделила хлеб и мёд. Дорога приняла решение и не стала возражать."
+                      },
+                      {
+                          "template_type":  "guild_feast",
+                          "source":  "community",
+                          "text_template":  "Пир «{guild_name}» {emblem} ненадолго отогнал дорожную усталость. Сумерки легли на Скайрим особенно спокойно."
+                      },
+                      {
+                          "template_type":  "guild_feast",
+                          "source":  "community",
+                          "text_template":  "«{guild_name}» {emblem} открыла пир для тех, кто держит строй. Эта весть дошла до ближайшего костра."
+                      },
+                      {
+                          "template_type":  "guild_feast",
+                          "source":  "community",
+                          "text_template":  "Под знаком {emblem} гильдия «{guild_name}» разделила хлеб и мёд. Старый камень у дороги сохранил молчаливую память."
+                      },
+                      {
+                          "template_type":  "guild_feast",
+                          "source":  "community",
+                          "text_template":  "Пир «{guild_name}» {emblem} ненадолго отогнал дорожную усталость. Поступок оказался тише славы, но весомее слухов."
+                      },
+                      {
+                          "template_type":  "guild_feast",
+                          "source":  "community",
+                          "text_template":  "«{guild_name}» {emblem} открыла пир для тех, кто держит строй. Холодный воздух словно стал немного добрее."
+                      },
+                      {
+                          "template_type":  "guild_feast",
+                          "source":  "community",
+                          "text_template":  "Под знаком {emblem} гильдия «{guild_name}» разделила хлеб и мёд. В истории края появилась ещё одна честная строка."
+                      },
+                      {
+                          "template_type":  "guild_feast",
+                          "source":  "community",
+                          "text_template":  "Пир «{guild_name}» {emblem} ненадолго отогнал дорожную усталость. Путники взглянули вслед с уважением."
+                      },
+                      {
+                          "template_type":  "guild_feast",
+                          "source":  "community",
+                          "text_template":  "«{guild_name}» {emblem} открыла пир для тех, кто держит строй. Далёкий колокол будто отметил этот час."
+                      },
+                      {
+                          "template_type":  "guild_feast",
+                          "source":  "community",
+                          "text_template":  "Под знаком {emblem} гильдия «{guild_name}» разделила хлеб и мёд. Рассвет найдёт эту историю уже известной."
+                      },
+                      {
+                          "template_type":  "guild_feast",
+                          "source":  "community",
+                          "text_template":  "Пир «{guild_name}» {emblem} ненадолго отогнал дорожную усталость. Север помнит дела лучше громких обещаний."
+                      },
+                      {
+                          "template_type":  "guild_feast",
+                          "source":  "community",
+                          "text_template":  "«{guild_name}» {emblem} открыла пир для тех, кто держит строй. Ворона проверила карманы взглядом и улетела довольной."
+                      },
+                      {
+                          "template_type":  "guild_feast",
+                          "source":  "community",
+                          "text_template":  "Под знаком {emblem} гильдия «{guild_name}» разделила хлеб и мёд. Бард уже ищет рифму, и это немного тревожит."
+                      },
+                      {
+                          "template_type":  "guild_feast",
+                          "source":  "community",
+                          "text_template":  "Пир «{guild_name}» {emblem} ненадолго отогнал дорожную усталость. Стражник одобрил всё настолько, насколько позволяет шлем."
+                      },
+                      {
+                          "template_type":  "guild_feast",
+                          "source":  "community",
+                          "text_template":  "«{guild_name}» {emblem} открыла пир для тех, кто держит строй. Кот из таверны сделал вид, что это его заслуга."
+                      },
+                      {
+                          "template_type":  "guild_feast",
+                          "source":  "community",
+                          "text_template":  "Под знаком {emblem} гильдия «{guild_name}» разделила хлеб и мёд. Снег скрипнул так торжественно, будто был свидетелем."
+                      },
+                      {
+                          "template_type":  "guild_feast",
+                          "source":  "community",
+                          "text_template":  "Пир «{guild_name}» {emblem} ненадолго отогнал дорожную усталость. Один сыр в лавке созрел от важности момента."
+                      },
+                      {
+                          "template_type":  "guild_feast",
+                          "source":  "community",
+                          "text_template":  "«{guild_name}» {emblem} открыла пир для тех, кто держит строй. Скелет в крипте не сказал ничего, как всегда по делу."
+                      },
+                      {
+                          "template_type":  "guild_feast",
+                          "source":  "community",
+                          "text_template":  "Под знаком {emblem} гильдия «{guild_name}» разделила хлеб и мёд. Грязекраб прислушался и решил не вмешиваться."
+                      },
+                      {
+                          "template_type":  "guild_feast",
+                          "source":  "community",
+                          "text_template":  "Пир «{guild_name}» {emblem} ненадолго отогнал дорожную усталость. Кузнечный молот отозвался с лишним энтузиазмом."
+                      },
+                      {
+                          "template_type":  "guild_feast",
+                          "source":  "community",
+                          "text_template":  "«{guild_name}» {emblem} открыла пир для тех, кто держит строй. Уличный петух объявил событие без спроса."
+                      },
+                      {
+                          "template_type":  "guild_feast",
+                          "source":  "community",
+                          "text_template":  "Под знаком {emblem} гильдия «{guild_name}» разделила хлеб и мёд. Мешок с репой выглядел удивительно вдохновлённым."
+                      },
+                      {
+                          "template_type":  "guild_feast",
+                          "source":  "community",
+                          "text_template":  "Пир «{guild_name}» {emblem} ненадолго отогнал дорожную усталость. Три септима под лавкой решили остаться на месте."
+                      },
+                      {
+                          "template_type":  "guild_feast",
+                          "source":  "community",
+                          "text_template":  "«{guild_name}» {emblem} открыла пир для тех, кто держит строй. Даже лошадь кивнула, хотя могла просто чесаться."
+                      }
+                  ]
+}

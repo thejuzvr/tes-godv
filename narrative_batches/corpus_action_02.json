@@ -1,0 +1,1005 @@
+﻿{
+    "activation_policy":  "pending",
+    "templates":  [
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "Под серым небом {hero_name} вернулся к жизни в {location}, начиная путь заново оставив след лишь на пыльной дороге.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} очнулся в {location}; смерть, как обычно, не приложила инструкции а ближайший куст сохранил дипломатическое молчание.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "На окраине поселения {hero_name} вернулся к жизни в {location}, начиная путь заново с твёрдой мыслью идти дальше.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} очнулся в {location}; смерть, как обычно, не приложила инструкции и решил не рассказывать об этом трактирщику.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "В час, когда ветер стих {hero_name} вернулся к жизни в {location}, начиная путь заново прислушиваясь к миру вокруг.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} очнулся в {location}; смерть, как обычно, не приложила инструкции хотя инвентарь выглядел слегка озадаченным.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "На рассвете {hero_name} вернулся к жизни в {location}, начиная путь заново сохраняя спокойствие.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} очнулся в {location}; смерть, как обычно, не приложила инструкции но ни один мамонт не подал жалобу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "После долгой дороги {hero_name} вернулся к жизни в {location}, начиная путь заново с надеждой на удачу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} очнулся в {location}; смерть, как обычно, не приложила инструкции и мысленно потребовал за это достижение сладкий рулет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "Под серым небом {hero_name} вернулся к жизни в {location}, начиная путь заново с привычной нордской выдержкой.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} очнулся в {location}; смерть, как обычно, не приложила инструкции пока судьба листала свиток с пометкой «обычный вторник».",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "На окраине поселения {hero_name} вернулся к жизни в {location}, начиная путь заново не забывая о цели пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} очнулся в {location}; смерть, как обычно, не приложила инструкции а местный грязекраб ничего не понял, но одобрил.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "В час, когда ветер стих {hero_name} вернулся к жизни в {location}, начиная путь заново перед следующей главой пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} очнулся в {location}; смерть, как обычно, не приложила инструкции и пообещал больше не доверять советам летающих стрел.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "На рассвете {hero_name} вернулся к жизни в {location}, начиная путь заново и запомнил эту минуту.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} очнулся в {location}; смерть, как обычно, не приложила инструкции и даже Талос, вероятно, не стал спорить.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "После долгой дороги {hero_name} вернулся к жизни в {location}, начиная путь заново не теряя осторожности.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} очнулся в {location}; смерть, как обычно, не приложила инструкции но барды ещё не придумали для этого подходящий куплет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "Под серым небом {hero_name} вернулся к жизни в {location}, начиная путь заново оставив след лишь на пыльной дороге.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} очнулся в {location}; смерть, как обычно, не приложила инструкции а ближайший куст сохранил дипломатическое молчание.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "На окраине поселения {hero_name} вернулся к жизни в {location}, начиная путь заново с твёрдой мыслью идти дальше.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} очнулся в {location}; смерть, как обычно, не приложила инструкции и решил не рассказывать об этом трактирщику.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "В час, когда ветер стих {hero_name} вернулся к жизни в {location}, начиная путь заново прислушиваясь к миру вокруг.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} очнулся в {location}; смерть, как обычно, не приложила инструкции хотя инвентарь выглядел слегка озадаченным.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "На рассвете {hero_name} вернулся к жизни в {location}, начиная путь заново сохраняя спокойствие.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "discover_treasure",
+                          "text_template":  "На рассвете {hero_name} обнаружил тайник с {loot_text} и запомнил эту минуту.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "discover_treasure",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} нашёл клад с {loot_text} и запиской «не трогать, серьёзно» и даже Талос, вероятно, не стал спорить.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "discover_treasure",
+                          "text_template":  "После долгой дороги {hero_name} обнаружил тайник с {loot_text} не теряя осторожности.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "discover_treasure",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} нашёл клад с {loot_text} и запиской «не трогать, серьёзно» но барды ещё не придумали для этого подходящий куплет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "discover_treasure",
+                          "text_template":  "Под серым небом {hero_name} обнаружил тайник с {loot_text} оставив след лишь на пыльной дороге.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "discover_treasure",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} нашёл клад с {loot_text} и запиской «не трогать, серьёзно» а ближайший куст сохранил дипломатическое молчание.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "discover_treasure",
+                          "text_template":  "На окраине поселения {hero_name} обнаружил тайник с {loot_text} с твёрдой мыслью идти дальше.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "discover_treasure",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} нашёл клад с {loot_text} и запиской «не трогать, серьёзно» и решил не рассказывать об этом трактирщику.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "discover_treasure",
+                          "text_template":  "В час, когда ветер стих {hero_name} обнаружил тайник с {loot_text} прислушиваясь к миру вокруг.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "discover_treasure",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} нашёл клад с {loot_text} и запиской «не трогать, серьёзно» хотя инвентарь выглядел слегка озадаченным.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "discover_treasure",
+                          "text_template":  "На рассвете {hero_name} обнаружил тайник с {loot_text} сохраняя спокойствие.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "discover_treasure",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} нашёл клад с {loot_text} и запиской «не трогать, серьёзно» но ни один мамонт не подал жалобу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "discover_treasure",
+                          "text_template":  "После долгой дороги {hero_name} обнаружил тайник с {loot_text} с надеждой на удачу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "discover_treasure",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} нашёл клад с {loot_text} и запиской «не трогать, серьёзно» и мысленно потребовал за это достижение сладкий рулет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "discover_treasure",
+                          "text_template":  "Под серым небом {hero_name} обнаружил тайник с {loot_text} с привычной нордской выдержкой.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "discover_treasure",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} нашёл клад с {loot_text} и запиской «не трогать, серьёзно» пока судьба листала свиток с пометкой «обычный вторник».",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "discover_treasure",
+                          "text_template":  "На окраине поселения {hero_name} обнаружил тайник с {loot_text} не забывая о цели пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "discover_treasure",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} нашёл клад с {loot_text} и запиской «не трогать, серьёзно» а местный грязекраб ничего не понял, но одобрил.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "discover_treasure",
+                          "text_template":  "В час, когда ветер стих {hero_name} обнаружил тайник с {loot_text} перед следующей главой пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "discover_treasure",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} нашёл клад с {loot_text} и запиской «не трогать, серьёзно» и пообещал больше не доверять советам летающих стрел.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "discover_treasure",
+                          "text_template":  "На рассвете {hero_name} обнаружил тайник с {loot_text} и запомнил эту минуту.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "discover_treasure",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} нашёл клад с {loot_text} и запиской «не трогать, серьёзно» и даже Талос, вероятно, не стал спорить.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "discover_treasure",
+                          "text_template":  "После долгой дороги {hero_name} обнаружил тайник с {loot_text} не теряя осторожности.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "discover_treasure",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} нашёл клад с {loot_text} и запиской «не трогать, серьёзно» но барды ещё не придумали для этого подходящий куплет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "discover_treasure",
+                          "text_template":  "Под серым небом {hero_name} обнаружил тайник с {loot_text} оставив след лишь на пыльной дороге.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "На рассвете {hero_name} увидел во сне далёкую {location_name} и тихую дорогу и запомнил эту минуту.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} во сне посетил {location_name}, где курица потребовала показать пропуск и даже Талос, вероятно, не стал спорить.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "После долгой дороги {hero_name} увидел во сне далёкую {location_name} и тихую дорогу не теряя осторожности.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} во сне посетил {location_name}, где курица потребовала показать пропуск но барды ещё не придумали для этого подходящий куплет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "Под серым небом {hero_name} увидел во сне далёкую {location_name} и тихую дорогу оставив след лишь на пыльной дороге.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} во сне посетил {location_name}, где курица потребовала показать пропуск а ближайший куст сохранил дипломатическое молчание.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "На окраине поселения {hero_name} увидел во сне далёкую {location_name} и тихую дорогу с твёрдой мыслью идти дальше.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} во сне посетил {location_name}, где курица потребовала показать пропуск и решил не рассказывать об этом трактирщику.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "В час, когда ветер стих {hero_name} увидел во сне далёкую {location_name} и тихую дорогу прислушиваясь к миру вокруг.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} во сне посетил {location_name}, где курица потребовала показать пропуск хотя инвентарь выглядел слегка озадаченным.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "На рассвете {hero_name} увидел во сне далёкую {location_name} и тихую дорогу сохраняя спокойствие.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} во сне посетил {location_name}, где курица потребовала показать пропуск но ни один мамонт не подал жалобу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "После долгой дороги {hero_name} увидел во сне далёкую {location_name} и тихую дорогу с надеждой на удачу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} во сне посетил {location_name}, где курица потребовала показать пропуск и мысленно потребовал за это достижение сладкий рулет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "Под серым небом {hero_name} увидел во сне далёкую {location_name} и тихую дорогу с привычной нордской выдержкой.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} во сне посетил {location_name}, где курица потребовала показать пропуск пока судьба листала свиток с пометкой «обычный вторник».",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "На окраине поселения {hero_name} увидел во сне далёкую {location_name} и тихую дорогу не забывая о цели пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} во сне посетил {location_name}, где курица потребовала показать пропуск а местный грязекраб ничего не понял, но одобрил.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "В час, когда ветер стих {hero_name} увидел во сне далёкую {location_name} и тихую дорогу перед следующей главой пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} во сне посетил {location_name}, где курица потребовала показать пропуск и пообещал больше не доверять советам летающих стрел.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "На рассвете {hero_name} увидел во сне далёкую {location_name} и тихую дорогу и запомнил эту минуту.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} во сне посетил {location_name}, где курица потребовала показать пропуск и даже Талос, вероятно, не стал спорить.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "После долгой дороги {hero_name} увидел во сне далёкую {location_name} и тихую дорогу не теряя осторожности.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} во сне посетил {location_name}, где курица потребовала показать пропуск но барды ещё не придумали для этого подходящий куплет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "Под серым небом {hero_name} увидел во сне далёкую {location_name} и тихую дорогу оставив след лишь на пыльной дороге.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} во сне посетил {location_name}, где курица потребовала показать пропуск а ближайший куст сохранил дипломатическое молчание.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "На окраине поселения {hero_name} увидел во сне далёкую {location_name} и тихую дорогу с твёрдой мыслью идти дальше.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} во сне посетил {location_name}, где курица потребовала показать пропуск и решил не рассказывать об этом трактирщику.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "В час, когда ветер стих {hero_name} увидел во сне далёкую {location_name} и тихую дорогу прислушиваясь к миру вокруг.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} во сне посетил {location_name}, где курица потребовала показать пропуск хотя инвентарь выглядел слегка озадаченным.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "На рассвете {hero_name} увидел во сне далёкую {location_name} и тихую дорогу сохраняя спокойствие.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} во сне посетил {location_name}, где курица потребовала показать пропуск но ни один мамонт не подал жалобу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "После долгой дороги {hero_name} увидел во сне далёкую {location_name} и тихую дорогу с надеждой на удачу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} во сне посетил {location_name}, где курица потребовала показать пропуск и мысленно потребовал за это достижение сладкий рулет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "Под серым небом {hero_name} увидел во сне далёкую {location_name} и тихую дорогу с привычной нордской выдержкой.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} во сне посетил {location_name}, где курица потребовала показать пропуск пока судьба листала свиток с пометкой «обычный вторник».",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "На окраине поселения {hero_name} увидел во сне далёкую {location_name} и тихую дорогу не забывая о цели пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} во сне посетил {location_name}, где курица потребовала показать пропуск а местный грязекраб ничего не понял, но одобрил.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "В час, когда ветер стих {hero_name} увидел во сне далёкую {location_name} и тихую дорогу перед следующей главой пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} во сне посетил {location_name}, где курица потребовала показать пропуск и пообещал больше не доверять советам летающих стрел.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "На рассвете {hero_name} увидел во сне далёкую {location_name} и тихую дорогу и запомнил эту минуту.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} во сне посетил {location_name}, где курица потребовала показать пропуск и даже Талос, вероятно, не стал спорить.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "dream",
+                          "text_template":  "После долгой дороги {hero_name} увидел во сне далёкую {location_name} и тихую дорогу не теряя осторожности.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "enemy_ambush",
+                          "text_template":  "На рассвете {hero_name} заметил, как {monster_name} выходит из засады и запомнил эту минуту.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "enemy_ambush",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} услышал, как {monster_name} слишком громко репетирует засаду и даже Талос, вероятно, не стал спорить.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "enemy_ambush",
+                          "text_template":  "После долгой дороги {hero_name} заметил, как {monster_name} выходит из засады не теряя осторожности.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "enemy_ambush",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} услышал, как {monster_name} слишком громко репетирует засаду но барды ещё не придумали для этого подходящий куплет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "enemy_ambush",
+                          "text_template":  "Под серым небом {hero_name} заметил, как {monster_name} выходит из засады оставив след лишь на пыльной дороге.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "enemy_ambush",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} услышал, как {monster_name} слишком громко репетирует засаду а ближайший куст сохранил дипломатическое молчание.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "enemy_ambush",
+                          "text_template":  "На окраине поселения {hero_name} заметил, как {monster_name} выходит из засады с твёрдой мыслью идти дальше.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "enemy_ambush",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} услышал, как {monster_name} слишком громко репетирует засаду и решил не рассказывать об этом трактирщику.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "enemy_ambush",
+                          "text_template":  "В час, когда ветер стих {hero_name} заметил, как {monster_name} выходит из засады прислушиваясь к миру вокруг.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "enemy_ambush",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} услышал, как {monster_name} слишком громко репетирует засаду хотя инвентарь выглядел слегка озадаченным.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "enemy_ambush",
+                          "text_template":  "На рассвете {hero_name} заметил, как {monster_name} выходит из засады сохраняя спокойствие.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "enemy_ambush",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} услышал, как {monster_name} слишком громко репетирует засаду но ни один мамонт не подал жалобу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "enemy_ambush",
+                          "text_template":  "После долгой дороги {hero_name} заметил, как {monster_name} выходит из засады с надеждой на удачу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "enemy_ambush",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} услышал, как {monster_name} слишком громко репетирует засаду и мысленно потребовал за это достижение сладкий рулет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "enemy_ambush",
+                          "text_template":  "Под серым небом {hero_name} заметил, как {monster_name} выходит из засады с привычной нордской выдержкой.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "enemy_ambush",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} услышал, как {monster_name} слишком громко репетирует засаду пока судьба листала свиток с пометкой «обычный вторник».",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "enemy_ambush",
+                          "text_template":  "На окраине поселения {hero_name} заметил, как {monster_name} выходит из засады не забывая о цели пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "enemy_ambush",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} услышал, как {monster_name} слишком громко репетирует засаду а местный грязекраб ничего не понял, но одобрил.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "enemy_ambush",
+                          "text_template":  "В час, когда ветер стих {hero_name} заметил, как {monster_name} выходит из засады перед следующей главой пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "enemy_ambush",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} услышал, как {monster_name} слишком громко репетирует засаду и пообещал больше не доверять советам летающих стрел.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "enemy_ambush",
+                          "text_template":  "На рассвете {hero_name} заметил, как {monster_name} выходит из засады и запомнил эту минуту.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "enemy_ambush",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} услышал, как {monster_name} слишком громко репетирует засаду и даже Талос, вероятно, не стал спорить.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "enemy_ambush",
+                          "text_template":  "После долгой дороги {hero_name} заметил, как {monster_name} выходит из засады не теряя осторожности.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "enemy_ambush",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} услышал, как {monster_name} слишком громко репетирует засаду но барды ещё не придумали для этого подходящий куплет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "enemy_ambush",
+                          "text_template":  "Под серым небом {hero_name} заметил, как {monster_name} выходит из засады оставив след лишь на пыльной дороге.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "enemy_ambush",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} услышал, как {monster_name} слишком громко репетирует засаду а ближайший куст сохранил дипломатическое молчание.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "enemy_ambush",
+                          "text_template":  "На окраине поселения {hero_name} заметил, как {monster_name} выходит из засады с твёрдой мыслью идти дальше.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "enemy_ambush",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} услышал, как {monster_name} слишком громко репетирует засаду и решил не рассказывать об этом трактирщику.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "enemy_ambush",
+                          "text_template":  "В час, когда ветер стих {hero_name} заметил, как {monster_name} выходит из засады прислушиваясь к миру вокруг.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "enemy_ambush",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} услышал, как {monster_name} слишком громко репетирует засаду хотя инвентарь выглядел слегка озадаченным.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "enemy_ambush",
+                          "text_template":  "На рассвете {hero_name} заметил, как {monster_name} выходит из засады сохраняя спокойствие.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "На рассвете {hero_name} поправил снаряжение перед дорогой и запомнил эту минуту.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} надел снаряжение и сразу стал выглядеть на один медяк опаснее и даже Талос, вероятно, не стал спорить.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "После долгой дороги {hero_name} поправил снаряжение перед дорогой не теряя осторожности.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} надел снаряжение и сразу стал выглядеть на один медяк опаснее но барды ещё не придумали для этого подходящий куплет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "Под серым небом {hero_name} поправил снаряжение перед дорогой оставив след лишь на пыльной дороге.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} надел снаряжение и сразу стал выглядеть на один медяк опаснее а ближайший куст сохранил дипломатическое молчание.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "На окраине поселения {hero_name} поправил снаряжение перед дорогой с твёрдой мыслью идти дальше.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} надел снаряжение и сразу стал выглядеть на один медяк опаснее и решил не рассказывать об этом трактирщику.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "В час, когда ветер стих {hero_name} поправил снаряжение перед дорогой прислушиваясь к миру вокруг.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} надел снаряжение и сразу стал выглядеть на один медяк опаснее хотя инвентарь выглядел слегка озадаченным.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "На рассвете {hero_name} поправил снаряжение перед дорогой сохраняя спокойствие.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} надел снаряжение и сразу стал выглядеть на один медяк опаснее но ни один мамонт не подал жалобу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "После долгой дороги {hero_name} поправил снаряжение перед дорогой с надеждой на удачу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} надел снаряжение и сразу стал выглядеть на один медяк опаснее и мысленно потребовал за это достижение сладкий рулет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "Под серым небом {hero_name} поправил снаряжение перед дорогой с привычной нордской выдержкой.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} надел снаряжение и сразу стал выглядеть на один медяк опаснее пока судьба листала свиток с пометкой «обычный вторник».",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "На окраине поселения {hero_name} поправил снаряжение перед дорогой не забывая о цели пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} надел снаряжение и сразу стал выглядеть на один медяк опаснее а местный грязекраб ничего не понял, но одобрил.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "В час, когда ветер стих {hero_name} поправил снаряжение перед дорогой перед следующей главой пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} надел снаряжение и сразу стал выглядеть на один медяк опаснее и пообещал больше не доверять советам летающих стрел.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "На рассвете {hero_name} поправил снаряжение перед дорогой и запомнил эту минуту.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} надел снаряжение и сразу стал выглядеть на один медяк опаснее и даже Талос, вероятно, не стал спорить.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "После долгой дороги {hero_name} поправил снаряжение перед дорогой не теряя осторожности.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} надел снаряжение и сразу стал выглядеть на один медяк опаснее но барды ещё не придумали для этого подходящий куплет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "Под серым небом {hero_name} поправил снаряжение перед дорогой оставив след лишь на пыльной дороге.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} надел снаряжение и сразу стал выглядеть на один медяк опаснее а ближайший куст сохранил дипломатическое молчание.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "На окраине поселения {hero_name} поправил снаряжение перед дорогой с твёрдой мыслью идти дальше.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} надел снаряжение и сразу стал выглядеть на один медяк опаснее и решил не рассказывать об этом трактирщику.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "В час, когда ветер стих {hero_name} поправил снаряжение перед дорогой прислушиваясь к миру вокруг.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} надел снаряжение и сразу стал выглядеть на один медяк опаснее хотя инвентарь выглядел слегка озадаченным.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "На рассвете {hero_name} поправил снаряжение перед дорогой сохраняя спокойствие.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} надел снаряжение и сразу стал выглядеть на один медяк опаснее но ни один мамонт не подал жалобу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "После долгой дороги {hero_name} поправил снаряжение перед дорогой с надеждой на удачу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} надел снаряжение и сразу стал выглядеть на один медяк опаснее и мысленно потребовал за это достижение сладкий рулет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "Под серым небом {hero_name} поправил снаряжение перед дорогой с привычной нордской выдержкой.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} надел снаряжение и сразу стал выглядеть на один медяк опаснее пока судьба листала свиток с пометкой «обычный вторник».",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "На окраине поселения {hero_name} поправил снаряжение перед дорогой не забывая о цели пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} надел снаряжение и сразу стал выглядеть на один медяк опаснее а местный грязекраб ничего не понял, но одобрил.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "В час, когда ветер стих {hero_name} поправил снаряжение перед дорогой перед следующей главой пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} надел снаряжение и сразу стал выглядеть на один медяк опаснее и пообещал больше не доверять советам летающих стрел.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "На рассвете {hero_name} поправил снаряжение перед дорогой и запомнил эту минуту.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} надел снаряжение и сразу стал выглядеть на один медяк опаснее и даже Талос, вероятно, не стал спорить.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "equip",
+                          "text_template":  "После долгой дороги {hero_name} поправил снаряжение перед дорогой не теряя осторожности.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "find_loot",
+                          "text_template":  "На рассвете {hero_name} нашёл среди руин {loot_text} и запомнил эту минуту.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "find_loot",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} обнаружил {loot_text}, которое не успел прибрать ни один предприимчивый скелет и даже Талос, вероятно, не стал спорить.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "find_loot",
+                          "text_template":  "После долгой дороги {hero_name} нашёл среди руин {loot_text} не теряя осторожности.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "find_loot",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} обнаружил {loot_text}, которое не успел прибрать ни один предприимчивый скелет но барды ещё не придумали для этого подходящий куплет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "find_loot",
+                          "text_template":  "Под серым небом {hero_name} нашёл среди руин {loot_text} оставив след лишь на пыльной дороге.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "find_loot",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} обнаружил {loot_text}, которое не успел прибрать ни один предприимчивый скелет а ближайший куст сохранил дипломатическое молчание.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "find_loot",
+                          "text_template":  "На окраине поселения {hero_name} нашёл среди руин {loot_text} с твёрдой мыслью идти дальше.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "find_loot",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} обнаружил {loot_text}, которое не успел прибрать ни один предприимчивый скелет и решил не рассказывать об этом трактирщику.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "find_loot",
+                          "text_template":  "В час, когда ветер стих {hero_name} нашёл среди руин {loot_text} прислушиваясь к миру вокруг.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "find_loot",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} обнаружил {loot_text}, которое не успел прибрать ни один предприимчивый скелет хотя инвентарь выглядел слегка озадаченным.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "find_loot",
+                          "text_template":  "На рассвете {hero_name} нашёл среди руин {loot_text} сохраняя спокойствие.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "find_loot",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} обнаружил {loot_text}, которое не успел прибрать ни один предприимчивый скелет но ни один мамонт не подал жалобу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "find_loot",
+                          "text_template":  "После долгой дороги {hero_name} нашёл среди руин {loot_text} с надеждой на удачу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "find_loot",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} обнаружил {loot_text}, которое не успел прибрать ни один предприимчивый скелет и мысленно потребовал за это достижение сладкий рулет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "find_loot",
+                          "text_template":  "Под серым небом {hero_name} нашёл среди руин {loot_text} с привычной нордской выдержкой.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "find_loot",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} обнаружил {loot_text}, которое не успел прибрать ни один предприимчивый скелет пока судьба листала свиток с пометкой «обычный вторник».",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "find_loot",
+                          "text_template":  "На окраине поселения {hero_name} нашёл среди руин {loot_text} не забывая о цели пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "find_loot",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} обнаружил {loot_text}, которое не успел прибрать ни один предприимчивый скелет а местный грязекраб ничего не понял, но одобрил.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "find_loot",
+                          "text_template":  "В час, когда ветер стих {hero_name} нашёл среди руин {loot_text} перед следующей главой пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "find_loot",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} обнаружил {loot_text}, которое не успел прибрать ни один предприимчивый скелет и пообещал больше не доверять советам летающих стрел.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "find_loot",
+                          "text_template":  "На рассвете {hero_name} нашёл среди руин {loot_text} и запомнил эту минуту.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "find_loot",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} обнаружил {loot_text}, которое не успел прибрать ни один предприимчивый скелет и даже Талос, вероятно, не стал спорить.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "find_loot",
+                          "text_template":  "После долгой дороги {hero_name} нашёл среди руин {loot_text} не теряя осторожности.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "find_loot",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} обнаружил {loot_text}, которое не успел прибрать ни один предприимчивый скелет но барды ещё не придумали для этого подходящий куплет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "find_loot",
+                          "text_template":  "Под серым небом {hero_name} нашёл среди руин {loot_text} оставив след лишь на пыльной дороге.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "find_loot",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} обнаружил {loot_text}, которое не успел прибрать ни один предприимчивый скелет а ближайший куст сохранил дипломатическое молчание.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "find_loot",
+                          "text_template":  "На окраине поселения {hero_name} нашёл среди руин {loot_text} с твёрдой мыслью идти дальше.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "find_loot",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} обнаружил {loot_text}, которое не успел прибрать ни один предприимчивый скелет и решил не рассказывать об этом трактирщику.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "find_loot",
+                          "text_template":  "В час, когда ветер стих {hero_name} нашёл среди руин {loot_text} прислушиваясь к миру вокруг.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "find_loot",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} обнаружил {loot_text}, которое не успел прибрать ни один предприимчивый скелет хотя инвентарь выглядел слегка озадаченным.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "find_loot",
+                          "text_template":  "На рассвете {hero_name} нашёл среди руин {loot_text} сохраняя спокойствие.",
+                          "source":  "community"
+                      }
+                  ]
+}

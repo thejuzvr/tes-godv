@@ -1,0 +1,130 @@
+﻿{
+    "activation_policy":  "pending",
+    "templates":  [
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "{god_name} укрепил сердце {hero_name} перед новым шагом. Писарь занёс этот миг в книгу без помарок."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "{hero_name} почувствовал, как {god_name} возвращает ему решимость. Дорога приняла решение и не стала возражать."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "Тихое благословение {god_name} придало {hero_name} уверенности. Сумерки легли на Скайрим особенно спокойно."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "{god_name} укрепил сердце {hero_name} перед новым шагом. Эта весть дошла до ближайшего костра."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "{hero_name} почувствовал, как {god_name} возвращает ему решимость. Старый камень у дороги сохранил молчаливую память."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "Тихое благословение {god_name} придало {hero_name} уверенности. Поступок оказался тише славы, но весомее слухов."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "{god_name} укрепил сердце {hero_name} перед новым шагом. Холодный воздух словно стал немного добрее."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "{hero_name} почувствовал, как {god_name} возвращает ему решимость. В истории края появилась ещё одна честная строка."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "Тихое благословение {god_name} придало {hero_name} уверенности. Путники взглянули вслед с уважением."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "{god_name} укрепил сердце {hero_name} перед новым шагом. Далёкий колокол будто отметил этот час."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "{hero_name} почувствовал, как {god_name} возвращает ему решимость. Рассвет найдёт эту историю уже известной."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "Тихое благословение {god_name} придало {hero_name} уверенности. Север помнит дела лучше громких обещаний."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "{god_name} укрепил сердце {hero_name} перед новым шагом. Ворона проверила карманы взглядом и улетела довольной."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "{hero_name} почувствовал, как {god_name} возвращает ему решимость. Бард уже ищет рифму, и это немного тревожит."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "Тихое благословение {god_name} придало {hero_name} уверенности. Стражник одобрил всё настолько, насколько позволяет шлем."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "{god_name} укрепил сердце {hero_name} перед новым шагом. Кот из таверны сделал вид, что это его заслуга."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "{hero_name} почувствовал, как {god_name} возвращает ему решимость. Снег скрипнул так торжественно, будто был свидетелем."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "Тихое благословение {god_name} придало {hero_name} уверенности. Один сыр в лавке созрел от важности момента."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "{god_name} укрепил сердце {hero_name} перед новым шагом. Скелет в крипте не сказал ничего, как всегда по делу."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "{hero_name} почувствовал, как {god_name} возвращает ему решимость. Грязекраб прислушался и решил не вмешиваться."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "Тихое благословение {god_name} придало {hero_name} уверенности. Кузнечный молот отозвался с лишним энтузиазмом."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "{god_name} укрепил сердце {hero_name} перед новым шагом. Уличный петух объявил событие без спроса."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "{hero_name} почувствовал, как {god_name} возвращает ему решимость. Мешок с репой выглядел удивительно вдохновлённым."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "Тихое благословение {god_name} придало {hero_name} уверенности. Три септима под лавкой решили остаться на месте."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "{god_name} укрепил сердце {hero_name} перед новым шагом. Даже лошадь кивнула, хотя могла просто чесаться."
+                      }
+                  ]
+}

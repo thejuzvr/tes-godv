@@ -26,6 +26,8 @@ config :tes_idle,
   game_tick_enabled: false,
   activity_flush_enabled: false,
   world_kernel_enabled: false,
-  world_aggregator_enabled: false
+  world_aggregator_enabled: false,
+  encounter_worker_enabled: false,
+  outbox_dispatcher_enabled: false
 
 config :logger, level: :warning

@@ -2,6 +2,55 @@ const API_BASE = "/api/v1"
 
 import type { Pet } from "@/stores/gameStore"
 
+export type DecisionAuditEventType = "intent_selected" | "intent_held" | "intent_switched" | "action_started" | "action_completed" | "action_failed"
+
+export interface DecisionAuditGoal {
+  goal: string | null
+  selected: number
+  held: number
+  switched: number
+  avg_utility: number
+}
+
+export interface DecisionAuditActionOutcome {
+  goal: string | null
+  action: string | null
+  completed: number
+  failed: number
+}
+
+export interface DecisionAuditHero {
+  hero: string
+  level: number
+  events: number
+  selected: number
+  held: number
+  switched: number
+  completed: number
+  failed: number
+}
+
+export interface DecisionAuditRecentEvent {
+  hero: string
+  game_day: number | null
+  game_hour: number | null
+  event_type: DecisionAuditEventType
+  goal: string | null
+  action: string | null
+  utility: number | null
+  created_at: string
+}
+
+export interface DecisionAuditReport {
+  range: { from: string; days: number }
+  limit: number
+  intent_by_goal: DecisionAuditGoal[]
+  action_outcomes: DecisionAuditActionOutcome[]
+  heroes: DecisionAuditHero[]
+  recent_events: DecisionAuditRecentEvent[]
+  total_decisions: number
+}
+
 class ApiClient {
   private token: string | null = null
 
@@ -73,6 +122,30 @@ class ApiClient {
   // Hero
   async getHero() {
     return this.request<any>("/hero/me")
+  }
+
+  async getHeroEncounters(limit = 20) {
+    return this.request<{ encounters: any[]; has_more: boolean }>(`/hero/encounters?limit=${limit}`)
+  }
+
+  async getHeroRelationships() {
+    return this.request<{ relationships: any[] }>("/hero/relationships")
+  }
+
+  async getHeroSocialSettings() {
+    return this.request<{ encounter_mode: "disabled" | "live_only" | "async"; reveal_name: "nobody" | "encounter" | "guild" | "public"; daily_cap: number; cooldown_seconds: number; limits: { daily_cap_max: number } }>("/hero/social-settings")
+  }
+
+  async updateHeroSocialSettings(body: { encounter_mode?: "disabled" | "live_only" | "async"; reveal_name?: "nobody" | "encounter" | "guild" | "public"; daily_cap?: number }) {
+    return this.request<any>("/hero/social-settings", { method: "PATCH", body: JSON.stringify(body) })
+  }
+
+  async blockHero(heroId: string) {
+    return this.request<any>(`/hero/blocks/${heroId}`, { method: "PUT" })
+  }
+
+  async unblockHero(heroId: string) {
+    return this.request<any>(`/hero/blocks/${heroId}`, { method: "DELETE" })
   }
 
   // Текущий пользователь (тихая проверка роли, 200 для всех авторизованных)
@@ -371,6 +444,21 @@ class ApiClient {
     return this.request<any>("/admin/game/restart-loops", { method: "POST" })
   }
 
+  async adminValidateNarrativeBatch(payload: { templates: Array<Record<string, unknown>>; activation_policy?: "pending" | "active_system" }) {
+    return this.request<any>("/admin/narrative-batches/validate", { method: "POST", body: JSON.stringify(payload) })
+  }
+
+  async adminImportNarrativeBatch(payload: { templates: Array<Record<string, unknown>>; activation_policy?: "pending" | "active_system" }) {
+    return this.request<any>("/admin/narrative-batches/import", { method: "POST", body: JSON.stringify(payload) })
+  }
+
+  async adminDeletePendingTemplates(scope: { template_type?: string; source?: string; all?: true }) {
+    return this.request<{ deleted: number }>("/admin/narrative-templates/delete-pending", {
+      method: "POST",
+      body: JSON.stringify(scope),
+    })
+  }
+
   async adminNarrativeTemplates(page = 1, perPage = 50, type?: string, source?: string, isActive?: boolean, q?: string) {
     const params = new URLSearchParams({ page: String(page), per_page: String(perPage) })
     if (type) params.set("template_type", type)
@@ -393,6 +481,10 @@ class ApiClient {
 
   async adminNarrativeUsage(days = 30) {
     return this.request<any>(`/admin/narrative-stats?days=${days}`)
+  }
+
+  async adminBrainStats(days = 30, limit = 50) {
+    return this.request<DecisionAuditReport>(`/admin/brain/stats?days=${days}&limit=${limit}`)
   }
 
   async adminApproveBatch(body: Record<string, string>) {

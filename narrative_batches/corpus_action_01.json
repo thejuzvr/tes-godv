@@ -1,0 +1,1005 @@
+﻿{
+    "activation_policy":  "pending",
+    "templates":  [
+                      {
+                          "template_type":  "break_in",
+                          "text_template":  "На рассвете {hero_name} проверил запертую дверь на прочность и терпение и запомнил эту минуту.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "break_in",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} объяснил замку, что визит был назначен судьбой и даже Талос, вероятно, не стал спорить.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "break_in",
+                          "text_template":  "После долгой дороги {hero_name} проверил запертую дверь на прочность и терпение не теряя осторожности.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "break_in",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} объяснил замку, что визит был назначен судьбой но барды ещё не придумали для этого подходящий куплет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "break_in",
+                          "text_template":  "Под серым небом {hero_name} проверил запертую дверь на прочность и терпение оставив след лишь на пыльной дороге.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "break_in",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} объяснил замку, что визит был назначен судьбой а ближайший куст сохранил дипломатическое молчание.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "break_in",
+                          "text_template":  "На окраине поселения {hero_name} проверил запертую дверь на прочность и терпение с твёрдой мыслью идти дальше.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "break_in",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} объяснил замку, что визит был назначен судьбой и решил не рассказывать об этом трактирщику.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "break_in",
+                          "text_template":  "В час, когда ветер стих {hero_name} проверил запертую дверь на прочность и терпение прислушиваясь к миру вокруг.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "break_in",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} объяснил замку, что визит был назначен судьбой хотя инвентарь выглядел слегка озадаченным.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "break_in",
+                          "text_template":  "На рассвете {hero_name} проверил запертую дверь на прочность и терпение сохраняя спокойствие.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "break_in",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} объяснил замку, что визит был назначен судьбой но ни один мамонт не подал жалобу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "break_in",
+                          "text_template":  "После долгой дороги {hero_name} проверил запертую дверь на прочность и терпение с надеждой на удачу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "break_in",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} объяснил замку, что визит был назначен судьбой и мысленно потребовал за это достижение сладкий рулет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "break_in",
+                          "text_template":  "Под серым небом {hero_name} проверил запертую дверь на прочность и терпение с привычной нордской выдержкой.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "break_in",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} объяснил замку, что визит был назначен судьбой пока судьба листала свиток с пометкой «обычный вторник».",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "break_in",
+                          "text_template":  "На окраине поселения {hero_name} проверил запертую дверь на прочность и терпение не забывая о цели пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "break_in",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} объяснил замку, что визит был назначен судьбой а местный грязекраб ничего не понял, но одобрил.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "break_in",
+                          "text_template":  "В час, когда ветер стих {hero_name} проверил запертую дверь на прочность и терпение перед следующей главой пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "break_in",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} объяснил замку, что визит был назначен судьбой и пообещал больше не доверять советам летающих стрел.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "break_in",
+                          "text_template":  "На рассвете {hero_name} проверил запертую дверь на прочность и терпение и запомнил эту минуту.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "break_in",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} объяснил замку, что визит был назначен судьбой и даже Талос, вероятно, не стал спорить.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "break_in",
+                          "text_template":  "После долгой дороги {hero_name} проверил запертую дверь на прочность и терпение не теряя осторожности.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "break_in",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} объяснил замку, что визит был назначен судьбой но барды ещё не придумали для этого подходящий куплет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "break_in",
+                          "text_template":  "Под серым небом {hero_name} проверил запертую дверь на прочность и терпение оставив след лишь на пыльной дороге.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "break_in",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} объяснил замку, что визит был назначен судьбой а ближайший куст сохранил дипломатическое молчание.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "break_in",
+                          "text_template":  "На окраине поселения {hero_name} проверил запертую дверь на прочность и терпение с твёрдой мыслью идти дальше.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "break_in",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} объяснил замку, что визит был назначен судьбой и решил не рассказывать об этом трактирщику.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "break_in",
+                          "text_template":  "В час, когда ветер стих {hero_name} проверил запертую дверь на прочность и терпение прислушиваясь к миру вокруг.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "break_in",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} объяснил замку, что визит был назначен судьбой хотя инвентарь выглядел слегка озадаченным.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "break_in",
+                          "text_template":  "На рассвете {hero_name} проверил запертую дверь на прочность и терпение сохраняя спокойствие.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "break_in",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} объяснил замку, что визит был назначен судьбой но ни один мамонт не подал жалобу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "break_in",
+                          "text_template":  "После долгой дороги {hero_name} проверил запертую дверь на прочность и терпение с надеждой на удачу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "collect_herbs",
+                          "text_template":  "На рассвете {hero_name} бережно собрал {herb_name} и запомнил эту минуту.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "collect_herbs",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} собрал {herb_name} и убедился, что пчёлы не выдвинули претензий и даже Талос, вероятно, не стал спорить.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "collect_herbs",
+                          "text_template":  "После долгой дороги {hero_name} бережно собрал {herb_name} не теряя осторожности.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "collect_herbs",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} собрал {herb_name} и убедился, что пчёлы не выдвинули претензий но барды ещё не придумали для этого подходящий куплет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "collect_herbs",
+                          "text_template":  "Под серым небом {hero_name} бережно собрал {herb_name} оставив след лишь на пыльной дороге.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "collect_herbs",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} собрал {herb_name} и убедился, что пчёлы не выдвинули претензий а ближайший куст сохранил дипломатическое молчание.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "collect_herbs",
+                          "text_template":  "На окраине поселения {hero_name} бережно собрал {herb_name} с твёрдой мыслью идти дальше.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "collect_herbs",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} собрал {herb_name} и убедился, что пчёлы не выдвинули претензий и решил не рассказывать об этом трактирщику.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "collect_herbs",
+                          "text_template":  "В час, когда ветер стих {hero_name} бережно собрал {herb_name} прислушиваясь к миру вокруг.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "collect_herbs",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} собрал {herb_name} и убедился, что пчёлы не выдвинули претензий хотя инвентарь выглядел слегка озадаченным.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "collect_herbs",
+                          "text_template":  "На рассвете {hero_name} бережно собрал {herb_name} сохраняя спокойствие.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "collect_herbs",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} собрал {herb_name} и убедился, что пчёлы не выдвинули претензий но ни один мамонт не подал жалобу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "collect_herbs",
+                          "text_template":  "После долгой дороги {hero_name} бережно собрал {herb_name} с надеждой на удачу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "collect_herbs",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} собрал {herb_name} и убедился, что пчёлы не выдвинули претензий и мысленно потребовал за это достижение сладкий рулет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "collect_herbs",
+                          "text_template":  "Под серым небом {hero_name} бережно собрал {herb_name} с привычной нордской выдержкой.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "collect_herbs",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} собрал {herb_name} и убедился, что пчёлы не выдвинули претензий пока судьба листала свиток с пометкой «обычный вторник».",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "collect_herbs",
+                          "text_template":  "На окраине поселения {hero_name} бережно собрал {herb_name} не забывая о цели пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "collect_herbs",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} собрал {herb_name} и убедился, что пчёлы не выдвинули претензий а местный грязекраб ничего не понял, но одобрил.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "collect_herbs",
+                          "text_template":  "В час, когда ветер стих {hero_name} бережно собрал {herb_name} перед следующей главой пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "collect_herbs",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} собрал {herb_name} и убедился, что пчёлы не выдвинули претензий и пообещал больше не доверять советам летающих стрел.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "collect_herbs",
+                          "text_template":  "На рассвете {hero_name} бережно собрал {herb_name} и запомнил эту минуту.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "collect_herbs",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} собрал {herb_name} и убедился, что пчёлы не выдвинули претензий и даже Талос, вероятно, не стал спорить.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "collect_herbs",
+                          "text_template":  "После долгой дороги {hero_name} бережно собрал {herb_name} не теряя осторожности.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "collect_herbs",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} собрал {herb_name} и убедился, что пчёлы не выдвинули претензий но барды ещё не придумали для этого подходящий куплет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "collect_herbs",
+                          "text_template":  "Под серым небом {hero_name} бережно собрал {herb_name} оставив след лишь на пыльной дороге.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "collect_herbs",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} собрал {herb_name} и убедился, что пчёлы не выдвинули претензий а ближайший куст сохранил дипломатическое молчание.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "collect_herbs",
+                          "text_template":  "На окраине поселения {hero_name} бережно собрал {herb_name} с твёрдой мыслью идти дальше.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "collect_herbs",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} собрал {herb_name} и убедился, что пчёлы не выдвинули претензий и решил не рассказывать об этом трактирщику.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "collect_herbs",
+                          "text_template":  "В час, когда ветер стих {hero_name} бережно собрал {herb_name} прислушиваясь к миру вокруг.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "collect_herbs",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} собрал {herb_name} и убедился, что пчёлы не выдвинули претензий хотя инвентарь выглядел слегка озадаченным.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "collect_herbs",
+                          "text_template":  "На рассвете {hero_name} бережно собрал {herb_name} сохраняя спокойствие.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_defeat",
+                          "text_template":  "На рассвете {hero_name} отступил после тяжёлой встречи с {monster_name} и запомнил эту минуту.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_defeat",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} признал, что {monster_name} сегодня был убедительнее и даже Талос, вероятно, не стал спорить.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_defeat",
+                          "text_template":  "После долгой дороги {hero_name} отступил после тяжёлой встречи с {monster_name} не теряя осторожности.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_defeat",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} признал, что {monster_name} сегодня был убедительнее но барды ещё не придумали для этого подходящий куплет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_defeat",
+                          "text_template":  "Под серым небом {hero_name} отступил после тяжёлой встречи с {monster_name} оставив след лишь на пыльной дороге.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_defeat",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} признал, что {monster_name} сегодня был убедительнее а ближайший куст сохранил дипломатическое молчание.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_defeat",
+                          "text_template":  "На окраине поселения {hero_name} отступил после тяжёлой встречи с {monster_name} с твёрдой мыслью идти дальше.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_defeat",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} признал, что {monster_name} сегодня был убедительнее и решил не рассказывать об этом трактирщику.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_defeat",
+                          "text_template":  "В час, когда ветер стих {hero_name} отступил после тяжёлой встречи с {monster_name} прислушиваясь к миру вокруг.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_defeat",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} признал, что {monster_name} сегодня был убедительнее хотя инвентарь выглядел слегка озадаченным.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_defeat",
+                          "text_template":  "На рассвете {hero_name} отступил после тяжёлой встречи с {monster_name} сохраняя спокойствие.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_defeat",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} признал, что {monster_name} сегодня был убедительнее но ни один мамонт не подал жалобу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_defeat",
+                          "text_template":  "После долгой дороги {hero_name} отступил после тяжёлой встречи с {monster_name} с надеждой на удачу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_defeat",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} признал, что {monster_name} сегодня был убедительнее и мысленно потребовал за это достижение сладкий рулет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_defeat",
+                          "text_template":  "Под серым небом {hero_name} отступил после тяжёлой встречи с {monster_name} с привычной нордской выдержкой.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_defeat",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} признал, что {monster_name} сегодня был убедительнее пока судьба листала свиток с пометкой «обычный вторник».",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_defeat",
+                          "text_template":  "На окраине поселения {hero_name} отступил после тяжёлой встречи с {monster_name} не забывая о цели пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_defeat",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} признал, что {monster_name} сегодня был убедительнее а местный грязекраб ничего не понял, но одобрил.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_defeat",
+                          "text_template":  "В час, когда ветер стих {hero_name} отступил после тяжёлой встречи с {monster_name} перед следующей главой пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_defeat",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} признал, что {monster_name} сегодня был убедительнее и пообещал больше не доверять советам летающих стрел.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_defeat",
+                          "text_template":  "На рассвете {hero_name} отступил после тяжёлой встречи с {monster_name} и запомнил эту минуту.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_defeat",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} признал, что {monster_name} сегодня был убедительнее и даже Талос, вероятно, не стал спорить.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_defeat",
+                          "text_template":  "После долгой дороги {hero_name} отступил после тяжёлой встречи с {monster_name} не теряя осторожности.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_defeat",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} признал, что {monster_name} сегодня был убедительнее но барды ещё не придумали для этого подходящий куплет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_defeat",
+                          "text_template":  "Под серым небом {hero_name} отступил после тяжёлой встречи с {monster_name} оставив след лишь на пыльной дороге.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_defeat",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} признал, что {monster_name} сегодня был убедительнее а ближайший куст сохранил дипломатическое молчание.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_defeat",
+                          "text_template":  "На окраине поселения {hero_name} отступил после тяжёлой встречи с {monster_name} с твёрдой мыслью идти дальше.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_defeat",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} признал, что {monster_name} сегодня был убедительнее и решил не рассказывать об этом трактирщику.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_defeat",
+                          "text_template":  "В час, когда ветер стих {hero_name} отступил после тяжёлой встречи с {monster_name} прислушиваясь к миру вокруг.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_defeat",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} признал, что {monster_name} сегодня был убедительнее хотя инвентарь выглядел слегка озадаченным.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_defeat",
+                          "text_template":  "На рассвете {hero_name} отступил после тяжёлой встречи с {monster_name} сохраняя спокойствие.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_defeat",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} признал, что {monster_name} сегодня был убедительнее но ни один мамонт не подал жалобу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_defeat",
+                          "text_template":  "После долгой дороги {hero_name} отступил после тяжёлой встречи с {monster_name} с надеждой на удачу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_defeat",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} признал, что {monster_name} сегодня был убедительнее и мысленно потребовал за это достижение сладкий рулет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_result",
+                          "text_template":  "На рассвете {hero_name} завершил схватку с {monster_name}, получив {xp} опыта и {gold} золота и запомнил эту минуту.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_result",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} пересчитал после боя с {monster_name}: {xp} опыта, {gold} золота и даже Талос, вероятно, не стал спорить.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_result",
+                          "text_template":  "После долгой дороги {hero_name} завершил схватку с {monster_name}, получив {xp} опыта и {gold} золота не теряя осторожности.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_result",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} пересчитал после боя с {monster_name}: {xp} опыта, {gold} золота но барды ещё не придумали для этого подходящий куплет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_result",
+                          "text_template":  "Под серым небом {hero_name} завершил схватку с {monster_name}, получив {xp} опыта и {gold} золота оставив след лишь на пыльной дороге.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_result",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} пересчитал после боя с {monster_name}: {xp} опыта, {gold} золота а ближайший куст сохранил дипломатическое молчание.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_result",
+                          "text_template":  "На окраине поселения {hero_name} завершил схватку с {monster_name}, получив {xp} опыта и {gold} золота с твёрдой мыслью идти дальше.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_result",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} пересчитал после боя с {monster_name}: {xp} опыта, {gold} золота и решил не рассказывать об этом трактирщику.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_result",
+                          "text_template":  "В час, когда ветер стих {hero_name} завершил схватку с {monster_name}, получив {xp} опыта и {gold} золота прислушиваясь к миру вокруг.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_result",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} пересчитал после боя с {monster_name}: {xp} опыта, {gold} золота хотя инвентарь выглядел слегка озадаченным.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_result",
+                          "text_template":  "На рассвете {hero_name} завершил схватку с {monster_name}, получив {xp} опыта и {gold} золота сохраняя спокойствие.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_result",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} пересчитал после боя с {monster_name}: {xp} опыта, {gold} золота но ни один мамонт не подал жалобу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_result",
+                          "text_template":  "После долгой дороги {hero_name} завершил схватку с {monster_name}, получив {xp} опыта и {gold} золота с надеждой на удачу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_result",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} пересчитал после боя с {monster_name}: {xp} опыта, {gold} золота и мысленно потребовал за это достижение сладкий рулет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_result",
+                          "text_template":  "Под серым небом {hero_name} завершил схватку с {monster_name}, получив {xp} опыта и {gold} золота с привычной нордской выдержкой.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_result",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} пересчитал после боя с {monster_name}: {xp} опыта, {gold} золота пока судьба листала свиток с пометкой «обычный вторник».",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_result",
+                          "text_template":  "На окраине поселения {hero_name} завершил схватку с {monster_name}, получив {xp} опыта и {gold} золота не забывая о цели пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_result",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} пересчитал после боя с {monster_name}: {xp} опыта, {gold} золота а местный грязекраб ничего не понял, но одобрил.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_result",
+                          "text_template":  "В час, когда ветер стих {hero_name} завершил схватку с {monster_name}, получив {xp} опыта и {gold} золота перед следующей главой пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_result",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} пересчитал после боя с {monster_name}: {xp} опыта, {gold} золота и пообещал больше не доверять советам летающих стрел.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_result",
+                          "text_template":  "На рассвете {hero_name} завершил схватку с {monster_name}, получив {xp} опыта и {gold} золота и запомнил эту минуту.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_result",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} пересчитал после боя с {monster_name}: {xp} опыта, {gold} золота и даже Талос, вероятно, не стал спорить.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_result",
+                          "text_template":  "После долгой дороги {hero_name} завершил схватку с {monster_name}, получив {xp} опыта и {gold} золота не теряя осторожности.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_result",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} пересчитал после боя с {monster_name}: {xp} опыта, {gold} золота но барды ещё не придумали для этого подходящий куплет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_result",
+                          "text_template":  "Под серым небом {hero_name} завершил схватку с {monster_name}, получив {xp} опыта и {gold} золота оставив след лишь на пыльной дороге.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_result",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} пересчитал после боя с {monster_name}: {xp} опыта, {gold} золота а ближайший куст сохранил дипломатическое молчание.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_result",
+                          "text_template":  "На окраине поселения {hero_name} завершил схватку с {monster_name}, получив {xp} опыта и {gold} золота с твёрдой мыслью идти дальше.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_result",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} пересчитал после боя с {monster_name}: {xp} опыта, {gold} золота и решил не рассказывать об этом трактирщику.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_result",
+                          "text_template":  "В час, когда ветер стих {hero_name} завершил схватку с {monster_name}, получив {xp} опыта и {gold} золота прислушиваясь к миру вокруг.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_result",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} пересчитал после боя с {monster_name}: {xp} опыта, {gold} золота хотя инвентарь выглядел слегка озадаченным.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_start",
+                          "text_template":  "На рассвете {hero_name} вскинул оружие перед {monster_name} и запомнил эту минуту.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_start",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} измерил взглядом {monster_name} и даже Талос, вероятно, не стал спорить.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_start",
+                          "text_template":  "После долгой дороги {hero_name} вскинул оружие перед {monster_name} не теряя осторожности.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_start",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} измерил взглядом {monster_name} но барды ещё не придумали для этого подходящий куплет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_start",
+                          "text_template":  "Под серым небом {hero_name} вскинул оружие перед {monster_name} оставив след лишь на пыльной дороге.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_start",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} измерил взглядом {monster_name} а ближайший куст сохранил дипломатическое молчание.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_start",
+                          "text_template":  "На окраине поселения {hero_name} вскинул оружие перед {monster_name} с твёрдой мыслью идти дальше.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_start",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} измерил взглядом {monster_name} и решил не рассказывать об этом трактирщику.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_start",
+                          "text_template":  "В час, когда ветер стих {hero_name} вскинул оружие перед {monster_name} прислушиваясь к миру вокруг.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_start",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} измерил взглядом {monster_name} хотя инвентарь выглядел слегка озадаченным.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_start",
+                          "text_template":  "На рассвете {hero_name} вскинул оружие перед {monster_name} сохраняя спокойствие.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_start",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} измерил взглядом {monster_name} но ни один мамонт не подал жалобу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_start",
+                          "text_template":  "После долгой дороги {hero_name} вскинул оружие перед {monster_name} с надеждой на удачу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_start",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} измерил взглядом {monster_name} и мысленно потребовал за это достижение сладкий рулет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_start",
+                          "text_template":  "Под серым небом {hero_name} вскинул оружие перед {monster_name} с привычной нордской выдержкой.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_start",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} измерил взглядом {monster_name} пока судьба листала свиток с пометкой «обычный вторник».",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_start",
+                          "text_template":  "На окраине поселения {hero_name} вскинул оружие перед {monster_name} не забывая о цели пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "combat_start",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} измерил взглядом {monster_name} а местный грязекраб ничего не понял, но одобрил.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death",
+                          "text_template":  "На рассвете {hero_name} пал в дороге, когда силы окончательно иссякли и запомнил эту минуту.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} проиграл спор с суровой реальностью; та снова использовала аргумент «смерть» и даже Талос, вероятно, не стал спорить.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death",
+                          "text_template":  "После долгой дороги {hero_name} пал в дороге, когда силы окончательно иссякли не теряя осторожности.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} проиграл спор с суровой реальностью; та снова использовала аргумент «смерть» но барды ещё не придумали для этого подходящий куплет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death",
+                          "text_template":  "Под серым небом {hero_name} пал в дороге, когда силы окончательно иссякли оставив след лишь на пыльной дороге.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} проиграл спор с суровой реальностью; та снова использовала аргумент «смерть» а ближайший куст сохранил дипломатическое молчание.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death",
+                          "text_template":  "На окраине поселения {hero_name} пал в дороге, когда силы окончательно иссякли с твёрдой мыслью идти дальше.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} проиграл спор с суровой реальностью; та снова использовала аргумент «смерть» и решил не рассказывать об этом трактирщику.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death",
+                          "text_template":  "В час, когда ветер стих {hero_name} пал в дороге, когда силы окончательно иссякли прислушиваясь к миру вокруг.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} проиграл спор с суровой реальностью; та снова использовала аргумент «смерть» хотя инвентарь выглядел слегка озадаченным.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death",
+                          "text_template":  "На рассвете {hero_name} пал в дороге, когда силы окончательно иссякли сохраняя спокойствие.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} проиграл спор с суровой реальностью; та снова использовала аргумент «смерть» но ни один мамонт не подал жалобу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death",
+                          "text_template":  "После долгой дороги {hero_name} пал в дороге, когда силы окончательно иссякли с надеждой на удачу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} проиграл спор с суровой реальностью; та снова использовала аргумент «смерть» и мысленно потребовал за это достижение сладкий рулет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death",
+                          "text_template":  "Под серым небом {hero_name} пал в дороге, когда силы окончательно иссякли с привычной нордской выдержкой.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} проиграл спор с суровой реальностью; та снова использовала аргумент «смерть» пока судьба листала свиток с пометкой «обычный вторник».",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death",
+                          "text_template":  "На окраине поселения {hero_name} пал в дороге, когда силы окончательно иссякли не забывая о цели пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} проиграл спор с суровой реальностью; та снова использовала аргумент «смерть» а местный грязекраб ничего не понял, но одобрил.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death",
+                          "text_template":  "В час, когда ветер стих {hero_name} пал в дороге, когда силы окончательно иссякли перед следующей главой пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} проиграл спор с суровой реальностью; та снова использовала аргумент «смерть» и пообещал больше не доверять советам летающих стрел.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death",
+                          "text_template":  "На рассвете {hero_name} пал в дороге, когда силы окончательно иссякли и запомнил эту минуту.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} проиграл спор с суровой реальностью; та снова использовала аргумент «смерть» и даже Талос, вероятно, не стал спорить.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death",
+                          "text_template":  "После долгой дороги {hero_name} пал в дороге, когда силы окончательно иссякли не теряя осторожности.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} проиграл спор с суровой реальностью; та снова использовала аргумент «смерть» но барды ещё не придумали для этого подходящий куплет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death",
+                          "text_template":  "Под серым небом {hero_name} пал в дороге, когда силы окончательно иссякли оставив след лишь на пыльной дороге.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} проиграл спор с суровой реальностью; та снова использовала аргумент «смерть» а ближайший куст сохранил дипломатическое молчание.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death",
+                          "text_template":  "На окраине поселения {hero_name} пал в дороге, когда силы окончательно иссякли с твёрдой мыслью идти дальше.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} проиграл спор с суровой реальностью; та снова использовала аргумент «смерть» и решил не рассказывать об этом трактирщику.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death",
+                          "text_template":  "В час, когда ветер стих {hero_name} пал в дороге, когда силы окончательно иссякли прислушиваясь к миру вокруг.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} проиграл спор с суровой реальностью; та снова использовала аргумент «смерть» хотя инвентарь выглядел слегка озадаченным.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "На рассвете {hero_name} вернулся к жизни в {location}, начиная путь заново и запомнил эту минуту.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} очнулся в {location}; смерть, как обычно, не приложила инструкции и даже Талос, вероятно, не стал спорить.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "После долгой дороги {hero_name} вернулся к жизни в {location}, начиная путь заново не теряя осторожности.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} очнулся в {location}; смерть, как обычно, не приложила инструкции но барды ещё не придумали для этого подходящий куплет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "Под серым небом {hero_name} вернулся к жизни в {location}, начиная путь заново оставив след лишь на пыльной дороге.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} очнулся в {location}; смерть, как обычно, не приложила инструкции а ближайший куст сохранил дипломатическое молчание.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "На окраине поселения {hero_name} вернулся к жизни в {location}, начиная путь заново с твёрдой мыслью идти дальше.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} очнулся в {location}; смерть, как обычно, не приложила инструкции и решил не рассказывать об этом трактирщику.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "В час, когда ветер стих {hero_name} вернулся к жизни в {location}, начиная путь заново прислушиваясь к миру вокруг.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} очнулся в {location}; смерть, как обычно, не приложила инструкции хотя инвентарь выглядел слегка озадаченным.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "На рассвете {hero_name} вернулся к жизни в {location}, начиная путь заново сохраняя спокойствие.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} очнулся в {location}; смерть, как обычно, не приложила инструкции но ни один мамонт не подал жалобу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "После долгой дороги {hero_name} вернулся к жизни в {location}, начиная путь заново с надеждой на удачу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} очнулся в {location}; смерть, как обычно, не приложила инструкции и мысленно потребовал за это достижение сладкий рулет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "Под серым небом {hero_name} вернулся к жизни в {location}, начиная путь заново с привычной нордской выдержкой.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} очнулся в {location}; смерть, как обычно, не приложила инструкции пока судьба листала свиток с пометкой «обычный вторник».",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "На окраине поселения {hero_name} вернулся к жизни в {location}, начиная путь заново не забывая о цели пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} очнулся в {location}; смерть, как обычно, не приложила инструкции а местный грязекраб ничего не понял, но одобрил.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "В час, когда ветер стих {hero_name} вернулся к жизни в {location}, начиная путь заново перед следующей главой пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} очнулся в {location}; смерть, как обычно, не приложила инструкции и пообещал больше не доверять советам летающих стрел.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "На рассвете {hero_name} вернулся к жизни в {location}, начиная путь заново и запомнил эту минуту.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} очнулся в {location}; смерть, как обычно, не приложила инструкции и даже Талос, вероятно, не стал спорить.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "После долгой дороги {hero_name} вернулся к жизни в {location}, начиная путь заново не теряя осторожности.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "death_respawn",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} очнулся в {location}; смерть, как обычно, не приложила инструкции но барды ещё не придумали для этого подходящий куплет.",
+                          "source":  "community"
+                      }
+                  ]
+}

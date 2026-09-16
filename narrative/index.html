@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TES Idle · Narrative Classifier</title>
+<style>
+:root{--bg:#101c22;--surface:#17262d;--raised:#20333b;--line:#33464d;--ink:#e9e9de;--muted:#a3b4b9;--gold:#d6b87c;--danger:#ed9b8e;--ok:#94bb9f;--mono:"Fira Code",ui-monospace,Consolas,monospace;--serif:Georgia,"Times New Roman",serif}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 system-ui,sans-serif}.shell{max-width:1500px;margin:auto;padding:30px}.mast{display:grid;grid-template-columns:auto 1fr auto;gap:22px;align-items:center;border-bottom:1px solid var(--line);padding-bottom:28px}.seal{display:grid;place-items:center;width:58px;height:70px;border:1px solid var(--gold);border-radius:50% 50% 42% 42%;color:var(--gold);font:31px var(--serif)}.eyebrow{margin:0;color:var(--gold);font:12px var(--mono);letter-spacing:.12em;text-transform:uppercase}h1,h2,h3{font-family:var(--serif)}h1{font-size:clamp(38px,5vw,64px);line-height:1;margin:8px 0}h2{font-size:28px;margin:0 0 8px}h3{font-size:20px;margin:0 0 6px}.mast p:last-child,.muted{color:var(--muted)}.badge{border:1px solid var(--line);padding:10px 13px;border-radius:7px;color:var(--muted);font-size:13px}.grid{display:grid;grid-template-columns:320px minmax(0,1fr);gap:24px;margin-top:28px}.side,.card{background:var(--surface);border:1px solid var(--line);border-radius:11px}.side{padding:16px;align-self:start;position:sticky;top:16px}.side h2{font-size:22px}.search,select,textarea,input{width:100%;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);padding:10px;font:inherit}.search{margin:12px 0}.type-list{display:grid;gap:3px;max-height:66vh;overflow:auto}.type-list button{border:0;border-left:2px solid transparent;background:transparent;color:var(--muted);text-align:left;padding:8px;cursor:pointer;border-radius:3px}.type-list button:hover,.type-list button.active{background:var(--raised);color:var(--ink);border-left-color:var(--gold)}.content{display:grid;gap:24px}.card{padding:24px}.vars{display:flex;flex-wrap:wrap;gap:8px}.var{border:1px solid var(--line);border-radius:5px;padding:6px 8px;background:var(--raised);font:12px var(--mono);cursor:pointer}.var:hover{border-color:var(--gold);color:var(--gold)}.detail{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px}.detail p{margin:0}.note{border-left:2px solid var(--gold);padding:12px 14px;background:color-mix(in srgb,var(--gold) 7%,transparent);color:var(--muted)}.controls{display:grid;grid-template-columns:1fr 180px 120px;gap:12px;margin:18px 0}.prompt{min-height:390px;font:13px/1.55 var(--mono);white-space:pre-wrap}.actions{display:flex;gap:10px;align-items:center}.button{border:1px solid var(--gold);border-radius:6px;background:var(--gold);color:#16242b;padding:10px 14px;font-weight:700;cursor:pointer}.button.secondary{background:transparent;color:var(--gold)}.status{color:var(--ok);font-size:13px}.base-table{width:100%;border-collapse:collapse;font-size:14px}.base-table th,.base-table td{padding:10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}.base-table th{color:var(--muted);font-weight:500}.base-table code{color:var(--gold)}.rules{display:grid;grid-template-columns:1fr 1fr;gap:14px}.rules ul{margin:8px 0;padding-left:20px}.good{border-top:2px solid var(--ok)}.bad{border-top:2px solid var(--danger)}code{color:var(--gold)}@media(max-width:800px){.shell{padding:18px}.mast{grid-template-columns:auto 1fr}.badge{grid-column:1/-1}.grid{grid-template-columns:1fr}.side{position:static}.type-list{max-height:260px;grid-template-columns:repeat(2,minmax(0,1fr))}.detail,.rules,.controls{grid-template-columns:1fr}.card{padding:18px}}
+</style>
+</head>
+<body><main class="shell"><header class="mast"><div class="seal">✦</div><div><p class="eyebrow">TES Idle · автономный справочник</p><h1>Мастерская<br><em style="color:var(--gold);font-weight:400">нарративов</em></h1><p class="muted">Классификатор допустимых переменных, типов и prompt для качественных JSON-пакетов.</p></div><div class="badge">Источник истины<br><b>BatchImporter</b><br>Макс. 200 строк / файл</div></header><section class="grid"><aside class="side"><h2>Тип события</h2><input id="search" class="search" placeholder="Найти тип…" aria-label="Поиск типа шаблона"><div id="types" class="type-list"></div></aside><div class="content"><section class="card"><p class="eyebrow">Разрешённый контекст</p><h2 id="typeTitle">explore</h2><p id="typeDesc" class="muted"></p><div id="typeVars" class="vars"></div><div class="detail"><div><h3>Пример JSON</h3><pre id="jsonExample" class="prompt" style="min-height:160px"></pre></div><div><h3>Как писать</h3><p id="typeGuide" class="note"></p></div></div></section><section class="card"><p class="eyebrow">Prompt-генератор</p><h2>Сцены без механических повторов</h2><div class="controls"><select id="style" aria-label="Стиль"><option value="ordinary">Обычный · атмосферный</option><option value="comic">Комичный · TES-отсылка</option><option value="hard">Хардкорный · суровый</option><option value="lyrical">Лирический · созерцательный</option><option value="restrained">Сдержанный · хроникальный</option></select><select id="source" aria-label="Источник"><option value="community">community · модерация</option><option value="system">system · только при active_system</option></select><input id="count" type="number" min="1" max="60" value="20" aria-label="Число сцен"></div><textarea id="prompt" class="prompt" readonly spellcheck="false"></textarea><div class="actions"><button id="copy" class="button">Скопировать prompt</button><button id="refresh" class="button secondary">Обновить</button><span id="status" class="status" role="status"></span></div></section><section class="card"><p class="eyebrow">Базовые переменные</p><h2>Разрешены у всех типов</h2><table class="base-table"><thead><tr><th>Переменная</th><th>Значение</th><th>Пример</th></tr></thead><tbody id="baseVars"></tbody></table></section><section class="rules"><article class="card good"><h3>Делайте</h3><ul><li>Каждая строка — отдельная сцена с новым действием или наблюдением.</li><li>Меняйте глагол, ритм, точку зрения, момент и итог.</li><li>Держите примерно 50/50 обычного и комичного тона внутри одного типа.</li><li>Сохраняйте UTF-8; проверяйте preview перед импортом.</li></ul></article><article class="card bad"><h3>Не делайте</h3><ul><li>Не используйте «одинаковое начало + другой хвост».</li><li>Не добавляйте номера, «вариант 17» и искусственные маркеры уникальности.</li><li>Не используйте произвольные <code>{variables}</code>.</li><li>Не импортируйте моджибейку вида <code>РќР°...</code>.</li></ul></article></section></div></section></main><script>
+const base={
+  hero_name:['Имя героя','Хальвар'],
+  location_name:['Название локации','Ривервуд'],
+  location_type:['Технический тип места','village'],
+  god_name:['Имя божества','Талос'],
+  mood:['Настроение 0–100','72']
+};
+
+const extra={
+  explore:['terrain','discovery','landmark'],
+  combat_start:['monster_name','landmark'],
+  combat_result:['monster_name','xp','gold','rounds','_combat_verbs'],
+  combat_defeat:['monster_name'],
+  shop:['item_name','gold_spent','npc_name','shop_item'],
+  social:['gamble_result','npc_name','rumor','tavern'],
+  travel:['destination'],
+  loot:['loot_text'],
+  fishing:['fish_name'],
+  gather:['herb_name'],
+  collect_herbs:['herb_name'],
+  mining:['ore_name'],
+  steal:['stolen_gold','witness_name','bounty_gold','fine_gold','witness_outcome'],
+  break_in:['trap_hp','break_in_ok','break_in_trap','break_in_noise','break_in_fail'],
+  jail:['jail_reason','jail_ticks','jail_escaped','jail_escape_fail','jail_free'],
+  pet_care:['pet_name','pet_species','pet_care_kind','pet_loyalty'],
+  death_respawn:['location','generation'],
+  dream:['location_name'],
+  world_news:['event'],
+  construction_donation:['amount','project_name'],
+  gate_donation:['amount','location_name'],
+  gate_closed:['location_name'],
+  enhance_success:['item_name','level','price'],
+  guild_shop_purchase:['item_name','price'],
+  guild_founded:['guild_name','emblem','leader'],
+  guild_levelup:['guild_name','emblem','level'],
+  guild_feast:['guild_name','emblem'],
+  hero_encounter_initiator:['other_hero_name','location_name','encounter_kind'],
+  hero_encounter_counterpart:['other_hero_name','location_name','encounter_kind']
+};
+
+const samples={
+  hero_name:'Хальвар', location_name:'Ривервуд', god_name:'Талос', mood:'72',
+  terrain:'густому лесу', discovery:'старую карту', landmark:'старого дуба',
+  monster_name:'серый волк', xp:'25', gold:'12', rounds:'3', _combat_verbs:'сверкнул',
+  item_name:'стальной меч', gold_spent:'10', npc_name:'Олаф', shop_item:'стальной наплечник',
+  gamble_result:'выиграл немного золота', rumor:'на востоке видели дракона',
+  tavern:'«Пьяный дракон»', destination:'Вайтран', loot_text:'немного золота',
+  fish_name:'ловкую форель', herb_name:'пучок лаванды', ore_name:'железная жила',
+  stolen_gold:'15', witness_name:'Олаф Двужильный', bounty_gold:'25', fine_gold:'30',
+  witness_outcome:'clean',
+  trap_hp:'10', break_in_ok:'false', break_in_trap:'false',
+  break_in_noise:'false', break_in_fail:'false',
+  jail_reason:'кражу', jail_ticks:'5', jail_escaped:'false',
+  jail_escape_fail:'false', jail_free:'false',
+  pet_name:'Мурчелло', pet_species:'кот', pet_care_kind:'покормил', pet_loyalty:'70',
+  location:'Вайтран', generation:'3', event:'ветер переменился',
+  amount:'50', project_name:'Часовня Девяти', level:'2', price:'50',
+  guild_name:'Соратники', emblem:'🛡️', leader:'Хальвар',
+  other_hero_name:'Сигрун', encounter_kind:'дружеская'
+};
+
+const names={
+  explore:'Исследование', combat_start:'Начало боя', combat_result:'Итог боя',
+  combat_defeat:'Поражение', shop:'Лавка', social:'Общение', travel:'Путь',
+  loot:'Добыча', fishing:'Рыбалка', gather:'Сбор трав', mining:'Горное дело',
+  steal:'Кража', break_in:'Взлом', jail:'Тюрьма', pet_care:'Питомец',
+  death_respawn:'Возрождение', dream:'Сон', world_news:'Весть мира',
+  construction_donation:'Стройка', gate_donation:'Врата', enhance_success:'Кузня',
+  guild_shop_purchase:'Лавка гильдии',
+  hero_encounter_initiator:'Встреча · инициатор',
+  hero_encounter_counterpart:'Встреча · ответ'
+};
+
+// Специфичные подсказки для сложных типов
+const typeHints = {
+  combat_result: 'Поле {_combat_verbs} — это ОДИН глагол в прошедшем времени («сверкнул», «рубанул», «увернулся»). Вставляй его как действие героя или врага, а не как техническую метку.',
+  steal: 'Поле {witness_outcome} — техническое (clean/spotted/caught). НЕ вставляй его в художественный текст напрямую; вместо этого опиши исход словами: «никто не заметил», «стражник окликнул», «схватили на месте».',
+  break_in: 'Поля {break_in_ok}, {break_in_trap}, {break_in_noise}, {break_in_fail} — технические boolean. НЕ пиши «false» в тексте. Для каждой строки выбери ОДИН сценарий (успех / ловушка / шум / провал) и опиши его художественно, используя {trap_hp} как число урона.',
+  jail: 'Поля {jail_escaped}, {jail_escape_fail}, {jail_free} — технические boolean. Выбери ОДИН сценарий на строку и опиши словами: «остался в камере», «попытка провалилась», «вышел на волю».',
+  combat_start: 'Сцена должна заканчиваться моментом перехода к бою — обнажение оружия, первый выпад, крик.',
+  combat_defeat: 'Без героического пафоса: усталость, темнота, холод, последнее, что увидел герой.',
+  death_respawn: 'Мистический тон: пробуждение, память прошлых жизней, {generation} — число воплощений.',
+  dream: 'Образный, зыбкий текст; {location_name} всплывает как видение, а не как факт.',
+  social: 'Живая речь, детали таверны, намёки в {rumor}.',
+  hero_encounter_initiator: 'Герой сам инициирует контакт: оклик, жест, предложение.',
+  hero_encounter_counterpart: 'Героя окликнули первым: реакция, оценка, ответ.'
+};
+
+let current='explore';
+const all=[...new Set([...Object.keys(extra),
+  'rest','thought','death',
+  'god_encourage','god_punish','god_heal','god_direct','god_quest','god_weather',
+  'equip','remember_defeat','find_loot','hero_victory','hero_defeat','enemy_ambush',
+  'spot_bandits','hear_wolves','leave_city','travel_road','travel_shortcut',
+  'cross_bridge','enter_city','bad_weather','discover_ruin','discover_cave',
+  'find_shrine','find_abandoned_cart','notice_tracks','find_tracks','hear_river',
+  'hear_birds','smell_flowers','sleep_in_inn','rest_by_fire','watch_sunset',
+  'meet_merchant','learn_rumors','hear_song','shelter_from_storm','discover_treasure',
+  'avoid_danger','search_danger'
+])].sort();
+
+function vars(t){return [...Object.keys(base),...(extra[t]||[])].filter((v,i,a)=>a.indexOf(v)===i)}
+
+function renderTypes(q=''){
+  const root=document.querySelector('#types');
+  root.innerHTML='';
+  all.filter(t=>t.includes(q.toLowerCase())||(names[t]||'').toLowerCase().includes(q.toLowerCase()))
+    .forEach(t=>{
+      const b=document.createElement('button');
+      b.textContent=names[t]||t;
+      b.className=t===current?'active':'';
+      b.onclick=()=>{current=t;renderTypes(document.querySelector('#search').value);render()};
+      root.append(b);
+    });
+}
+
+function render(){
+  document.querySelector('#typeTitle').textContent=`${names[current]||current} · ${current}`;
+  const v=vars(current);
+  document.querySelector('#typeDesc').textContent=`Для типа «${current}» importer разрешает ${v.length} переменных. Нажмите на переменную, чтобы скопировать её.`;
+
+  const root=document.querySelector('#typeVars');
+  root.innerHTML='';
+  v.forEach(x=>{
+    const e=document.createElement('button');
+    e.className='var';
+    e.textContent=`{${x}}`;
+    e.title=samples[x]||base[x]?.[0]||'Базовый контекст';
+    e.onclick=()=>navigator.clipboard.writeText(`{${x}}`);
+    root.append(e);
+  });
+
+  // Пример JSON: подставляем реальные примеры значений
+  const demoText = buildDemoText(current, v);
+  const obj={
+    activation_policy:'pending',
+    templates:[{
+      template_type:current,
+      text_template:demoText,
+      source:'community',
+      variables:v,
+      mood_min:20, mood_max:80
+    }]
+  };
+  document.querySelector('#jsonExample').textContent=JSON.stringify(obj,null,2);
+
+  const hint = typeHints[current];
+  document.querySelector('#typeGuide').innerHTML = hint
+    ? `<b>Специфика типа:</b> ${hint}<br><br><b>Разрешены:</b> ${v.map(x=>`<code>{${x}}</code>`).join(', ')}.`
+    : `Используйте только: ${v.map(x=>`<code>{${x}}</code>`).join(', ')}. Не пишите технические boolean-поля как художественный факт без нужного event-типа.`;
+
+  prompt();
+}
+
+// Строим демо-строку с реальными примерами значений
+function buildDemoText(type, v){
+  const map = {...samples};
+  // для базовых берём примеры из base
+  Object.entries(base).forEach(([k,[,ex]])=>{ map[k]=ex; });
+  let tpl;
+  switch(type){
+    case 'explore':        tpl=`{hero_name} пробирается через {terrain} и замечает {discovery} у {landmark}.`; break;
+    case 'combat_start':   tpl=`{monster_name} преграждает путь у {landmark} — {hero_name} вынимает клинок.`; break;
+    case 'combat_result':  tpl=`{hero_name} {._combat_verbs} врага и забирает {gold} золота, получив {xp} опыта за {rounds} раундов.`.replace('{._combat_verbs}','{_combat_verbs}'); break;
+    case 'shop':           tpl=`{npc_name} продаёт {shop_item}; {hero_name} отдаёт {gold_spent} золота за {item_name}.`; break;
+    case 'social':         tpl=`В таверне {tavern} {npc_name} шепчет {rumor}, а {hero_name} {gamble_result}.`; break;
+    case 'steal':          tpl=`{hero_name} уносит {stolen_gold} золота; {witness_name} может донести.`; break;
+    case 'break_in':       tpl=`Замок поддаётся, но {trap_hp} урона от ловушки — {hero_name} уходит с добычей.`; break;
+    case 'jail':           tpl=`{hero_name} сидит за {jail_reason}; осталось {jail_ticks} тиков до суда.`; break;
+    case 'pet_care':       tpl=`{hero_name} {pet_care_kind} {pet_species}а {pet_name}; лояльность — {pet_loyalty}.`; break;
+    case 'death_respawn':  tpl=`{hero_name} приходит в себя в {location}; это уже {generation}-е воплощение.`; break;
+    case 'dream':          tpl=`Во сне {hero_name} видит {location_name} — далёкий и неясный.`; break;
+    case 'world_news':     tpl=`Гонцы принесли весть: {event}. {hero_name} в {location_name} настораживается.`; break;
+    case 'mining':         tpl=`{hero_name} находит {ore_name} в трещине жилы.`; break;
+    case 'fishing':        tpl=`На крючке — {fish_name}; {hero_name} аккуратно снимает добычу.`; break;
+    case 'gather': case 'collect_herbs': tpl=`{hero_name} собирает {herb_name} на лесной опушке.`; break;
+    case 'guild_founded':  tpl=`{leader} поднимает знамя: гильдия {guild_name} {emblem} основана.`; break;
+    case 'hero_encounter_initiator': tpl=`{hero_name} окликает {other_hero_name} в {location_name}; встреча — {encounter_kind}.`; break;
+    case 'hero_encounter_counterpart': tpl=`{other_hero_name} окликает {hero_name} в {location_name}; встреча — {encounter_kind}.`; break;
+    default:               tpl=`{hero_name} в {location_name} — обычный день.`;
+  }
+  return tpl;
+}
+
+function prompt(){
+  const style=document.querySelector('#style').value;
+  const count=parseInt(document.querySelector('#count').value,10)||20;
+  const source=document.querySelector('#source').value;
+  const v=vars(current);
+  const hint=typeHints[current];
+
+  // Примеры значений переменных — чтобы модель понимала контекст
+  const varExamples = v.map(x=>{
+    const val = samples[x] || base[x]?.[1] || '—';
+    return `  {${x}} → «${val}»`;
+  }).join('\n');
+
+  const tones={
+    ordinary:'Обычный атмосферный TES-тон: конкретная сцена, ясный образ, без шутки ради шутки. Мир ощущается живым: запахи, звуки, свет, усталость.',
+    comic:'Комичный TES-тон: юмор растёт из ситуации. Допустимы деликатные отсылки к даэдра, ярлам, двемерам, стражникам, свиткам, сладкоцветам. Никаких современных мемов.',
+    hard:'Суровый тон: холод, риск, цена пути, усталость, практичность. Без героической бравады и пафоса.',
+    lyrical:'Лирический тон: ритм, погода, свет, память, пейзаж. Конкретные образы, без туманных абстракций.',
+    restrained:'Хроникальный тон: сдержанно зафиксируй факт и его человеческое последствие. Короткая фраза, вес каждого слова.'
+  };
+
+  const mandatory = `Каждая строка обязана быть самостоятельной сценой. Запрещено строить варианты по формуле «одинаковое начало + другой хвост», менять только предмет, добавлять нумерацию или искусственные маркеры уникальности.`;
+
+  const toneMix = (style==='ordinary' || style==='hard' || style==='lyrical' || style==='restrained')
+    ? `Сделай примерно половину строк в выбранном тоне и половину — с лёгким комичным оттенком TES. Не помечай тон в тексте.`
+    : `Все ${count} строк — в выбранном комичном тоне. Не помечай тон в тексте.`;
+
+  const booleanWarning = (['break_in','jail','steal'].includes(current))
+    ? `\nВАЖНО: в этом типе есть технические boolean-переменные. НИКОГДА не пиши в тексте слова "false"/"true" или сырые технические значения. Для каждой строки выбирай ОДИН художественный сценарий и описывай его словами.`
+    : '';
+
+  const technicalWarning = v.includes('_combat_verbs') || v.includes('witness_outcome')
+    ? `\nТехнические поля ({_combat_verbs} — глагол; {witness_outcome} — код исхода) вставляй только в правильной грамматической роли: глагол — как действие, код — НЕ вставляй вообще, перескажи словами.`
+    : '';
+
+  document.querySelector('#prompt').value =
+`Создай ровно ${count} уникальных шаблонов TES Idle для template_type "${current}" (${names[current]||current}).
+
+ТОН: ${tones[style]}
+${toneMix}
+
+КОНТЕКСТ ПЕРЕМЕННЫХ (примеры значений, используй их как ориентир):
+${varExamples}
+
+РАЗРЕШЕНЫ ТОЛЬКО ЭТИ ПЕРЕМЕННЫЕ: ${v.map(x=>`{${x}}`).join(', ')}
+Используй в каждой строке только подмножество, уместное для конкретной сцены. Не все переменные обязательны в каждой строке. Запрещены любые другие {переменные}.${booleanWarning}${technicalWarning}
+${hint ? `\nСПЕЦИФИКА ТИПА: ${hint}` : ''}
+
+ФОРМАТ ОТВЕТА — строго валидный JSON-объект, БЕЗ markdown, БЕЗ пояснений до и после:
+{
+  "activation_policy": "pending",
+  "templates": [
+    {
+      "template_type": "${current}",
+      "text_template": "русская строка с переменными",
+      "source": "${source}",
+      "variables": ["использованные_переменные"],
+      "mood_min": 0,
+      "mood_max": 100
+    }
+  ]
+}
+
+ПРАВИЛА КАЧЕСТВА:
+• ${mandatory}
+• Меняй глагол, точку зрения, место в сцене, момент времени и итог.
+• Не используй порядковые номера, слова «вариант», «строка», метки.
+• Не дублируй одно и то же предложение с заменой одного слова.
+• Не используй тип "god" — он мёртвый.
+• Каждая строка до 4000 UTF-8 байт.
+• Текст на русском, в сеттинге The Elder Scrolls: тракты, таверны, руины, гильдии, даэдра, двемеры, свитки, ярлы, стражники.
+• В поле "variables" перечисли ТОЛЬКО те переменные, которые реально встречаются в text_template этой строки (в том же порядке, без дублей).
+
+Верни ТОЛЬКО JSON, без \`\`\`json, без комментариев.`;
+}
+
+// Инициализация
+document.querySelector('#baseVars').innerHTML=Object.entries(base)
+  .map(([k,[d,e]])=>`<tr><td><code>{${k}}</code></td><td>${d}</td><td>${e}</td></tr>`).join('');
+document.querySelector('#search').oninput=e=>renderTypes(e.target.value);
+document.querySelector('#style').onchange=prompt;
+document.querySelector('#source').onchange=prompt;
+document.querySelector('#count').oninput=prompt;
+document.querySelector('#refresh').onclick=prompt;
+document.querySelector('#copy').onclick=async()=>{
+  await navigator.clipboard.writeText(document.querySelector('#prompt').value);
+  document.querySelector('#status').textContent='Prompt скопирован';
+  setTimeout(()=>document.querySelector('#status').textContent='',1600);
+};
+renderTypes();
+render();
+</script></body></html>

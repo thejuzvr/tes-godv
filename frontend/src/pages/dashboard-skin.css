@@ -1,183 +1,247 @@
-/* ═══════════════════════════════════════════════════════════════════
-   Dashboard skin — «Свеча и пергамент»
-   Визуальный слой поверх index.css. Логика и разметка не меняются.
-   Подключается после index.css, поэтому переопределяет базу.
-   ═══════════════════════════════════════════════════════════════════ */
-
-/* ── Сцена: тёплое свечение свечей по углам + водяной знак ───────── */
-.dashboard {
-  position: relative;
-  isolation: isolate;
-  background:
-    radial-gradient(52rem 30rem at 6% -4%, color-mix(in oklab, var(--accent), transparent 93%), transparent),
-    radial-gradient(40rem 26rem at 96% 22%, color-mix(in oklab, var(--mp), transparent 96%), transparent),
-    var(--bg);
+/* Observatory: slate, moonlight and a warm manuscript. All rules are dashboard-scoped. */
+.dashboard.observatory {
+  --bg: #101c22;
+  --surface: #17262d;
+  --surface-raised: #20333b;
+  --bg-elevated: #20333b;
+  --fg: #e9e9de;
+  --muted: #a3b4b9;
+  --border: #33464d;
+  --panel-bg: #17262d;
+  --panel-border: #33464d;
+  --journal-entry-bg: transparent;
+  --accent: #d6b87c;
+  --accent-on: #16242b;
+  --gold: #d6b87c;
+  --hp: #d78578;
+  --mp: #7eb9d1;
+  --sp: #94bb9f;
+  --xp: #b2a3cb;
+  --danger: #ed9b8e;
+  --success: #94bb9f;
+  --warn: #dfb477;
+  max-width: 1520px;
+  padding: 0 clamp(16px, 3.5vw, 56px) 24px;
+  gap: 28px;
+  background: var(--bg);
+  box-shadow: 0 0 0 100vmax var(--bg);
+  clip-path: inset(0 -100vmax);
 }
-.dashboard::before {
-  content: "ХРОНИКА · СКАЙРИМ";
-  position: absolute;
-  z-index: -1;
-  top: 14px;
-  right: var(--container-gutter);
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.22em;
-  color: color-mix(in oklab, var(--muted), transparent 35%);
-  pointer-events: none;
+[data-theme="light"] .dashboard.observatory {
+  --bg: #e8eeed;
+  --surface: #f5f7f3;
+  --surface-raised: #e1e9e7;
+  --bg-elevated: #e1e9e7;
+  --fg: #20353c;
+  --muted: #516970;
+  --border: #c9d5d2;
+  --panel-bg: #f5f7f3;
+  --panel-border: #c9d5d2;
+  --accent: #80622c;
+  --accent-on: #fffaf0;
+  --gold: #80622c;
+  --hp: #aa5149;
+  --mp: #366f89;
+  --sp: #477453;
+  --xp: #73608d;
+  --danger: #a34239;
+  --success: #477453;
+  --warn: #876024;
 }
-
-/* ── Лента героя: карточки на весу, лёгкий подъём при наведении ──── */
-.status-ribbon { gap: 14px; align-items: stretch; }
-.status-ribbon > .panel {
-  box-shadow: 0 18px 44px color-mix(in oklab, black, transparent 84%);
-  transition: transform var(--motion-fast) var(--ease-standard),
-    border-color var(--motion-fast) var(--ease-standard);
+.observatory .top-bar { padding: 23px 0; border-bottom: 1px solid var(--border); gap: 20px; }
+.observatory .logo { font-family: var(--font-display); font-size: 26px; letter-spacing: .01em; color: var(--fg); }
+.observatory .logo svg { width: 22px; color: var(--accent); }
+.observatory .nav-pills { gap: 4px; }
+.observatory .nav-pill { border-radius: 6px; font-size: 13px; padding: 9px 12px; }
+.observatory .nav-pill.active { color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, transparent); box-shadow: none; }
+.observatory .nav-pill:hover { color: var(--fg); background: var(--surface-raised); }
+.observatory .panel { border: 1px solid var(--border); background: var(--surface); box-shadow: none; border-radius: 10px; min-width: 0; }
+.observatory .fantasy-window::before, .observatory .fantasy-window::after,
+.observatory .parchment-glow::before, .observatory .parchment-glow::after { display: none; }
+.observatory .panel-header { padding: 17px 20px; background: transparent; color: var(--fg); border-bottom: 1px solid var(--border); font-family: var(--font-body); font-size: 14px; text-transform: none; letter-spacing: 0; }
+.observatory .panel-body { padding: 18px 20px; }
+.observatory-hero { position: relative; overflow: hidden; border: 1px solid var(--border); border-radius: 12px; background: linear-gradient(110deg, var(--surface) 30%, var(--bg-elevated)); padding: 24px 30px 0; }
+.observatory-landscape { position: absolute; inset: 0 0 40px 30%; color: #8ca7ac; pointer-events: none; mask-image: linear-gradient(90deg, transparent, #000 40%); }
+.observatory-landscape svg { width: 100%; height: 100%; }
+.observatory-hero-top, .observatory-identity, .observatory-resources { position: relative; }
+.observatory-hero-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.observatory-eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+.observatory-date { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+.observatory-identity { display: flex; align-items: center; gap: 22px; padding: 26px 0 30px; }
+.observatory-seal { flex-shrink: 0; width: 70px; height: 82px; display: grid; place-items: center; font-family: var(--font-display); font-size: 48px; color: var(--accent); background: color-mix(in srgb, var(--accent) 9%, var(--bg)); border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--border)); border-radius: 36px 36px 12px 12px; }
+.observatory-title { min-width: 0; }
+.observatory-lineage { color: var(--muted); font-size: 12px; text-transform: capitalize; }
+.observatory-lineage span { padding: 0 5px; color: var(--border); }
+.observatory-title h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(32px, 3.4vw, 48px); line-height: 1.15; margin: 4px 0 10px; overflow-wrap: anywhere; }
+.observatory-state { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; font-size: 13px; color: var(--fg); }
+.observatory-beacon { width: 6px; height: 6px; border-radius: 50%; background: var(--sp); box-shadow: 0 0 0 4px color-mix(in srgb, var(--sp) 12%, transparent); margin-right: 4px; }
+.observatory-beacon.is-danger { background: var(--danger); }
+.observatory-generation { color: var(--muted); }
+.observatory-location { margin-left: auto; min-width: 0; max-width: 38%; display: flex; flex-direction: column; gap: 7px; padding-left: 20px; }
+.observatory-place { display: flex; align-items: center; gap: 12px; font-family: var(--font-display); font-size: 28px; line-height: 1.2; overflow-wrap: anywhere; }
+.observatory-place svg { flex-shrink: 0; color: var(--accent); transition: transform 150ms ease; }
+.observatory-place:hover svg { transform: translate(2px, -2px); }
+.observatory-place:hover { color: var(--accent); }
+.observatory-location-note { color: var(--muted); font-size: 12px; }
+.observatory-resources { display: flex; align-items: center; gap: 30px; padding: 20px 0; border-top: 1px solid var(--border); }
+.observatory-vitals { flex: 1; min-width: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px; }
+.observatory-vitals .stat-bar { margin: 0; }
+.observatory-vitals .stat-bar-header { gap: 8px; flex-wrap: wrap; margin-bottom: 9px; }
+.observatory-vitals .stat-bar-label { font-family: var(--font-body); font-size: 12px; text-transform: none; letter-spacing: 0; color: var(--muted); }
+.observatory-vitals .stat-bar-value { font-size: 12px; font-variant-numeric: tabular-nums; }
+.observatory-vitals .stat-bar-track { height: 4px; background: color-mix(in srgb, var(--muted) 15%, transparent); }
+.observatory-vitals .stat-bar-fill { box-shadow: none; }
+.observatory-purse { display: flex; align-items: center; gap: 8px; border-left: 1px solid var(--border); padding-left: 24px; color: var(--gold); }
+.observatory-purse strong { font-size: 19px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.observatory-purse > span { color: var(--muted); font-size: 12px; }
+.observatory-bounty { position: relative; display: flex; align-items: center; gap: 8px; padding: 0 0 16px; font-size: 13px; color: var(--danger); }
+.observatory-workspace { display: grid; grid-template-columns: minmax(0, 1fr) 350px; gap: 28px; align-items: start; }
+.observatory-story, .observatory-sidebar { min-width: 0; display: flex; flex-direction: column; gap: 18px; }
+.observatory-section-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 26px; }
+.observatory-section-heading > span { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); }
+.observatory-section-heading > a { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--accent); }
+.observatory-section-heading > a:hover { text-decoration: underline; text-underline-offset: 4px; }
+/* The chronicle is a reading surface, not a stack of nested cards. */
+.observatory .journal-panel { --fg: #e8e3d8; --muted: #aaa99e; --accent: #d6b87c; background: #202c2f; border-color: #405054; }
+[data-theme="light"] .observatory .journal-panel { --fg: #34382f; --muted: #696e61; --accent: #80622c; background: #faf8ef; border-color: #d4d7c8; }
+.observatory .journal-panel > .panel-header { padding: 22px 26px 14px; border-bottom: 0; font-family: var(--font-display); font-size: 27px; }
+.observatory .journal-panel > .panel-header .panel-icon { display: none; }
+.observatory .journal-panel > .panel-header span[style] { font-size: 12px !important; margin-left: 10px; }
+.observatory .journal-panel .tabs { display: flex; padding: 0 26px; gap: 18px; overflow-x: auto; scrollbar-width: thin; border-color: color-mix(in srgb, var(--muted) 25%, transparent); }
+.observatory .journal-panel .tab { padding: 12px 0; white-space: nowrap; font-family: var(--font-body); font-size: 12px; color: var(--muted); background: transparent; border-radius: 0; }
+.observatory .journal-panel .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.observatory .journal-panel .tab:hover { color: var(--fg); }
+.observatory .journal-panel .panel-body { height: min(760px, 80vh); min-height: 380px; max-height: none; overflow-y: auto; padding: 8px 28px 26px; overscroll-behavior-y: contain; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+.observatory .journal-panel .journal-entry { position: relative; padding: 20px 0 22px 24px; margin: 0 !important; border: 0; border-bottom: 1px solid color-mix(in srgb, var(--muted) 17%, transparent); border-radius: 0; background: transparent; box-shadow: none; }
+.observatory .journal-entry::before { content: ""; position: absolute; left: 1px; top: 25px; width: 5px; height: 5px; border: 1px solid var(--muted); border-radius: 50%; }
+.observatory .journal-entry:hover { transform: none; background: transparent; box-shadow: none; }
+.observatory .journal-time { font-family: var(--font-body); font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+.observatory .journal-text { font-size: 16px; line-height: 1.8; color: var(--fg); overflow-wrap: anywhere; }
+.observatory .journal-motive { font-family: var(--font-body); font-size: 12px; line-height: 1.6; color: var(--muted); border: 0; padding: 0; margin-top: 10px; }
+.observatory .gilded-divider { gap: 4px; }
+.observatory .gilded-divider span { white-space: normal !important; text-align: center; }
+.observatory .loot-tag, .observatory .combat-tag { background: transparent; border: 0; padding: 0; color: var(--accent); font-size: 12px; }
+.observatory-dossier { border: 1px solid var(--border); border-radius: 10px; background: var(--surface); overflow: hidden; }
+.observatory-dossier > summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 20px; cursor: pointer; color: var(--fg); font-size: 14px; }
+.observatory-dossier > summary::-webkit-details-marker { display: none; }
+.observatory-dossier > summary > span { display: grid; grid-template-columns: 18px 1fr; align-items: center; gap: 6px 10px; }
+.observatory-dossier > summary small { grid-column: 2; color: var(--muted); font-size: 12px; line-height: 1.5; }
+.observatory-dossier > summary > svg { flex-shrink: 0; color: var(--muted); transition: transform 180ms ease; }
+.observatory-dossier[open] > summary > svg { transform: rotate(180deg); }
+.observatory-dossier > summary:hover { background: var(--surface-raised); }
+.observatory-dossier-content { border-top: 1px solid var(--border); padding: 12px; display: flex; flex-direction: column; gap: 12px; }
+.observatory-dossier-content > .panel { border: 0; background: transparent; }
+.observatory-dossier-content .panel-header { padding: 12px 8px; }
+.observatory-dossier-content .panel-body { padding: 12px 8px; }
+.observatory-dossier-content .arsenal-module { overflow: hidden; }
+.observatory .status-bar { background: transparent; border-top: 1px solid var(--border); padding: 16px 0; font-size: 12px; color: var(--muted); }
+/* Interventions: six readable, keyboard-friendly actions. */
+.observatory-intervention { border: 1px solid var(--border); border-radius: 10px; background: var(--surface); overflow: hidden; }
+.observatory-intervention-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; padding: 20px; border-bottom: 1px solid var(--border); }
+.observatory-intervention-heading { display: flex; align-items: center; gap: 10px; }
+.observatory-intervention-icon { color: var(--accent); }
+.observatory-intervention-title { font-size: 17px; font-weight: 500; }
+.observatory-intervention-availability { color: var(--muted); font-size: 12px; }
+.observatory-intervention-availability--ready { color: var(--sp); }
+.observatory-intervention-body { padding: 20px; }
+.observatory-intervention-energy-heading { display: flex; justify-content: space-between; gap: 12px; font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+.observatory-intervention-energy-value { color: var(--accent); font-variant-numeric: tabular-nums; }
+.observatory-intervention-energy-meter { display: block; appearance: none; width: 100%; height: 5px; border: 0; border-radius: 3px; background: var(--surface-raised); }
+.observatory-intervention-energy-meter::-webkit-meter-bar { background: var(--surface-raised); border: 0; border-radius: 3px; height: 5px; }
+.observatory-intervention-energy-meter::-webkit-meter-optimum-value { background: var(--accent); border-radius: 3px; }
+.observatory-intervention-energy-meter::-moz-meter-bar { background: var(--accent); border-radius: 3px; }
+.observatory-intervention-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; margin-top: 22px; }
+.observatory-intervention-action { display: flex; align-items: center; gap: 9px; padding: 14px 9px; min-height: 70px; color: var(--fg); background: transparent; border: 1px solid var(--border); border-radius: 7px; text-align: left; transition: background 150ms ease, border-color 150ms ease; }
+.observatory-intervention-action:hover:not(:disabled) { background: var(--surface-raised); border-color: var(--accent); }
+.observatory-intervention-action:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.observatory-intervention-action:disabled { opacity: .5; cursor: not-allowed; }
+.observatory-intervention-action-icon { display: flex; flex-shrink: 0; color: var(--accent); }
+.observatory-intervention-action--punish .observatory-intervention-action-icon { color: var(--danger); }
+.observatory-intervention-action--heal .observatory-intervention-action-icon { color: var(--success); }
+.observatory-intervention-action-copy { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.observatory-intervention-action-label { font-size: 12px; font-weight: 500; }
+.observatory-intervention-action-effect { font-size: 12px; color: var(--muted); }
+.observatory-intervention-feedback { margin-top: 18px; color: var(--muted); font-size: 12px; line-height: 1.6; }
+.observatory-intervention-feedback-title { font-size: 13px; font-weight: 500; color: var(--fg); }
+.observatory-intervention-feedback--error, .observatory-intervention-error { color: var(--danger); }
+.observatory-intervention-narrative { margin-top: 8px; color: var(--fg); font-size: 14px; overflow-wrap: anywhere; }
+.observatory-intervention-hint { font-size: 12px; }
+/* Current action, intent and long-term mastery are three separate readings. */
+.hero-activity-strip { display: grid; grid-template-columns: minmax(330px, 1fr) minmax(0, 1.35fr); gap: 12px; }
+.hero-live-signals, .hero-skill-list { min-width: 0; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); }
+.hero-live-signals { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(190px, .9fr); }
+.hero-current-activity { min-width: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px 12px; align-items: center; padding: 14px 16px; }
+.hero-current-intent { min-width: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 9px 10px; align-content: center; padding: 14px 16px; border-left: 1px solid var(--border); }
+.hero-activity-icon, .hero-current-intent > svg { color: var(--accent); }
+.hero-activity-copy { min-width: 0; display: flex; justify-content: space-between; gap: 12px; font-size: 12px; }
+.hero-activity-copy span { min-width: 0; color: var(--fg); overflow-wrap: anywhere; }
+.hero-activity-copy span b { color: var(--muted); font-weight: 500; }
+.hero-activity-copy span em { color: var(--muted); font-style: normal; }
+.hero-activity-copy span small { display: block; margin-top: 4px; color: var(--muted); font-size: 11px; }
+.hero-activity-copy strong { color: var(--muted); font-weight: 500; white-space: nowrap; }
+.hero-activity-progress { grid-column: 1 / -1; height: 4px; overflow: hidden; border-radius: 4px; background: var(--surface-raised); }
+.hero-activity-progress > i { display: block; height: 100%; background: var(--accent); }
+.hero-current-intent > div { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.hero-current-intent > div > span { color: var(--muted); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; }
+.hero-current-intent > div > strong { color: var(--fg); font-size: 12px; font-weight: 600; overflow-wrap: anywhere; }
+.hero-current-intent dl { grid-column: 2; display: flex; flex-wrap: wrap; gap: 5px 12px; margin: 0; }
+.hero-current-intent dl > div { display: flex; gap: 5px; font-size: 10px; color: var(--muted); }
+.hero-current-intent :is(dt, dd) { margin: 0; }
+.hero-current-intent dd { color: var(--fg); font-variant-numeric: tabular-nums; }
+.hero-skill-list { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; align-items: center; padding: 14px 16px; }
+.hero-skill { min-width: 0; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 6px 8px; align-items: center; color: var(--muted); font-size: 12px; }
+.hero-skill > svg { color: var(--accent); }
+.hero-skill > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hero-skill > strong { color: var(--fg); font-weight: 500; font-variant-numeric: tabular-nums; }
+.hero-skill > i { grid-column: 1 / -1; display: block; height: 3px; overflow: hidden; border-radius: 3px; background: var(--surface-raised); }
+.hero-skill > i > b { display: block; height: 100%; background: var(--accent); }
+@media (max-width: 1100px) { .hero-activity-strip { grid-template-columns: 1fr; } }
+@media (max-width: 700px) { .hero-live-signals { grid-template-columns: 1fr; } .hero-current-intent { border-left: 0; border-top: 1px solid var(--border); } .hero-skill-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 480px) { .hero-activity-copy { flex-direction: column; gap: 3px; } .hero-skill-list { grid-template-columns: 1fr; } }
+@media (min-width: 1101px) { .observatory-sidebar { padding-top: 44px; } }
+@media (max-width: 1100px) {
+  .observatory-workspace { grid-template-columns: minmax(0, 1fr) 310px; gap: 20px; }
+  .observatory-section-heading { flex-wrap: wrap; }
+  .observatory-identity { gap: 16px; }
+  .observatory-vitals { gap: 18px; }
+  .observatory-purse { flex-wrap: wrap; max-width: 120px; gap: 6px; }
+  .observatory-intervention-body, .observatory-intervention-header { padding: 16px; }
+  .observatory-intervention-action { gap: 7px; padding: 12px 7px; }
 }
-.status-ribbon > .panel:hover {
-  transform: translateY(-2px);
-  border-color: color-mix(in oklab, var(--accent), var(--panel-border) 55%);
+@media (max-width: 800px) {
+  .dashboard.observatory { gap: 20px; }
+  .observatory .top-bar { padding: 16px 0; gap: 12px; }
+  .observatory .nav-pills { order: 3; width: 100%; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 4px; }
+  .observatory .nav-pill { white-space: nowrap; }
+  .observatory-workspace { display: flex; flex-direction: column; }
+  .observatory-story, .observatory-sidebar { width: 100%; }
+  .observatory-sidebar { display: contents; }
+  .observatory-intervention { order: -1; width: 100%; }
+  .observatory-intervention-actions { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 14px; }
+  .observatory-dossier { width: 100%; }
+  .observatory-hero { padding: 20px 20px 0; }
+  .observatory-identity { flex-wrap: wrap; padding: 24px 0; }
+  .observatory-location { flex-basis: 100%; max-width: none; margin-left: 0; padding: 12px 0 0; gap: 5px; }
+  .observatory-place { font-size: 25px; }
+  .observatory-location .observatory-eyebrow { display: none; }
+  .observatory-vitals { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 24px; }
+  .observatory .journal-panel .panel-body { min-height: 320px; height: 65vh; }
 }
-
-/* Панель героя — титульная: золотой край и мягкий отсвет */
-.hero-panel {
-  border-color: color-mix(in oklab, var(--accent), var(--panel-border) 55%);
-  background: linear-gradient(135deg,
-    color-mix(in oklab, var(--accent), var(--surface) 93%),
-    var(--surface) 55%);
+@media (max-width: 480px) {
+  .observatory-hero-top { align-items: start; flex-direction: column; }
+  .observatory-eyebrow { font-size: 10px; }
+  .observatory-seal { width: 48px; height: 62px; font-size: 36px; }
+  .observatory-lineage { font-size: 11px; }
+  .observatory-title { flex: 1; }
+  .observatory-resources { gap: 16px; flex-wrap: wrap; }
+  .observatory-vitals { flex-basis: 100%; }
+  .observatory-purse { max-width: none; border: 0; padding: 0; }
+  .observatory-intervention-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .observatory .journal-panel > .panel-header { padding: 20px 18px 10px; font-size: 25px; }
+  .observatory .journal-panel .tabs { padding: 0 18px; }
+  .observatory .journal-panel .panel-body { padding: 4px 18px 20px; }
+  .observatory .journal-panel .journal-entry { padding-left: 16px; }
+  .observatory .journal-text { font-size: 15px; }
+  .observatory .status-bar { gap: 10px; flex-wrap: wrap; }
 }
-.hero-panel .panel-body { padding: var(--space-5); gap: var(--space-4); }
-.hero-avatar {
-  width: 54px;
-  height: 54px;
-  border-radius: 50%;
-  box-shadow:
-    0 0 0 5px color-mix(in oklab, var(--accent), transparent 86%),
-    0 8px 22px color-mix(in oklab, var(--accent), transparent 74%);
-}
-.hero-name { font-size: 27px; }
-.hero-gold { padding: 6px 14px; }
-
-/* ── Виталы: HP — во всю ширину, как главная строка досье ────────── */
-.hero-vitals { column-gap: var(--space-5); row-gap: 14px; }
-.hero-vitals .stat-bar:first-child { grid-column: 1 / -1; }
-.hero-vitals .stat-bar:first-child .stat-bar-track { height: 11px; }
-.stat-bar-track { background: color-mix(in oklab, var(--fg), transparent 89%); }
-.stat-bar-fill {
-  box-shadow: 0 0 10px color-mix(in oklab, currentColor, transparent 55%);
-}
-
-/* ── Хроника: манускрипт с полями ────────────────────────────────── */
-.main-grid { gap: 18px; }
-.left-col, .middle-col, .right-col { gap: 18px; }
-.main-grid > .middle-col { min-width: 0; }
-.middle-col > .panel {
-  box-shadow: 0 16px 38px color-mix(in oklab, black, transparent 88%);
-}
-.journal-panel { border-color: color-mix(in oklab, var(--accent), var(--panel-border) 75%); }
-.journal-panel > .panel-header {
-  padding: 14px 18px;
-  background: color-mix(in oklab, var(--accent), transparent 94%);
-  color: var(--fg);
-}
-.journal-panel > .panel-header .panel-icon { color: var(--accent); }
-
-.journal-panel .panel-body {
-  height: calc(100vh - 405px);
-  padding: var(--space-4);
-  gap: 10px;
-  scrollbar-width: thin;
-  scrollbar-color: color-mix(in oklab, var(--accent), transparent 55%) transparent;
-}
-.journal-panel .panel-body::-webkit-scrollbar { width: 6px; }
-.journal-panel .panel-body::-webkit-scrollbar-thumb {
-  background: color-mix(in oklab, var(--accent), transparent 55%);
-  border-radius: var(--radius-pill);
-}
-
-/* Запись — «строка пером»: косой срез слева, тёплый градиент */
-.journal-entry {
-  padding: 14px 16px;
-  border-radius: 3px 10px 10px 3px;
-  background: linear-gradient(105deg,
-    color-mix(in oklab, var(--accent), transparent 96%),
-    var(--journal-entry-bg) 60%);
-}
-.journal-entry:hover {
-  transform: translateX(3px);
-  box-shadow: 0 8px 20px color-mix(in oklab, black, transparent 88%);
-}
-.journal-time { color: color-mix(in oklab, var(--accent), var(--muted) 40%); }
-.journal-text { font-size: 15px; line-height: 1.65; }
-
-/* Фильтры хроники — сегмент-пилюли вместо подчёркиваний (только здесь) */
-.journal-panel .tabs { padding: 0 16px; gap: 4px; overflow-x: auto; scrollbar-width: none; }
-.journal-panel .tabs::-webkit-scrollbar { display: none; }
-.journal-panel .tab {
-  white-space: nowrap;
-  padding: 6px 12px;
-  margin: 8px 0;
-  border-bottom: none;
-  border-radius: var(--radius-pill);
-}
-.journal-panel .tab:hover { color: var(--fg); background: color-mix(in oklab, var(--fg), transparent 93%); }
-.journal-panel .tab.active {
-  color: var(--accent-on);
-  background: var(--accent);
-  border-bottom: none;
-}
-
-/* ── Адаптив и качество ──────────────────────────────────────────── */
-@media (max-width: 920px) {
-  .dashboard { padding-top: 36px; }
-  .dashboard::before { top: 12px; right: 16px; }
-  .hero-vitals .stat-bar:first-child { grid-column: auto; }
-  .journal-panel .panel-body { height: 60vh; }
-}
-
-/* ── Модуль «Арсенал героя»: Снаряжение и Сумка ──────────────────── */
-.arsenal-module {
-  border-color: color-mix(in oklab, var(--accent), var(--border) 45%);
-}
-
-.inv-slot {
-  transition: all 180ms cubic-bezier(0.16, 1, 0.3, 1);
-  border-radius: var(--radius-md);
-  position: relative;
-}
-.inv-slot:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.7);
-}
-.inv-slot.rarity-uncommon {
-  border-color: rgba(34, 197, 94, 0.45);
-  box-shadow: inset 0 0 8px rgba(34, 197, 94, 0.1);
-}
-.inv-slot.rarity-rare {
-  border-color: rgba(56, 189, 248, 0.55);
-  box-shadow: inset 0 0 10px rgba(56, 189, 248, 0.15), 0 0 6px rgba(56, 189, 248, 0.15);
-}
-.inv-slot.rarity-epic {
-  border-color: rgba(168, 85, 247, 0.65);
-  box-shadow: inset 0 0 12px rgba(168, 85, 247, 0.2), 0 0 10px rgba(168, 85, 247, 0.25);
-}
-.inv-slot.rarity-legendary {
-  border-color: rgba(245, 158, 11, 0.8);
-  box-shadow: inset 0 0 14px rgba(245, 158, 11, 0.25), 0 0 14px rgba(245, 158, 11, 0.35);
-  animation: gold-shimmer 3.5s infinite;
-}
-
-/* ── Боевая арена дуэли: анимации урона и искр ───────────────────── */
-.combat-arena {
-  border-color: color-mix(in srgb, var(--danger) 50%, var(--border)) !important;
-  background:
-    radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--danger) 15%, transparent), transparent 70%),
-    color-mix(in oklab, var(--surface), black 12%) !important;
-}
-
-.duel-health-bar {
-  position: relative;
-  overflow: hidden;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
-}
-
+@media (prefers-reduced-motion: reduce) { .observatory *, .observatory *::before, .observatory *::after { animation: none !important; transition: none !important; } }

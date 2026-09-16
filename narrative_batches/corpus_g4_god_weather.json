@@ -1,0 +1,130 @@
+﻿{
+    "activation_policy":  "pending",
+    "templates":  [
+                      {
+                          "template_type":  "god_weather",
+                          "source":  "community",
+                          "text_template":  "{god_name} изменил небо над дорогой {hero_name}. Северный ветер отметил этот поступок без лишних слов."
+                      },
+                      {
+                          "template_type":  "god_weather",
+                          "source":  "community",
+                          "text_template":  "{hero_name} увидел, как воля {god_name} тронула ветер и облака. Свидетели запомнили этот выбор как достойный рассказ у очага."
+                      },
+                      {
+                          "template_type":  "god_weather",
+                          "source":  "community",
+                          "text_template":  "По знаку {god_name} погода вокруг {hero_name} переменилась. В хронике дня появилась спокойная, но важная строка."
+                      },
+                      {
+                          "template_type":  "god_weather",
+                          "source":  "community",
+                          "text_template":  "{god_name} изменил небо над дорогой {hero_name}. Дорога впереди будто стала немного яснее."
+                      },
+                      {
+                          "template_type":  "god_weather",
+                          "source":  "community",
+                          "text_template":  "{hero_name} увидел, как воля {god_name} тронула ветер и облака. Старые камни Скайрима приняли эту весть молча."
+                      },
+                      {
+                          "template_type":  "god_weather",
+                          "source":  "community",
+                          "text_template":  "По знаку {god_name} погода вокруг {hero_name} переменилась. Над делом героя на миг воцарилась редкая ясность."
+                      },
+                      {
+                          "template_type":  "god_weather",
+                          "source":  "community",
+                          "text_template":  "{god_name} изменил небо над дорогой {hero_name}. Такой шаг не приносит славы сразу, зато меняет путь."
+                      },
+                      {
+                          "template_type":  "god_weather",
+                          "source":  "community",
+                          "text_template":  "{hero_name} увидел, как воля {god_name} тронула ветер и облака. Вечер сохранил его в памяти города."
+                      },
+                      {
+                          "template_type":  "god_weather",
+                          "source":  "community",
+                          "text_template":  "По знаку {god_name} погода вокруг {hero_name} переменилась. Даже суровый край умеет замечать добрые решения."
+                      },
+                      {
+                          "template_type":  "god_weather",
+                          "source":  "community",
+                          "text_template":  "{god_name} изменил небо над дорогой {hero_name}. Эхо поступка ушло дальше ближайшей площади."
+                      },
+                      {
+                          "template_type":  "god_weather",
+                          "source":  "community",
+                          "text_template":  "{hero_name} увидел, как воля {god_name} тронула ветер и облака. Небо над Скайримом не спорило с этим решением."
+                      },
+                      {
+                          "template_type":  "god_weather",
+                          "source":  "community",
+                          "text_template":  "По знаку {god_name} погода вокруг {hero_name} переменилась. Путники ещё долго будут пересказывать эту историю."
+                      },
+                      {
+                          "template_type":  "god_weather",
+                          "source":  "community",
+                          "text_template":  "{god_name} изменил небо над дорогой {hero_name}. Голубь рядом кивнул так серьёзно, будто был главным мастером."
+                      },
+                      {
+                          "template_type":  "god_weather",
+                          "source":  "community",
+                          "text_template":  "{hero_name} увидел, как воля {god_name} тронула ветер и облака. Кошелёк вздохнул, но спорить с судьбой не стал."
+                      },
+                      {
+                          "template_type":  "god_weather",
+                          "source":  "community",
+                          "text_template":  "По знаку {god_name} погода вокруг {hero_name} переменилась. Ближайший норд одобрительно хмыкнул и уронил булку."
+                      },
+                      {
+                          "template_type":  "god_weather",
+                          "source":  "community",
+                          "text_template":  "{god_name} изменил небо над дорогой {hero_name}. Даже стражник на миг перестал подозревать всех подряд."
+                      },
+                      {
+                          "template_type":  "god_weather",
+                          "source":  "community",
+                          "text_template":  "{hero_name} увидел, как воля {god_name} тронула ветер и облака. Где-то бард уже рифмует это с словом «капуста»."
+                      },
+                      {
+                          "template_type":  "god_weather",
+                          "source":  "community",
+                          "text_template":  "По знаку {god_name} погода вокруг {hero_name} переменилась. Случайный грязекраб выглядел впечатлённым, насколько умеют грязекрабы."
+                      },
+                      {
+                          "template_type":  "god_weather",
+                          "source":  "community",
+                          "text_template":  "{god_name} изменил небо над дорогой {hero_name}. Тавернский кот записал событие лапой в воображаемую книгу."
+                      },
+                      {
+                          "template_type":  "god_weather",
+                          "source":  "community",
+                          "text_template":  "{hero_name} увидел, как воля {god_name} тронула ветер и облака. Ветер попытался аплодировать, но вышел обычный сквозняк."
+                      },
+                      {
+                          "template_type":  "god_weather",
+                          "source":  "community",
+                          "text_template":  "По знаку {god_name} погода вокруг {hero_name} переменилась. Один скелет в старой крипте наверняка одобрил бы этот жест."
+                      },
+                      {
+                          "template_type":  "god_weather",
+                          "source":  "community",
+                          "text_template":  "{god_name} изменил небо над дорогой {hero_name}. Торговец рядом немедленно назвал это выгодой для души."
+                      },
+                      {
+                          "template_type":  "god_weather",
+                          "source":  "community",
+                          "text_template":  "{hero_name} увидел, как воля {god_name} тронула ветер и облака. Снежный ком с крыши выбрал именно этот момент для поклона."
+                      },
+                      {
+                          "template_type":  "god_weather",
+                          "source":  "community",
+                          "text_template":  "По знаку {god_name} погода вокруг {hero_name} переменилась. Драконов не было видно, но слухи уже начали расти."
+                      },
+                      {
+                          "template_type":  "god_weather",
+                          "source":  "community",
+                          "text_template":  "{god_name} изменил небо над дорогой {hero_name}. Картошка в ближайшем котле закипела с особым смыслом."
+                      }
+                  ]
+}

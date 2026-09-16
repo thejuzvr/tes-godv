@@ -1,6 +1,9 @@
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect } from "react"
+import { useSearchParams } from "react-router-dom"
+import { Crown, Swords, Coins, Hourglass, RefreshCw, Trophy, Shield, AlertCircle } from "lucide-react"
 import { api } from "@/lib/api"
 import { formatNumber, formatTime } from "@/lib/utils"
+import "./pantheon-observatory.css"
 
 interface PantheonEntry {
   rank: number
@@ -8,190 +11,90 @@ interface PantheonEntry {
   hero_level: number
   value: number
 }
-
 type Metric = "kills" | "gold" | "time"
-
 const metricConfig = {
-  kills: { label: "Убийства", icon: "⚔️", api: () => api.getPantheonKills(), format: (v: number) => formatNumber(v) },
-  gold: { label: "Золото", icon: "🪙", api: () => api.getPantheonGold(), format: (v: number) => `${formatNumber(v)} золота` },
-  time: { label: "Время", icon: "⏱️", api: () => api.getPantheonTime(), format: (v: number) => formatTime(v) },
-}
-
-const avatarColors = [
-  "var(--danger)", "var(--accent)", "var(--xp)", "var(--mp)",
-  "#8b5cf6", "#ec4899", "#14b8a6", "#f59e0b", "#6366f1", "#22c55e",
-]
-
-function getAvatarColor(name: string): string {
-  let hash = 0
-  for (let i = 0; i < name.length; i++) {
-    hash = name.charCodeAt(i) + ((hash << 5) - hash)
-  }
-  return avatarColors[Math.abs(hash) % avatarColors.length]
-}
-
-// Top-3 podium styling: vertical cards with medal frames
-const podiumStyles: Record<number, { medal: string; border: string; tint: string; labelColor: string; order: number }> = {
-  1: { medal: "🥇", border: "#d4af37", tint: "color-mix(in oklab, #d4af37, transparent 88%)", labelColor: "#d4af37", order: 2 },
-  2: { medal: "🥈", border: "#c0c0c0", tint: "color-mix(in oklab, #c0c0c0, transparent 90%)", labelColor: "#c0c0c0", order: 1 },
-  3: { medal: "🥉", border: "#cd7f32", tint: "color-mix(in oklab, #cd7f32, transparent 89%)", labelColor: "#cd7f32", order: 3 },
+  kills: { label: "Убийства", heading: "Имена, закалённые битвой", unit: "убийств", icon: Swords, api: () => api.getPantheonKills(), format: (v: number) => formatNumber(v) },
+  gold: { label: "Богатство", heading: "Состояния, ставшие легендой", unit: "золота", icon: Coins, api: () => api.getPantheonGold(), format: (v: number) => formatNumber(v) },
+  time: { label: "Время в мире", heading: "Долгий путь оставляет след", unit: "в мире", icon: Hourglass, api: () => api.getPantheonTime(), format: (v: number) => formatTime(v) },
 }
 
 export function PantheonPage() {
-  const [metric, setMetric] = useState<Metric>("kills")
-  const [data, setData] = useState<PantheonEntry[]>([])
+  const [params, setParams] = useSearchParams()
+  const rawMetric = params.get("metric")
+  const metric: Metric = rawMetric === "gold" || rawMetric === "time" ? rawMetric : "kills"
+  const [result, setResult] = useState<{ metric: Metric; entries: PantheonEntry[] } | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
+  const [revision, setRevision] = useState(0)
+  const [updatedAt, setUpdatedAt] = useState<Date | null>(null)
 
-  const fetchData = useCallback(() => {
-    setLoading(true)
-    metricConfig[metric].api().then(setData).catch(() => setData([])).finally(() => setLoading(false))
-  }, [metric])
-
-  useEffect(() => { fetchData() }, [fetchData])
-
-  // Auto-refresh every 30 seconds
   useEffect(() => {
-    const interval = setInterval(fetchData, 30000)
-    return () => clearInterval(interval)
-  }, [fetchData])
+    let active = true
+    let pending = false
+    setError(false)
+    const load = async () => {
+      if (pending) return
+      pending = true
+      setLoading(true)
+      try {
+        const entries = await metricConfig[metric].api()
+        if (active) {
+          setResult({ metric, entries })
+          setUpdatedAt(new Date())
+          setError(false)
+        }
+      } catch { if (active) setError(true) }
+      finally { pending = false; if (active) setLoading(false) }
+    }
+    void load()
+    const timer = setInterval(load, 30000)
+    return () => { active = false; clearInterval(timer) }
+  }, [metric, revision])
 
-  const podium = data.filter(e => e.rank >= 1 && e.rank <= 3)
-    .map(e => ({ entry: e, style: podiumStyles[e.rank] }))
-    .sort((a, b) => a.style.order - b.style.order) // display: 2nd, 1st, 3rd
-  const rest = data.filter(e => e.rank > 3)
+  const data = result?.metric === metric ? result.entries : []
+  const leaders = data.filter((entry) => entry.rank >= 1 && entry.rank <= 3).sort((a, b) => a.rank - b.rank)
+  const rest = data.filter((entry) => entry.rank > 3).sort((a, b) => a.rank - b.rank)
+  const config = metricConfig[metric]
+  const MetricIcon = config.icon
 
   return (
-    <div className="anim-fade-up">
-      <div style={{ marginBottom: "var(--space-6)" }}>
-        <h1 style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-2xl)", fontWeight: 800, letterSpacing: "-0.02em", marginBottom: "var(--space-2)" }}>Пантеон</h1>
-        <p style={{ color: "var(--muted)", fontSize: "var(--text-sm)" }}>Рейтинг героев по всему Тамриэлю</p>
-      </div>
-
-      <div style={{ display: "flex", gap: "var(--space-2)", marginBottom: "var(--space-4)" }}>
-        {(Object.keys(metricConfig) as Metric[]).map((m) => (
-          <button key={m} onClick={() => setMetric(m)}
-            style={{ padding: "6px 14px", borderRadius: "var(--radius-pill)", fontSize: "var(--text-sm)", fontWeight: 500, border: "none", cursor: "pointer", transition: "all 150ms",
-              background: metric === m ? "var(--accent)" : "var(--panel-bg)", color: metric === m ? "var(--accent-on)" : "var(--muted)" }}>
-            {metricConfig[m].icon} {metricConfig[m].label}
-          </button>
-        ))}
-      </div>
-
-      <div className="panel">
-        <div className="panel-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <span>Топ героев — {metricConfig[metric].label}</span>
-          <span style={{ fontSize: "var(--text-xs)", color: "var(--muted)", fontFamily: "var(--font-mono)" }}>
-            {data.length} героев
-          </span>
+    <main className="pantheon-observatory">
+      <header className="pantheon-intro">
+        <div className="pantheon-intro-copy">
+          <span className="pantheon-eyebrow"><Crown size={16} aria-hidden="true"/> Зал славы Тамриэля</span>
+          <h1>Пантеон</h1>
+          <p>Одни оставляют след клинком. Другие — целым состоянием.<br/>Здесь история помнит каждого по его свершениям.</p>
         </div>
-        <div className="panel-body">
-          {loading ? (
-            <div style={{ textAlign: "center", color: "var(--muted)", padding: 32 }}>Загрузка…</div>
-          ) : data.length === 0 ? (
-            <div style={{ textAlign: "center", color: "var(--muted)", padding: 32 }}>
-              <div style={{ fontSize: 32, marginBottom: "var(--space-2)" }}>🏆</div>
-              Нет данных для отображения
-            </div>
-          ) : (
-            <div>
-              {/* Top-3 podium: silver | gold | bronze, vertical cards */}
-              {podium.length > 0 && (
-                <div style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(3, 1fr)",
-                  gap: "var(--space-3)",
-                  alignItems: "end",
-                  marginBottom: "var(--space-5)",
-                  paddingBottom: "var(--space-5)",
-                  borderBottom: "1px solid var(--border)",
-                }}>
-                  {podium.map(({ entry, style }) => (
-                    <div key={entry.rank} style={{
-                      display: "flex", flexDirection: "column", alignItems: "center",
-                      gap: "var(--space-1)", padding: "var(--space-4) var(--space-2) var(--space-3)",
-                      borderRadius: "var(--radius-lg)",
-                      border: `2px solid ${style.border}`,
-                      background: style.tint,
-                      order: style.order,
-                      transition: "transform 150ms",
-                    }}
-                      onMouseEnter={e => (e.currentTarget.style.transform = "translateY(-3px)")}
-                      onMouseLeave={e => (e.currentTarget.style.transform = "none")}>
-                      <span style={{ fontSize: entry.rank === 1 ? 34 : 28, lineHeight: 1 }}>{style.medal}</span>
-                      <span style={{
-                        width: 44, height: 44, borderRadius: "50%", display: "flex",
-                        alignItems: "center", justifyContent: "center",
-                        fontSize: "var(--text-base)", fontWeight: 700,
-                        background: getAvatarColor(entry.hero_name), color: "#fff",
-                        border: `2px solid ${style.border}`,
-                      }}>
-                        {entry.hero_name.charAt(0).toUpperCase()}
-                      </span>
-                      <span style={{
-                        fontWeight: 700, fontSize: "var(--text-sm)", color: "var(--fg)",
-                        maxWidth: "100%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-                      }}>
-                        {entry.hero_name}
-                      </span>
-                      <span style={{ fontSize: "var(--text-xs)", color: "var(--muted)", fontFamily: "var(--font-mono)" }}>
-                        Ур. {entry.hero_level}
-                      </span>
-                      <span style={{
-                        fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: entry.rank === 1 ? "var(--text-base)" : "var(--text-sm)",
-                        color: style.labelColor, fontVariantNumeric: "tabular-nums",
-                      }}>
-                        {metricConfig[metric].format(entry.value)}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              )}
+        <div className="pantheon-emblem" aria-hidden="true"><span/><Crown size={54} strokeWidth={1}/><span/></div>
+      </header>
 
-              {/* Ranks 4+ */}
-              {rest.map((entry) => (
-                <div key={entry.rank} style={{
-                  display: "flex", alignItems: "center", gap: "var(--space-3)",
-                  padding: "var(--space-2) 0",
-                  borderBottom: "1px solid var(--border)",
-                }}>
-                  <span style={{
-                    width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center",
-                    borderRadius: "50%", fontFamily: "var(--font-mono)", fontWeight: 600, fontSize: "var(--text-xs)",
-                    background: "var(--panel-bg)", color: "var(--muted)", flexShrink: 0,
-                  }}>
-                    {entry.rank}
-                  </span>
-
-                  <span style={{
-                    width: 32, height: 32, borderRadius: "50%", display: "flex",
-                    alignItems: "center", justifyContent: "center", fontSize: "var(--text-xs)",
-                    fontWeight: 600, background: getAvatarColor(entry.hero_name),
-                    color: "#fff", flexShrink: 0,
-                  }}>
-                    {entry.hero_name.charAt(0).toUpperCase()}
-                  </span>
-
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontWeight: 500, fontSize: "var(--text-sm)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                      {entry.hero_name}
-                    </div>
-                    <div style={{ fontSize: "var(--text-xs)", color: "var(--muted)", fontFamily: "var(--font-mono)" }}>
-                      Уровень {entry.hero_level}
-                    </div>
-                  </div>
-
-                  <span style={{
-                    fontFamily: "var(--font-mono)", fontWeight: 600, fontSize: "var(--text-sm)",
-                    fontVariantNumeric: "tabular-nums", color: "var(--fg)",
-                  }}>
-                    {metricConfig[metric].format(entry.value)}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
+      <div className="pantheon-toolbar">
+        <div className="pantheon-metrics" role="group" aria-label="Показатель рейтинга">
+          {(Object.keys(metricConfig) as Metric[]).map((key) => {
+            const Icon = metricConfig[key].icon
+            return <button key={key} aria-pressed={metric === key} onClick={() => { const next = new URLSearchParams(params); next.set("metric", key); setParams(next, { replace: true }) }}><Icon size={17} aria-hidden="true"/>{metricConfig[key].label}</button>
+          })}
         </div>
+        <button className="pantheon-refresh" onClick={() => setRevision((n) => n + 1)} disabled={loading}><RefreshCw size={15} aria-hidden="true"/>{loading ? "Обновляем…" : "Обновить"}</button>
       </div>
-    </div>
+
+      {error && <div className="pantheon-notice" role="alert"><AlertCircle size={18} aria-hidden="true"/><span>Не удалось обновить рейтинг.{data.length ? " Показаны последние полученные данные." : " Проверьте соединение и нажмите «Обновить»."}</span></div>}
+
+      <section className="pantheon-ranking" aria-labelledby="pantheon-ranking-title" aria-busy={loading}>
+        <div className="pantheon-section-title"><h2 id="pantheon-ranking-title">{config.heading}</h2><span>{data.length ? `${data.length} в рейтинге` : "Рейтинг героев"}</span></div>
+        {loading && !data.length ? <div className="pantheon-empty" role="status"><Hourglass size={30} aria-hidden="true"/><h3>Собираем имена героев…</h3><p>Сведения о свершениях загружаются.</p></div> : !data.length ? <div className="pantheon-empty"><Trophy size={32} aria-hidden="true"/><h3>{error ? "Летопись пока недоступна" : "Легенды ещё впереди"}</h3><p>{error ? "Попробуйте обновить рейтинг ещё раз." : "В этой категории пока нет записей. Герои продолжают свой путь."}</p></div> : <>
+          {leaders.length > 0 && <ol className="pantheon-leaders" aria-label="Лидеры рейтинга">
+            {leaders.map((entry) => <li key={entry.rank} className="pantheon-leader" data-rank={entry.rank} value={entry.rank}>
+              <div className="pantheon-leader-top"><span className="pantheon-place">{entry.rank === 1 ? <Crown size={17} aria-hidden="true"/> : <Shield size={16} aria-hidden="true"/>} {entry.rank} место</span><span className="pantheon-level">Уровень {entry.hero_level}</span></div>
+              <div className="pantheon-monogram" aria-hidden="true">{entry.hero_name.charAt(0).toUpperCase()}</div>
+              <h3>{entry.hero_name}</h3>
+              <div className="pantheon-achievement"><MetricIcon size={17} aria-hidden="true"/><strong>{config.format(entry.value)}</strong><span>{config.unit}</span></div>
+            </li>)}
+          </ol>}
+          {rest.length > 0 && <div className="pantheon-table-wrap" role="region" aria-label="Таблица рейтинга" tabIndex={0}><table className="pantheon-table"><caption>Остальные участники · {config.label.toLowerCase()}</caption><thead><tr><th scope="col">Место</th><th scope="col">Герой</th><th scope="col">Уровень</th><th scope="col">{config.label}</th></tr></thead><tbody>{rest.map((entry) => <tr key={entry.rank}><td className="pantheon-table-rank">{entry.rank}</td><th scope="row"><span className="pantheon-row-seal" aria-hidden="true">{entry.hero_name.charAt(0).toUpperCase()}</span>{entry.hero_name}</th><td>{entry.hero_level}</td><td>{config.format(entry.value)}</td></tr>)}</tbody></table></div>}
+        </>}
+      </section>
+      <footer className="pantheon-footnote"><span>Свершения героев · обновление каждые 30 секунд</span>{updatedAt && result?.metric === metric && <span>Последнее обновление: {new Intl.DateTimeFormat("ru-RU", { hour: "2-digit", minute: "2-digit" }).format(updatedAt)}</span>}</footer>
+    </main>
   )
 }

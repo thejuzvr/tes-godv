@@ -5,7 +5,25 @@ config :tes_idle,
   ecto_repos: [TesIdle.Repo],
   # Тики героя: онлайн-герои — каждые 30с; офлайн-герои — раз в offline_tick_minutes
   # минут (ленивый тик: пока за героем не наблюдают, мир движется медленнее).
-  offline_tick_minutes: 15
+  offline_tick_minutes: 15,
+  encounter_worker_enabled: true,
+  outbox_dispatcher_enabled: true,
+  encounters: %{
+    round_seconds: 60,
+    activity_ttl_seconds: 120,
+    allowed_states: ~w(exploring resting socializing shopping),
+    daily_cap: 10,
+    cooldown_seconds: 300,
+    familiarity_gain: 1,
+    fallback_label: "Попутчик",
+    kind: "meeting"
+  },
+  outbox_dispatcher: %{
+    interval_seconds: 1,
+    batch_size: 50,
+    retry_seconds: 5,
+    max_attempts: 10
+  }
 
 config :tes_idle, TesIdle.Repo,
   migration_primary_key: [type: :binary_id],

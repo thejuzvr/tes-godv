@@ -19,6 +19,7 @@ import {
 } from "lucide-react"
 import { useGameStore } from "@/stores/gameStore"
 import { api } from "@/lib/api"
+import "./wiki-observatory.css"
 
 /* ─── Wiki pages and categories ─────────────────────── */
 interface WikiPageItem {
@@ -628,7 +629,7 @@ export function WikiPage() {
   }, [activePage, currentPage.file, isAiPrompts, isGuildNews])
 
   return (
-    <div className="wiki-layout">
+    <div className="wiki-observatory wiki-layout">
       {/* ── Left Sidebar (Ancient Codex Navigation) ── */}
       <nav className="wiki-sidebar" aria-label="Разделы Библиотеки">
         {/* Library Header Stamp */}
@@ -645,12 +646,14 @@ export function WikiPage() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Поиск по свиткам…"
+            aria-label="Поиск по свиткам"
             className="w-full pl-8 pr-3 py-1.5 rounded-lg border border-border/80 bg-surface text-xs text-fg placeholder:text-muted/60 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent/40"
           />
           {searchQuery && (
             <button
               type="button"
               onClick={() => setSearchQuery("")}
+              aria-label="Очистить поиск"
               className="absolute right-2.5 top-2 text-muted hover:text-fg text-xs p-0.5 cursor-pointer"
             >
               ×

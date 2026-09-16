@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback } from "react"
-import { api } from "@/lib/api"
+import { useState, useEffect, useCallback, useRef } from "react"
+import { api, type DecisionAuditReport, type DecisionAuditRecentEvent } from "@/lib/api"
 import { formatNumber, formatDate } from "@/lib/utils"
 import { VAR_GROUPS, TEMPLATE_TYPES, TEMPLATE_TYPE_GROUPS } from "@/components/narrativeData"
+import "./admin-observatory.css"
 
 /* ─── Narrative helpers (Библиотека) ────────────────── */
 // Превью шаблона: подстановка примеров из словника; неизвестные переменные остаются видимыми
@@ -13,17 +14,18 @@ function renderPreview(text: string): string {
 
 /* ─── Tab system ────────────────────────────────────── */
 const tabs = [
-  { key: "overview", label: "Обзор" },
-  { key: "users", label: "Пользователи" },
-  { key: "heroes", label: "Герои" },
-  { key: "narratives", label: "Нарративы" },
-  { key: "narrative-analytics", label: "Аналитика нарративов" },
-  { key: "moderation", label: "Модерация" },
-  { key: "suggestions", label: "Предложения" },
-  { key: "simulation", label: "Симуляция" },
-  { key: "tests", label: "Тесты" },
-  { key: "config", label: "Конфиг" },
-  { key: "backup", label: "Бэкап" },
+  { key: "overview", label: "Обзор", section: "Пульс мира", mark: "◈" },
+  { key: "users", label: "Пользователи", section: "Население", mark: "◌" },
+  { key: "heroes", label: "Герои", section: "Население", mark: "⚔" },
+  { key: "decision-audit", label: "Аудит решений", section: "Население", mark: "◉" },
+  { key: "narratives", label: "Нарративы", section: "Летопись", mark: "✦" },
+  { key: "narrative-analytics", label: "Аналитика нарративов", section: "Летопись", mark: "⌁" },
+  { key: "moderation", label: "Модерация", section: "Летопись", mark: "✓" },
+  { key: "suggestions", label: "Предложения", section: "Летопись", mark: "✉" },
+  { key: "simulation", label: "Симуляция", section: "Операции", mark: "◇" },
+  { key: "tests", label: "Тесты", section: "Операции", mark: "⌘" },
+  { key: "config", label: "Конфиг", section: "Устав", mark: "≡" },
+  { key: "backup", label: "Бэкап", section: "Устав", mark: "↧", destructive: true },
 ]
 
 /* ─── Narrative filter options (shared) ─────────────── */
@@ -439,6 +441,320 @@ function NarrativeAnalyticsPanel() {
   )
 }
 
+/* ─── Narrative batch import ─────────────────────────── */
+type NarrativeBatchPolicy = "pending" | "active_system"
+
+type NarrativeBatchRow = {
+  index: number
+  valid: boolean
+  errors?: string[]
+  warnings?: string[]
+  preview?: string | null
+  normalized?: {
+    template_type?: string
+    text_template?: string
+    source?: string
+    variables?: string[]
+    mood_min?: number | null
+    mood_max?: number | null
+    is_active?: boolean
+  } | null
+  variables?: string[]
+}
+
+type NarrativeBatchResult = {
+  valid: boolean
+  errors?: string[]
+  rows?: NarrativeBatchRow[]
+  summary?: { total: number; valid: number; invalid: number }
+}
+
+function NarrativeBatchPanel({ onImported }: { onImported: () => void }) {
+  const [batchText, setBatchText] = useState("")
+  const [policy, setPolicy] = useState<NarrativeBatchPolicy>("pending")
+  const [validation, setValidation] = useState<{ key: string; result: NarrativeBatchResult } | null>(null)
+  const [message, setMessage] = useState<{ kind: "success" | "error"; text: string } | null>(null)
+  const [busy, setBusy] = useState<"validate" | "import" | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const key = `${policy}\u0000${batchText}`
+  const result = validation?.key === key ? validation.result : null
+  const canImport = result?.valid === true && busy === null
+
+  const readTemplates = (): Array<Record<string, unknown>> | null => {
+    try {
+      const parsed: unknown = JSON.parse(batchText)
+      if (Array.isArray(parsed)) return parsed as Array<Record<string, unknown>>
+      if (parsed && typeof parsed === "object" && Array.isArray((parsed as { templates?: unknown }).templates)) {
+        return (parsed as { templates: Array<Record<string, unknown>> }).templates
+      }
+      throw new Error("JSON должен быть массивом шаблонов или объектом с полем templates.")
+    } catch (error: any) {
+      setValidation({ key, result: { valid: false, errors: [error.message || "Неверный JSON."], rows: [], summary: { total: 0, valid: 0, invalid: 0 } } })
+      return null
+    }
+  }
+
+  const validate = async () => {
+    const templates = readTemplates()
+    if (!templates) return
+    setBusy("validate")
+    setMessage(null)
+    try {
+      const next = await api.adminValidateNarrativeBatch({ templates, activation_policy: policy })
+      setValidation({ key, result: next })
+    } catch (error: any) {
+      setValidation({ key, result: { valid: false, errors: [error.message || "Не удалось проверить пакет."], rows: [], summary: { total: 0, valid: 0, invalid: 0 } } })
+    } finally {
+      setBusy(null)
+    }
+  }
+
+  const importBatch = async () => {
+    if (!canImport) return
+    const templates = readTemplates()
+    if (!templates) return
+    setBusy("import")
+    setMessage(null)
+    try {
+      const imported = await api.adminImportNarrativeBatch({ templates, activation_policy: policy })
+      setMessage({ kind: "success", text: `Импортировано шаблонов: ${imported.imported}.` })
+      setValidation(null)
+      onImported()
+    } catch (error: any) {
+      setMessage({ kind: "error", text: error.message || "Импорт не выполнен: пакет не изменён." })
+    } finally {
+      setBusy(null)
+    }
+  }
+
+  return (
+    <section className="narrative-batch panel" aria-labelledby="narrative-batch-title">
+      <div className="panel-header">
+        <span id="narrative-batch-title">Импорт JSON-пакета</span>
+        <span className="narrative-batch-atomic">атомарно · до 200 строк</span>
+      </div>
+      <div className="panel-body narrative-batch-body">
+        <p className="narrative-batch-help">Вставьте JSON-массив или целый объект пакета с полем <code>templates</code>; можно выбрать файл <code>.json</code>. Сначала проверьте пакет: импорт станет доступен только для этой неизменённой версии и выбранной политики.</p>
+        <div className="narrative-batch-policy" role="group" aria-label="Политика активации">
+          <span className="narrative-batch-label">После импорта</span>
+          <label>
+            <input type="radio" name="batch-policy" value="pending" checked={policy === "pending"} onChange={() => setPolicy("pending")} />
+            <span><b>Ожидают модерации</b><small>Любой источник; шаблоны не активируются.</small></span>
+          </label>
+          <label>
+            <input type="radio" name="batch-policy" value="active_system" checked={policy === "active_system"} onChange={() => setPolicy("active_system")} />
+            <span><b>Сразу активировать system</b><small>Только строки с <code>"source": "system"</code>.</small></span>
+          </label>
+        </div>
+        <div className="narrative-batch-file-row">
+          <label className="narrative-batch-label" htmlFor="narrative-batch-json">JSON-пакет шаблонов</label>
+          <input
+            ref={fileInputRef}
+            className="narrative-batch-file"
+            type="file"
+            accept="application/json,.json"
+            aria-label="Загрузить JSON-файл с шаблонами"
+            onChange={async (event) => {
+              const file = event.currentTarget.files?.[0]
+              if (!file) return
+              try {
+                const text = await file.text()
+                JSON.parse(text)
+                setBatchText(text)
+                setValidation(null)
+                setMessage({ kind: "success", text: `Файл «${file.name}» загружен. Проверьте пакет перед импортом.` })
+              } catch {
+                setMessage({ kind: "error", text: "Файл не содержит корректный JSON." })
+              } finally {
+                event.currentTarget.value = ""
+              }
+            }}
+          />
+          <button type="button" onClick={() => fileInputRef.current?.click()}>Выбрать файл…</button>
+        </div>
+        <textarea
+          id="narrative-batch-json"
+          className="narrative-batch-json"
+          value={batchText}
+          onChange={(event) => { setBatchText(event.target.value); setMessage(null) }}
+          rows={10}
+          spellCheck={false}
+          placeholder={'[\n  {\n    "template_type": "explore",\n    "text_template": "{hero_name} идёт по {terrain}.",\n    "source": "community"\n  }\n]'}
+          aria-describedby="narrative-batch-help"
+        />
+        <div className="narrative-batch-actions">
+          <button type="button" onClick={validate} disabled={busy !== null}>{busy === "validate" ? "Проверяем…" : "Проверить пакет"}</button>
+          <button type="button" className="narrative-batch-import" onClick={importBatch} disabled={!canImport}>{busy === "import" ? "Импортируем…" : "Импортировать"}</button>
+          {result && !result.valid && <span className="narrative-batch-stale">Исправьте ошибки и проверьте пакет заново.</span>}
+        </div>
+
+        <div id="narrative-batch-help" className="narrative-batch-results" aria-live="polite" aria-atomic="false">
+          {message && <p className={`narrative-batch-message ${message.kind}`} role="status">{message.text}</p>}
+          {result && (
+            <>
+              <div className={`narrative-batch-summary ${result.valid ? "is-valid" : "is-invalid"}`}>
+                <strong>{result.valid ? "Пакет готов к импорту" : "Пакет требует исправлений"}</strong>
+                {result.summary && <span>Всего: {result.summary.total} · корректных: {result.summary.valid} · с ошибками: {result.summary.invalid}</span>}
+              </div>
+              {result.errors && result.errors.length > 0 && (
+                <ul className="narrative-batch-errors" aria-label="Ошибки пакета">{result.errors.map((error, index) => <li key={`${error}-${index}`}>{error}</li>)}</ul>
+              )}
+              {result.rows && result.rows.length > 0 && (
+                <ol className="narrative-batch-rows" aria-label="Результаты проверки строк">
+                  {result.rows.map((row) => (
+                    <li key={row.index} className={`narrative-batch-row ${row.valid ? "is-valid" : "is-invalid"}`}>
+                      <div className="narrative-batch-row-title"><strong>Строка {row.index + 1}</strong><span>{row.valid ? "Корректна" : "Ошибка"}</span></div>
+                      {row.preview != null && <p><b>Превью:</b> {row.preview}</p>}
+                      {row.variables && <p><b>Переменные:</b> {row.variables.length ? row.variables.map((variable) => <code key={variable}>{`{${variable}}`}</code>) : "нет"}</p>}
+                      {row.normalized && <p className="narrative-batch-normalized"><b>Будет сохранено:</b> <code>{row.normalized.template_type}</code> · {row.normalized.source} · {row.normalized.is_active ? "активен" : "ожидает"}</p>}
+                      {row.errors && row.errors.length > 0 && <ul className="narrative-batch-errors">{row.errors.map((error, index) => <li key={`${error}-${index}`}>{error}</li>)}</ul>}
+                      {row.warnings && row.warnings.length > 0 && <ul className="narrative-batch-warnings">{row.warnings.map((warning, index) => <li key={`${warning}-${index}`}>{warning}</li>)}</ul>}
+                    </li>
+                  ))}
+                </ol>
+              )}
+            </>
+          )}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ─── Decision Audit Panel ───────────────────────────── */
+const AUDIT_EVENT_LABELS: Record<DecisionAuditRecentEvent["event_type"], string> = {
+  intent_selected: "намерение выбрано",
+  intent_held: "намерение удержано",
+  intent_switched: "намерение сменено",
+  action_started: "действие начато",
+  action_completed: "действие завершено",
+  action_failed: "действие не удалось",
+}
+
+function DecisionAuditPanel() {
+  const [data, setData] = useState<DecisionAuditReport | null>(null)
+  const [days, setDays] = useState(30)
+  const [limit, setLimit] = useState(50)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState("")
+
+  const load = useCallback(() => {
+    setLoading(true)
+    setError("")
+    api.adminBrainStats(days, limit)
+      .then(setData)
+      .catch(() => setError("Не удалось загрузить аудит решений"))
+      .finally(() => setLoading(false))
+  }, [days, limit])
+
+  useEffect(() => { load() }, [load])
+
+  if (loading && !data) return <div style={{ color: "var(--muted)", padding: 32 }}>Загрузка аудита…</div>
+  if (error && !data) return <div style={{ color: "var(--danger)", padding: 32 }}>{error}</div>
+  if (!data) return null
+
+  const intentTotal = data.intent_by_goal.reduce((total, goal) => total + goal.selected + goal.held + goal.switched, 0)
+  const actionTotal = data.action_outcomes.reduce((total, action) => total + action.completed + action.failed, 0)
+  const failedActions = data.action_outcomes.reduce((total, action) => total + action.failed, 0)
+  const topGoal = data.intent_by_goal[0]
+  const concentration = topGoal && intentTotal > 0 ? ((topGoal.selected + topGoal.held + topGoal.switched) / intentTotal) * 100 : 0
+  const topHeroEvents = data.heroes[0]?.events ?? 0
+  const heroEvents = data.heroes.reduce((total, hero) => total + hero.events, 0)
+
+  return (
+    <section className="decision-audit" aria-labelledby="decision-audit-title">
+      <div className="decision-audit-heading">
+        <div>
+          <p className="decision-audit-kicker">Brain telemetry · append-only</p>
+          <h3 id="decision-audit-title">Аудит решений</h3>
+          <p>Проверка перекоса мозга: какая цель забирает решения, как часто намерение меняется и чем заканчиваются действия.</p>
+        </div>
+        <div className="decision-audit-controls">
+          <label>Период
+            <select value={days} onChange={(event) => setDays(Number(event.target.value))}>
+              <option value={7}>7 дней</option>
+              <option value={30}>30 дней</option>
+              <option value={90}>90 дней</option>
+              <option value={365}>365 дней</option>
+            </select>
+          </label>
+          <label>Событий
+            <select value={limit} onChange={(event) => setLimit(Number(event.target.value))}>
+              <option value={25}>25</option>
+              <option value={50}>50</option>
+              <option value={100}>100</option>
+              <option value={200}>200</option>
+            </select>
+          </label>
+          <button type="button" onClick={load} disabled={loading}>{loading ? "Обновление…" : "Обновить"}</button>
+        </div>
+      </div>
+
+      <div className="decision-audit-summary">
+        <div className="decision-audit-signal">
+          <span>Концентрация цели</span>
+          <strong>{concentration.toFixed(1)}%</strong>
+          <small>{topGoal ? `${topGoal.goal ?? "без цели"} · ${topGoal.selected + topGoal.held + topGoal.switched} из ${intentTotal}` : "Пока нет намерений"}</small>
+          {concentration >= 60 && <em>Проверьте перекос</em>}
+        </div>
+        <div className="decision-audit-stat"><span>Решений</span><strong>{formatNumber(intentTotal)}</strong><small>выбрано / удержано / сменено</small></div>
+        <div className="decision-audit-stat"><span>Действий</span><strong>{formatNumber(actionTotal)}</strong><small>{failedActions ? `${failedActions} не завершились` : "без сбоев"}</small></div>
+        <div className="decision-audit-stat"><span>Героев в аудите</span><strong>{formatNumber(data.heroes.length)}</strong><small>{heroEvents ? `лидер: ${topHeroEvents}/${heroEvents} событий` : "событий пока нет"}</small></div>
+      </div>
+
+      <div className="decision-audit-grid">
+        <div className="panel decision-audit-panel">
+          <div className="panel-header">Распределение целей <span>выбрано · удержано · сменено</span></div>
+          <div className="panel-body">
+            {data.intent_by_goal.length === 0 ? <p className="decision-audit-empty">За выбранный период намерений нет.</p> : data.intent_by_goal.map((goal) => {
+              const count = goal.selected + goal.held + goal.switched
+              const percentage = intentTotal ? (count / intentTotal) * 100 : 0
+              return <div className="decision-goal-row" key={goal.goal ?? "none"}>
+                <div className="decision-goal-label"><b>{goal.goal ?? "без цели"}</b><span>{percentage.toFixed(1)}% · {count}</span></div>
+                <div className="decision-goal-track" aria-label={`${goal.goal ?? "без цели"}: ${percentage.toFixed(1)}%`}><i style={{ width: `${percentage}%` }} /></div>
+                <div className="decision-event-counts"><span>В {goal.selected}</span><span>У {goal.held}</span><span>С {goal.switched}</span><span>U {goal.avg_utility.toFixed(2)}</span></div>
+              </div>
+            })}
+          </div>
+        </div>
+
+        <div className="panel decision-audit-panel">
+          <div className="panel-header">Исходы действий <span>завершено · не удалось</span></div>
+          <div className="panel-body">
+            {data.action_outcomes.length === 0 ? <p className="decision-audit-empty">Исходов действий пока нет.</p> : data.action_outcomes.map((action) => {
+              const count = action.completed + action.failed
+              const failureRate = count ? (action.failed / count) * 100 : 0
+              return <div className="decision-action-row" key={`${action.goal}-${action.action}`}>
+                <div><b>{action.action ?? "без действия"}</b><span>{action.goal ?? "без цели"}</span></div>
+                <div className="decision-outcome-bar"><i style={{ width: `${100 - failureRate}%` }} /><i style={{ width: `${failureRate}%` }} /></div>
+                <small><strong>{action.completed}</strong> готово · <strong>{action.failed}</strong> сбой</small>
+              </div>
+            })}
+          </div>
+        </div>
+      </div>
+
+      <div className="panel decision-audit-panel">
+        <div className="panel-header">Концентрация по героям <span>все телеметрические события периода</span></div>
+        <div className="panel-body" style={{ padding: 0 }}>
+          {data.heroes.length === 0 ? <p className="decision-audit-empty">Герои ещё не оставили след в аудите.</p> : <table className="decision-audit-table"><thead><tr><th>Герой</th><th>События</th><th>Намерения</th><th>Действия</th><th>Доля</th></tr></thead><tbody>{data.heroes.map((hero) => {
+            const share = heroEvents ? (hero.events / heroEvents) * 100 : 0
+            return <tr key={hero.hero}><td><b>{hero.hero}</b><small>ур. {hero.level}</small></td><td>{hero.events}</td><td>В {hero.selected} · У {hero.held} · С {hero.switched}</td><td>✓ {hero.completed} · ! {hero.failed}</td><td>{share.toFixed(1)}%</td></tr>
+          })}</tbody></table>}
+        </div>
+      </div>
+
+      <div className="panel decision-audit-panel">
+        <div className="panel-header">Последние события <span>за {data.range.days} дн. · последние {data.limit}</span></div>
+        <div className="panel-body" style={{ padding: 0 }}>
+          {data.recent_events.length === 0 ? <p className="decision-audit-empty">За выбранный период событий нет.</p> : <table className="decision-audit-table"><thead><tr><th>Когда</th><th>Герой</th><th>Событие</th><th>Цель / действие</th><th>Контекст</th></tr></thead><tbody>{data.recent_events.map((event, index) => <tr key={`${event.created_at}-${event.hero}-${index}`}><td>{formatDate(event.created_at)}</td><td>{event.hero}</td><td><span className={`decision-event-type ${event.event_type}`}>{AUDIT_EVENT_LABELS[event.event_type]}</span></td><td><b>{event.goal ?? "—"}</b>{event.action && <small>{event.action}</small>}</td><td>день {event.game_day ?? "—"} · час {event.game_hour ?? "—"}{event.utility != null && ` · U ${event.utility.toFixed(2)}`}</td></tr>)}</tbody></table>}
+        </div>
+        <div className="decision-audit-note">API сейчас отдаёт период и лимит последних событий. Причины и metadata сохраняются аудитом, но в ответ маршрута ещё не включены; фильтрация по ним и постраничный offset появятся после расширения API.</div>
+      </div>
+    </section>
+  )
+}
+
 /* ─── Narratives Panel (Библиотека) ─────────────────── */
 function NarrativesPanel() {
   const [data, setData] = useState<any>(null)
@@ -557,6 +873,8 @@ function NarrativesPanel() {
 
   return (
     <div>
+      <NarrativeBatchPanel onImported={() => { load(); loadStats() }} />
+
       {/* Create / Edit Form */}
       {(creating || editing) && (
         <div className="panel" style={{ marginBottom: "var(--space-4)" }}>
@@ -1096,6 +1414,7 @@ function ModerationPanel() {
   const [editText, setEditText] = useState("")
   const [loading, setLoading] = useState(false)
   const [genMsg, setGenMsg] = useState("")
+  const [deletingAll, setDeletingAll] = useState(false)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -1147,6 +1466,30 @@ function ModerationPanel() {
             {FILTER_OPTIONS.map((f) => <option key={f.k} value={f.k}>{f.l}</option>)}
           </select>
           {total > 0 && (
+            <>
+            <button
+              type="button"
+              aria-label="Удалить все ожидающие шаблоны по текущему фильтру"
+              disabled={deletingAll}
+              onClick={async () => {
+                const scope = typeFilter ? `типа «${typeFilter}»` : "ВСЕ ожидающие шаблоны"
+                if (!confirm(`Удалить ${total} шаблонов (${scope}) без возможности восстановления?`)) return
+                setDeletingAll(true)
+                try {
+                  const res = await api.adminDeletePendingTemplates(typeFilter ? { template_type: typeFilter } : { all: true })
+                  setGenMsg(`Удалено ожидающих шаблонов: ${res.deleted}`)
+                  setPage(1)
+                } catch (error: any) {
+                  setGenMsg(error?.message || "Ошибка массового удаления")
+                } finally {
+                  setDeletingAll(false)
+                  load()
+                }
+              }}
+              style={{ padding: "4px 10px", background: "color-mix(in oklab, var(--danger), transparent 86%)", color: "var(--danger)", border: "1px solid var(--danger)", borderRadius: "var(--radius-md)", fontSize: "var(--text-xs)", cursor: deletingAll ? "wait" : "pointer" }}
+            >
+              {deletingAll ? "Удаляем…" : `Удалить всё отобранное (${total})`}
+            </button>
             <button aria-label="Одобрить все отобранные шаблоны"
               onClick={async () => {
                 const scope = typeFilter ? `тип «${typeFilter}»` : "ВСЕ ожидающие шаблоны"
@@ -1162,6 +1505,7 @@ function ModerationPanel() {
               style={{ padding: "4px 10px", background: "color-mix(in oklab, var(--success), transparent 75%)", color: "var(--success)", border: "1px solid var(--success)", borderRadius: "var(--radius-md)", fontSize: "var(--text-xs)", cursor: "pointer" }}>
               Одобрить всё отобранное ({total})
             </button>
+            </>
           )}
           {genMsg && <span role="status" style={{ fontSize: "var(--text-xs)", color: "var(--muted)" }}>{genMsg}</span>}
         </div>
@@ -1510,31 +1854,74 @@ function BackupPanel() {
 /* ─── Main Admin Page ───────────────────────────────── */
 export function AdminPage() {
   const [activeTab, setActiveTab] = useState("overview")
+  const active = tabs.find((tab) => tab.key === activeTab) ?? tabs[0]
+  const sections = [...new Set(tabs.map((tab) => tab.section))]
 
   return (
-    <div className="anim-fade-up">
-      <div style={{ marginBottom: "var(--space-4)" }}>
-        <h1 style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-2xl)", fontWeight: 800, letterSpacing: "-0.02em", marginBottom: "var(--space-2)" }}>Админ-панель</h1>
-        <p style={{ color: "var(--muted)", fontSize: "var(--text-sm)" }}>Управление игрой, пользователями и контентом</p>
-      </div>
+    <section className="admin-observatory anim-fade-up" aria-labelledby="admin-observatory-title">
+      <header className="admin-command-header">
+        <div>
+          <p className="admin-kicker"><span aria-hidden="true">◆</span> Командная палата</p>
+          <h1 id="admin-observatory-title">Управление владением</h1>
+          <p className="admin-command-intro">Наблюдайте за миром, распоряжайтесь доступом и ведите летопись без лишнего шума.</p>
+        </div>
+        <div className="admin-command-seal" aria-label="Привилегированный доступ">
+          <span aria-hidden="true">♜</span>
+          <div><b>Привилегированный доступ</b><small>Все действия применяются к живому миру</small></div>
+        </div>
+      </header>
 
-      <div className="tabs" style={{ marginBottom: "var(--space-4)" }}>
-        {tabs.map((t) => (
-          <button key={t.key} className={`tab ${activeTab === t.key ? "active" : ""}`} onClick={() => setActiveTab(t.key)}>{t.label}</button>
-        ))}
-      </div>
+      <div className="admin-command-layout">
+        <nav className="admin-command-nav" aria-label="Разделы командной палаты">
+          <div className="admin-nav-heading">Разделы</div>
+          <div className="admin-nav-scroll" role="tablist" aria-orientation="vertical">
+            {sections.map((section) => (
+              <div className="admin-nav-group" key={section}>
+                <p>{section}</p>
+                {tabs.filter((tab) => tab.section === section).map((tab) => (
+                  <button
+                    key={tab.key}
+                    id={`admin-tab-${tab.key}`}
+                    className={`admin-command-tab ${activeTab === tab.key ? "active" : ""} ${tab.destructive ? "admin-command-tab-danger" : ""}`}
+                    role="tab"
+                    aria-selected={activeTab === tab.key}
+                    aria-controls="admin-tab-panel"
+                    tabIndex={activeTab === tab.key ? 0 : -1}
+                    onClick={() => setActiveTab(tab.key)}
+                  >
+                    <span className="admin-tab-mark" aria-hidden="true">{tab.mark}</span>
+                    <span>{tab.label}</span>
+                  </button>
+                ))}
+              </div>
+            ))}
+          </div>
+        </nav>
 
-      {activeTab === "overview" && <OverviewPanel />}
-      {activeTab === "users" && <UsersPanel />}
-      {activeTab === "heroes" && <HeroesPanel />}
-      {activeTab === "narratives" && <NarrativesPanel />}
-      {activeTab === "narrative-analytics" && <NarrativeAnalyticsPanel />}
-      {activeTab === "moderation" && <ModerationPanel />}
-      {activeTab === "suggestions" && <SuggestionsPanel />}
-      {activeTab === "simulation" && <SimulationPanel />}
-      {activeTab === "tests" && <TestsPanel />}
-      {activeTab === "config" && <ConfigPanel />}
-      {activeTab === "backup" && <BackupPanel />}
-    </div>
+        <main id="admin-tab-panel" className="admin-command-content" role="tabpanel" aria-labelledby={`admin-tab-${active.key}`} tabIndex={-1}>
+          <header className="admin-content-heading">
+            <div>
+              <p>{active.section}</p>
+              <h2>{active.label}</h2>
+            </div>
+            {active.destructive && <span className="admin-danger-status" role="status">Требует осознанного действия</span>}
+          </header>
+          <div className="admin-panel-stage">
+            {activeTab === "overview" && <OverviewPanel />}
+            {activeTab === "users" && <UsersPanel />}
+            {activeTab === "heroes" && <HeroesPanel />}
+            {activeTab === "decision-audit" && <DecisionAuditPanel />}
+            {activeTab === "narratives" && <NarrativesPanel />}
+            {activeTab === "narrative-analytics" && <NarrativeAnalyticsPanel />}
+            {activeTab === "moderation" && <ModerationPanel />}
+            {activeTab === "suggestions" && <SuggestionsPanel />}
+            {activeTab === "simulation" && <SimulationPanel />}
+            {activeTab === "tests" && <TestsPanel />}
+            {activeTab === "config" && <ConfigPanel />}
+            {activeTab === "backup" && <BackupPanel />}
+          </div>
+        </main>
+      </div>
+    </section>
   )
 }

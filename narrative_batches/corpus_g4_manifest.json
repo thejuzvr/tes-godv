@@ -1,0 +1,469 @@
+﻿{
+    "corpus":  "G4 special narrative completion",
+    "activation_policy":  "pending",
+    "source":  "community",
+    "scope":  "Corpus files only; database intentionally not modified.",
+    "minimum_target_per_type":  60,
+    "batch_count":  2,
+    "files":  [
+                  {
+                      "template_type":  "construction_donation",
+                      "existing_file":  "corpus_special_construction_donation.json",
+                      "existing_count":  54,
+                      "g4_files":  [
+                                       {
+                                           "file":  "corpus_g4_construction_donation.json",
+                                           "count":  25,
+                                           "tone_split":  {
+                                                              "normal":  12,
+                                                              "comic":  13
+                                                          }
+                                       },
+                                       {
+                                           "file":  "corpus_g4_02_construction_donation.json",
+                                           "count":  25,
+                                           "tone_split":  {
+                                                              "normal":  12,
+                                                              "comic":  13
+                                                          }
+                                       }
+                                   ],
+                      "g4_count":  50,
+                      "corpus_total":  104,
+                      "activation_policy":  "pending",
+                      "source":  "community"
+                  },
+                  {
+                      "template_type":  "enhance_success",
+                      "existing_file":  "corpus_special_enhance_success.json",
+                      "existing_count":  53,
+                      "g4_files":  [
+                                       {
+                                           "file":  "corpus_g4_enhance_success.json",
+                                           "count":  25,
+                                           "tone_split":  {
+                                                              "normal":  12,
+                                                              "comic":  13
+                                                          }
+                                       },
+                                       {
+                                           "file":  "corpus_g4_02_enhance_success.json",
+                                           "count":  25,
+                                           "tone_split":  {
+                                                              "normal":  12,
+                                                              "comic":  13
+                                                          }
+                                       }
+                                   ],
+                      "g4_count":  50,
+                      "corpus_total":  103,
+                      "activation_policy":  "pending",
+                      "source":  "community"
+                  },
+                  {
+                      "template_type":  "gate_closed",
+                      "existing_file":  "corpus_special_gate_closed.json",
+                      "existing_count":  52,
+                      "g4_files":  [
+                                       {
+                                           "file":  "corpus_g4_gate_closed.json",
+                                           "count":  25,
+                                           "tone_split":  {
+                                                              "normal":  12,
+                                                              "comic":  13
+                                                          }
+                                       },
+                                       {
+                                           "file":  "corpus_g4_02_gate_closed.json",
+                                           "count":  25,
+                                           "tone_split":  {
+                                                              "normal":  12,
+                                                              "comic":  13
+                                                          }
+                                       }
+                                   ],
+                      "g4_count":  50,
+                      "corpus_total":  102,
+                      "activation_policy":  "pending",
+                      "source":  "community"
+                  },
+                  {
+                      "template_type":  "gate_donation",
+                      "existing_file":  "corpus_special_gate_donation.json",
+                      "existing_count":  54,
+                      "g4_files":  [
+                                       {
+                                           "file":  "corpus_g4_gate_donation.json",
+                                           "count":  25,
+                                           "tone_split":  {
+                                                              "normal":  12,
+                                                              "comic":  13
+                                                          }
+                                       },
+                                       {
+                                           "file":  "corpus_g4_02_gate_donation.json",
+                                           "count":  25,
+                                           "tone_split":  {
+                                                              "normal":  12,
+                                                              "comic":  13
+                                                          }
+                                       }
+                                   ],
+                      "g4_count":  50,
+                      "corpus_total":  104,
+                      "activation_policy":  "pending",
+                      "source":  "community"
+                  },
+                  {
+                      "template_type":  "god_direct",
+                      "existing_file":  "corpus_special_god_direct.json",
+                      "existing_count":  42,
+                      "g4_files":  [
+                                       {
+                                           "file":  "corpus_g4_god_direct.json",
+                                           "count":  25,
+                                           "tone_split":  {
+                                                              "normal":  12,
+                                                              "comic":  13
+                                                          }
+                                       },
+                                       {
+                                           "file":  "corpus_g4_02_god_direct.json",
+                                           "count":  25,
+                                           "tone_split":  {
+                                                              "normal":  12,
+                                                              "comic":  13
+                                                          }
+                                       }
+                                   ],
+                      "g4_count":  50,
+                      "corpus_total":  92,
+                      "activation_policy":  "pending",
+                      "source":  "community"
+                  },
+                  {
+                      "template_type":  "god_encourage",
+                      "existing_file":  "corpus_special_god_encourage.json",
+                      "existing_count":  35,
+                      "g4_files":  [
+                                       {
+                                           "file":  "corpus_g4_god_encourage.json",
+                                           "count":  25,
+                                           "tone_split":  {
+                                                              "normal":  12,
+                                                              "comic":  13
+                                                          }
+                                       },
+                                       {
+                                           "file":  "corpus_g4_02_god_encourage.json",
+                                           "count":  25,
+                                           "tone_split":  {
+                                                              "normal":  12,
+                                                              "comic":  13
+                                                          }
+                                       }
+                                   ],
+                      "g4_count":  50,
+                      "corpus_total":  85,
+                      "activation_policy":  "pending",
+                      "source":  "community"
+                  },
+                  {
+                      "template_type":  "god_heal",
+                      "existing_file":  "corpus_special_god_heal.json",
+                      "existing_count":  41,
+                      "g4_files":  [
+                                       {
+                                           "file":  "corpus_g4_god_heal.json",
+                                           "count":  25,
+                                           "tone_split":  {
+                                                              "normal":  12,
+                                                              "comic":  13
+                                                          }
+                                       },
+                                       {
+                                           "file":  "corpus_g4_02_god_heal.json",
+                                           "count":  25,
+                                           "tone_split":  {
+                                                              "normal":  12,
+                                                              "comic":  13
+                                                          }
+                                       }
+                                   ],
+                      "g4_count":  50,
+                      "corpus_total":  91,
+                      "activation_policy":  "pending",
+                      "source":  "community"
+                  },
+                  {
+                      "template_type":  "god_punish",
+                      "existing_file":  "corpus_special_god_punish.json",
+                      "existing_count":  39,
+                      "g4_files":  [
+                                       {
+                                           "file":  "corpus_g4_god_punish.json",
+                                           "count":  25,
+                                           "tone_split":  {
+                                                              "normal":  12,
+                                                              "comic":  13
+                                                          }
+                                       },
+                                       {
+                                           "file":  "corpus_g4_02_god_punish.json",
+                                           "count":  25,
+                                           "tone_split":  {
+                                                              "normal":  12,
+                                                              "comic":  13
+                                                          }
+                                       }
+                                   ],
+                      "g4_count":  50,
+                      "corpus_total":  89,
+                      "activation_policy":  "pending",
+                      "source":  "community"
+                  },
+                  {
+                      "template_type":  "god_quest",
+                      "existing_file":  "corpus_special_god_quest.json",
+                      "existing_count":  42,
+                      "g4_files":  [
+                                       {
+                                           "file":  "corpus_g4_god_quest.json",
+                                           "count":  25,
+                                           "tone_split":  {
+                                                              "normal":  12,
+                                                              "comic":  13
+                                                          }
+                                       },
+                                       {
+                                           "file":  "corpus_g4_02_god_quest.json",
+                                           "count":  25,
+                                           "tone_split":  {
+                                                              "normal":  12,
+                                                              "comic":  13
+                                                          }
+                                       }
+                                   ],
+                      "g4_count":  50,
+                      "corpus_total":  92,
+                      "activation_policy":  "pending",
+                      "source":  "community"
+                  },
+                  {
+                      "template_type":  "god_weather",
+                      "existing_file":  "corpus_special_god_weather.json",
+                      "existing_count":  42,
+                      "g4_files":  [
+                                       {
+                                           "file":  "corpus_g4_god_weather.json",
+                                           "count":  25,
+                                           "tone_split":  {
+                                                              "normal":  12,
+                                                              "comic":  13
+                                                          }
+                                       },
+                                       {
+                                           "file":  "corpus_g4_02_god_weather.json",
+                                           "count":  25,
+                                           "tone_split":  {
+                                                              "normal":  12,
+                                                              "comic":  13
+                                                          }
+                                       }
+                                   ],
+                      "g4_count":  50,
+                      "corpus_total":  92,
+                      "activation_policy":  "pending",
+                      "source":  "community"
+                  },
+                  {
+                      "template_type":  "guild_feast",
+                      "existing_file":  "corpus_special_guild_feast.json",
+                      "existing_count":  55,
+                      "g4_files":  [
+                                       {
+                                           "file":  "corpus_g4_guild_feast.json",
+                                           "count":  25,
+                                           "tone_split":  {
+                                                              "normal":  12,
+                                                              "comic":  13
+                                                          }
+                                       },
+                                       {
+                                           "file":  "corpus_g4_02_guild_feast.json",
+                                           "count":  25,
+                                           "tone_split":  {
+                                                              "normal":  12,
+                                                              "comic":  13
+                                                          }
+                                       }
+                                   ],
+                      "g4_count":  50,
+                      "corpus_total":  105,
+                      "activation_policy":  "pending",
+                      "source":  "community"
+                  },
+                  {
+                      "template_type":  "guild_founded",
+                      "existing_file":  "corpus_special_guild_founded.json",
+                      "existing_count":  51,
+                      "g4_files":  [
+                                       {
+                                           "file":  "corpus_g4_guild_founded.json",
+                                           "count":  25,
+                                           "tone_split":  {
+                                                              "normal":  12,
+                                                              "comic":  13
+                                                          }
+                                       },
+                                       {
+                                           "file":  "corpus_g4_02_guild_founded.json",
+                                           "count":  25,
+                                           "tone_split":  {
+                                                              "normal":  12,
+                                                              "comic":  13
+                                                          }
+                                       }
+                                   ],
+                      "g4_count":  50,
+                      "corpus_total":  101,
+                      "activation_policy":  "pending",
+                      "source":  "community"
+                  },
+                  {
+                      "template_type":  "guild_levelup",
+                      "existing_file":  "corpus_special_guild_levelup.json",
+                      "existing_count":  51,
+                      "g4_files":  [
+                                       {
+                                           "file":  "corpus_g4_guild_levelup.json",
+                                           "count":  25,
+                                           "tone_split":  {
+                                                              "normal":  12,
+                                                              "comic":  13
+                                                          }
+                                       },
+                                       {
+                                           "file":  "corpus_g4_02_guild_levelup.json",
+                                           "count":  25,
+                                           "tone_split":  {
+                                                              "normal":  12,
+                                                              "comic":  13
+                                                          }
+                                       }
+                                   ],
+                      "g4_count":  50,
+                      "corpus_total":  101,
+                      "activation_policy":  "pending",
+                      "source":  "community"
+                  },
+                  {
+                      "template_type":  "guild_shop_purchase",
+                      "existing_file":  "corpus_special_guild_shop_purchase.json",
+                      "existing_count":  53,
+                      "g4_files":  [
+                                       {
+                                           "file":  "corpus_g4_guild_shop_purchase.json",
+                                           "count":  25,
+                                           "tone_split":  {
+                                                              "normal":  12,
+                                                              "comic":  13
+                                                          }
+                                       },
+                                       {
+                                           "file":  "corpus_g4_02_guild_shop_purchase.json",
+                                           "count":  25,
+                                           "tone_split":  {
+                                                              "normal":  12,
+                                                              "comic":  13
+                                                          }
+                                       }
+                                   ],
+                      "g4_count":  50,
+                      "corpus_total":  103,
+                      "activation_policy":  "pending",
+                      "source":  "community"
+                  },
+                  {
+                      "template_type":  "hero_encounter_counterpart",
+                      "existing_file":  "corpus_special_hero_encounter_counterpart.json",
+                      "existing_count":  52,
+                      "g4_files":  [
+                                       {
+                                           "file":  "corpus_g4_hero_encounter_counterpart.json",
+                                           "count":  25,
+                                           "tone_split":  {
+                                                              "normal":  12,
+                                                              "comic":  13
+                                                          }
+                                       },
+                                       {
+                                           "file":  "corpus_g4_02_hero_encounter_counterpart.json",
+                                           "count":  25,
+                                           "tone_split":  {
+                                                              "normal":  12,
+                                                              "comic":  13
+                                                          }
+                                       }
+                                   ],
+                      "g4_count":  50,
+                      "corpus_total":  102,
+                      "activation_policy":  "pending",
+                      "source":  "community"
+                  },
+                  {
+                      "template_type":  "hero_encounter_initiator",
+                      "existing_file":  "corpus_special_hero_encounter_initiator.json",
+                      "existing_count":  52,
+                      "g4_files":  [
+                                       {
+                                           "file":  "corpus_g4_hero_encounter_initiator.json",
+                                           "count":  25,
+                                           "tone_split":  {
+                                                              "normal":  12,
+                                                              "comic":  13
+                                                          }
+                                       },
+                                       {
+                                           "file":  "corpus_g4_02_hero_encounter_initiator.json",
+                                           "count":  25,
+                                           "tone_split":  {
+                                                              "normal":  12,
+                                                              "comic":  13
+                                                          }
+                                       }
+                                   ],
+                      "g4_count":  50,
+                      "corpus_total":  102,
+                      "activation_policy":  "pending",
+                      "source":  "community"
+                  },
+                  {
+                      "template_type":  "world_news",
+                      "existing_file":  "corpus_special_world_news.json",
+                      "existing_count":  45,
+                      "g4_files":  [
+                                       {
+                                           "file":  "corpus_g4_world_news.json",
+                                           "count":  25,
+                                           "tone_split":  {
+                                                              "normal":  12,
+                                                              "comic":  13
+                                                          }
+                                       },
+                                       {
+                                           "file":  "corpus_g4_02_world_news.json",
+                                           "count":  25,
+                                           "tone_split":  {
+                                                              "normal":  12,
+                                                              "comic":  13
+                                                          }
+                                       }
+                                   ],
+                      "g4_count":  50,
+                      "corpus_total":  95,
+                      "activation_policy":  "pending",
+                      "source":  "community"
+                  }
+              ]
+}

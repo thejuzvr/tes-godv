@@ -1,0 +1,42 @@
+/* Shared Observatory shell for guild, progress and hall of fame. */
+body:has(.dashboard.realm-shell) { background: #101c22; }
+[data-theme="light"] body:has(.dashboard.realm-shell) { background: #e8eeed; }
+.dashboard.realm-shell {
+  --bg: #101c22; --surface: #17262d; --surface-raised: #20333b; --bg-elevated: #20333b;
+  --fg: #e9e9de; --muted: #a3b4b9; --border: #33464d;
+  --panel-bg: #17262d; --panel-border: #33464d;
+  --accent: #d6b87c; --accent-on: #16242b; --gold: #d6b87c;
+  --hp: #d78578; --mp: #7eb9d1; --sp: #94bb9f; --xp: #b2a3cb;
+  --danger: #ed9b8e; --success: #94bb9f; --warn: #dfb477;
+  max-width: 1520px; padding: 0 clamp(16px, 3.5vw, 56px) 24px; gap: 28px;
+  background: var(--bg);
+}
+[data-theme="light"] .dashboard.realm-shell {
+  --bg: #e8eeed; --surface: #f5f7f3; --surface-raised: #e1e9e7; --bg-elevated: #e1e9e7;
+  --fg: #20353c; --muted: #516970; --border: #c9d5d2;
+  --panel-bg: #f5f7f3; --panel-border: #c9d5d2;
+  --accent: #80622c; --accent-on: #fffaf0; --gold: #80622c;
+  --hp: #aa5149; --mp: #366f89; --sp: #477453; --xp: #73608d;
+  --danger: #a34239; --success: #477453; --warn: #876024;
+}
+.dashboard.realm-shell.wiki-shell { max-width: 100%; margin: 0; padding: 0; gap: 0; height: 100vh; min-height: 100vh; overflow: hidden; }
+.dashboard.realm-shell.wiki-shell .top-bar { padding: 16px clamp(16px, 3.5vw, 56px); background: var(--bg); border-bottom: 1px solid var(--border); }
+.dashboard.realm-shell.wiki-shell .status-bar { padding: 10px clamp(16px, 3.5vw, 56px); background: var(--bg); border-top: 1px solid var(--border); }
+.realm-shell .top-bar { padding: 23px 0; border-bottom: 1px solid var(--border); gap: 20px; }
+.realm-shell .logo { font-family: var(--font-display); font-size: 26px; letter-spacing: .01em; color: var(--fg); }
+.realm-shell .logo svg { width: 22px; color: var(--accent); }
+.realm-shell .nav-pills { gap: 4px; }
+.realm-shell .nav-pill { border-radius: 6px; font-size: 13px; padding: 9px 12px; }
+.realm-shell .nav-pill.active { color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, transparent); box-shadow: none; }
+.realm-shell .nav-pill:hover { color: var(--fg); background: var(--surface-raised); }
+.realm-shell .status-bar { margin-top: auto; background: transparent; border-top: 1px solid var(--border); padding: 16px 0; font-size: 12px; color: var(--muted); }
+.realm-shell :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.realm-shell input, .realm-shell select, .realm-shell textarea { color: var(--fg); background-color: var(--bg); accent-color: var(--accent); }
+@media (max-width: 800px) {
+  .dashboard.realm-shell { gap: 20px; }
+  .realm-shell .top-bar { padding: 16px 0; gap: 12px; }
+  .realm-shell .nav-pills { order: 3; width: 100%; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 4px; }
+  .realm-shell .nav-pill { white-space: nowrap; }
+  .realm-shell .status-bar { gap: 10px; flex-wrap: wrap; }
+}
+@media (prefers-reduced-motion: reduce) { .realm-shell *, .realm-shell *::before, .realm-shell *::after { animation: none !important; transition: none !important; } }

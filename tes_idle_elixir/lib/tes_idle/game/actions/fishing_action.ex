@@ -32,13 +32,14 @@ defmodule TesIdle.Game.Actions.FishingAction do
     if water?(ctx) do
       ticks = Enum.random(cfg["ticks"] || [1, 5])
 
-      {:ok, %{
-        state_to: "fishing",
-        state_data_update: %{
-          "fishing" => %{"ticks_left" => ticks, "total_ticks" => ticks},
-        },
-        context: %{"fish_start" => "true"},
-      }}
+      {:ok,
+       %{
+         state_to: "fishing",
+         state_data_update: %{
+           "fishing" => %{"ticks_left" => ticks, "total_ticks" => ticks}
+         },
+         context: %{"fish_start" => "true"}
+       }}
     else
       # Нет воды — тихо переключаемся на исследование
       TesIdle.Game.Actions.ExploreAction.execute(ctx)
@@ -51,11 +52,12 @@ defmodule TesIdle.Game.Actions.FishingAction do
     cond do
       ticks_left > 0 and :rand.uniform() > catch_chance(ctx, cfg) ->
         # Пустой тик — продолжаем ждать клёва
-        {:ok, %{
-          state_to: "fishing",
-          state_data_update: %{"fishing" => Map.put(fishing, "ticks_left", ticks_left)},
-          context: %{},
-        }}
+        {:ok,
+         %{
+           state_to: "fishing",
+           state_data_update: %{"fishing" => Map.put(fishing, "ticks_left", ticks_left)},
+           context: %{}
+         }}
 
       true ->
         # Улов! (или срок вышел с уловом в последний тик)
@@ -64,21 +66,27 @@ defmodule TesIdle.Game.Actions.FishingAction do
   end
 
   defp catch_fish(ctx, cfg) do
-    fish_item = Repo.one(
-      from i in Item,
-        where: "fish" in i.tags and i.is_active == true,
-        order_by: fragment("RANDOM()"),
-        limit: 1
-    )
+    fish_item =
+      Repo.one(
+        from i in Item,
+          where: "fish" in i.tags and i.is_active == true,
+          order_by: fragment("RANDOM()"),
+          limit: 1
+      )
 
     {item_name, xp} =
       if fish_item do
-        inv = Repo.one(from ii in InventoryItem, where: ii.hero_id == ^ctx.hero.id and ii.item_id == ^fish_item.id)
+        inv =
+          Repo.one(
+            from ii in InventoryItem,
+              where: ii.hero_id == ^ctx.hero.id and ii.item_id == ^fish_item.id
+          )
 
         if inv do
           inv |> Ecto.Changeset.change(%{quantity: inv.quantity + 1}) |> Repo.update!()
         else
-          %InventoryItem{hero_id: ctx.hero.id, item_id: fish_item.id, quantity: 1} |> Repo.insert!()
+          %InventoryItem{hero_id: ctx.hero.id, item_id: fish_item.id, quantity: 1}
+          |> Repo.insert!()
         end
 
         {fish_item.name, rand_in(cfg["xp"] || [3, 8])}
@@ -90,13 +98,15 @@ defmodule TesIdle.Game.Actions.FishingAction do
     {skills, _} = Skills.gain(ctx.hero, :fishing, cfg["skill_xp"] || 1, Skills.rate(ctx.configs))
     ctx.hero |> Ecto.Changeset.change(%{skills: skills}) |> Repo.update!()
 
-    {:ok, %{
-      state_to: "fishing",
-      xp: xp,
-      state_data_update: %{"fishing" => nil},
-      context: %{"fish_name" => item_name || "что-то блеснуло и сорвалось"},
-      item_name: item_name,
-    }}
+    {:ok,
+     %{
+       state_to: "fishing",
+       activity_complete: true,
+       xp: xp,
+       state_data_update: %{"fishing" => nil},
+       context: %{"fish_name" => item_name || "что-то блеснуло и сорвалось"},
+       item_name: item_name
+     }}
   end
 
   @doc "S-1: шанс улова тика (открыт для статистических тестов)."
@@ -128,7 +138,9 @@ defmodule TesIdle.Game.Actions.FishingAction do
 
   defp get_cfg(ctx), do: ((ctx.configs || %{})["activities"] || %{})["fishing"] || %{}
 
-  defp rand_in([lo, hi]) when is_number(lo) and is_number(hi), do: Enum.random(round(lo)..round(hi))
+  defp rand_in([lo, hi]) when is_number(lo) and is_number(hi),
+    do: Enum.random(round(lo)..round(hi))
+
   defp rand_in(v) when is_number(v), do: v
   defp rand_in(_), do: 5
 end

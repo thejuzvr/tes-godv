@@ -30,7 +30,7 @@ import {
   type GuildSummary,
   type GuildMemberRow,
 } from "@/stores/guildStore"
-import "./guild-skin.css"
+import "./guild-observatory.css"
 
 const CREATE_COST = 500
 
@@ -70,22 +70,39 @@ function LeaveConfirmModal({
   onCancel: () => void
   busy: boolean
 }) {
+  const dialogRef = useRef<HTMLDialogElement>(null)
+  useEffect(() => {
+    const previous = document.activeElement as HTMLElement | null
+    const dialog = dialogRef.current
+    dialog?.showModal()
+    dialog?.querySelector<HTMLButtonElement>("button")?.focus()
+    return () => {
+      dialog?.close()
+      if (previous?.isConnected) previous.focus()
+    }
+  }, [])
   return (
-    <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        backgroundColor: "rgba(0, 0, 0, 0.7)",
-        backdropFilter: "blur(4px)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        zIndex: 9999,
-        padding: 16,
+    <dialog
+      className="guild-leave-dialog"
+      ref={dialogRef}
+      onCancel={(event) => {
+        event.preventDefault()
+        if (!busy) onCancel()
       }}
-      role="dialog"
+      onKeyDown={(event) => {
+        if (event.key === "Tab") {
+          const buttons = dialogRef.current?.querySelectorAll<HTMLButtonElement>("button:not(:disabled)")
+          if (!buttons?.length) { event.preventDefault(); return }
+          const first = buttons[0]
+          const last = buttons[buttons.length - 1]
+          if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus() }
+          if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus() }
+        }
+      }}
       aria-modal="true"
+      aria-busy={busy}
       aria-labelledby="leave-modal-title"
+      aria-describedby="leave-modal-description"
     >
       <div
         className="fantasy-window"
@@ -103,7 +120,7 @@ function LeaveConfirmModal({
             {isLeader ? "Сложить знамя гильдии?" : "Покинуть ряды соратников?"}
           </h3>
         </div>
-        <p style={{ fontSize: "var(--text-sm)", color: "var(--muted)", lineHeight: 1.55, marginBottom: 22 }}>
+        <p id="leave-modal-description" style={{ fontSize: "var(--text-sm)", color: "var(--muted)", lineHeight: 1.55, marginBottom: 22 }}>
           {isLeader
             ? "Если в гильдии есть соратники, знамя перейдёт старшему офицеру или самому преданному воину. Если ты один — гильдия будет распущена навсегда."
             : "Ты утратишь доступ к общему алтарю, казне и лавке соратников. Вступить снова можно будет в любое время."}
@@ -143,7 +160,7 @@ function LeaveConfirmModal({
           </button>
         </div>
       </div>
-    </div>
+    </dialog>
   )
 }
 
@@ -208,7 +225,7 @@ function CreateGuildCharter({
         </button>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 24, alignItems: "start" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 320px), 1fr))", gap: 24, alignItems: "start" }}>
         {/* Живой предпросмотр знамени */}
         <div
           style={{
@@ -265,6 +282,7 @@ function CreateGuildCharter({
               Название знамени (от 3 до 24 знаков)
             </label>
             <input
+              aria-label="Название гильдии — от 3 до 24 символов"
               value={name}
               onChange={(e) => setName(e.target.value)}
               maxLength={24}
@@ -286,6 +304,7 @@ function CreateGuildCharter({
               Девиз гильдии (до 80 знаков)
             </label>
             <input
+              aria-label="Девиз гильдии"
               value={motto}
               onChange={(e) => setMotto(e.target.value)}
               maxLength={80}
@@ -345,6 +364,7 @@ function CreateGuildCharter({
                   <button
                     key={key}
                     type="button"
+                    aria-pressed={active}
                     onClick={() => setPolicy(key)}
                     style={{
                       padding: "8px 16px",
@@ -442,6 +462,7 @@ function GuildLanding({
   const [search, setSearch] = useState("")
   const [policyFilter, setPolicyFilter] = useState<"all" | "open" | "request">("all")
   const [joiningId, setJoiningId] = useState<string | null>(null)
+  const [pendingIds, setPendingIds] = useState<string[]>([])
   const [notice, setNotice] = useState<{ type: "success" | "warn" | "error"; text: string } | null>(null)
 
   const handleJoin = async (id: string) => {
@@ -450,6 +471,7 @@ function GuildLanding({
     setNotice(null)
     const ok = await onJoin(id)
     if (ok === "pending") {
+      setPendingIds((ids) => [...ids, id])
       setNotice({ type: "warn", text: "Прошение о вступлении подано совету офицеров." })
     } else if (ok === true) {
       setNotice({ type: "success", text: "Добро пожаловать под знамя!" })
@@ -494,7 +516,7 @@ function GuildLanding({
               Союзы Тамриэля
             </span>
           </div>
-          <h1 className="guild-title-hero">Оплоты и Ордены Скайрима</h1>
+          <h1 className="guild-title-hero">Найди своё знамя</h1>
           <p style={{ color: "var(--muted)", fontSize: "var(--text-sm)", marginTop: 8, maxWidth: 720, lineHeight: 1.6 }}>
             Объединяйтесь под общими знамёнами, возводите подношения Священному Алтарю ради благословений опыта и атаки,
             закатывайте совместные пиры и приобретайте редкие реликвии в лавке соратников.
@@ -585,6 +607,7 @@ function GuildLanding({
                   style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "var(--muted)" }}
                 />
                 <input
+                  aria-label="Поиск гильдий по названию или девизу"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Поиск по названию или девизу знамени…"
@@ -613,6 +636,7 @@ function GuildLanding({
                 return (
                   <button
                     key={tab.id}
+                    aria-pressed={active}
                     onClick={() => setPolicyFilter(tab.id)}
                     style={{
                       padding: "7px 16px",
@@ -644,7 +668,7 @@ function GuildLanding({
                 : "По вашему запросу не найдено подходящих гильдий."}
             </div>
           ) : (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: 20 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 340px), 1fr))", gap: 20 }}>
               {filteredGuilds.map((g) => {
                 const isJoining = joiningId === g.id
                 return (
@@ -687,7 +711,7 @@ function GuildLanding({
                             style={{
                               padding: "2px 7px",
                               borderRadius: 3,
-                              fontSize: 10,
+                              fontSize: 13,
                               background: g.policy === "open" ? "rgba(34, 197, 94, 0.15)" : "rgba(234, 179, 8, 0.15)",
                               color: g.policy === "open" ? "var(--success)" : "var(--gold)",
                               border: `1px solid ${g.policy === "open" ? "rgba(34, 197, 94, 0.3)" : "rgba(234, 179, 8, 0.3)"}`,
@@ -719,7 +743,7 @@ function GuildLanding({
                       {g.policy === "open" ? (
                         <button
                           onClick={() => handleJoin(g.id)}
-                          disabled={isJoining}
+                          disabled={joiningId !== null}
                           style={{
                             width: "100%",
                             padding: "10px 0",
@@ -738,7 +762,7 @@ function GuildLanding({
                       ) : (
                         <button
                           onClick={() => handleJoin(g.id)}
-                          disabled={isJoining}
+                          disabled={joiningId !== null || g.policy === "invite" || pendingIds.includes(g.id)}
                           style={{
                             width: "100%",
                             padding: "10px 0",
@@ -751,7 +775,7 @@ function GuildLanding({
                             transition: "all 0.2s ease",
                           }}
                         >
-                          {isJoining ? "Подаём…" : "Подать прошение"}
+                          {g.policy === "invite" ? "Только по приглашению" : pendingIds.includes(g.id) ? "Заявка подана" : isJoining ? "Подаём…" : "Подать прошение"}
                         </button>
                       )}
                     </div>
@@ -869,7 +893,7 @@ function AltarAndTreasuryChamber({
         </div>
       )}
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(440px, 1fr))", gap: 24 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 440px), 1fr))", gap: 24 }}>
         {/* Карточка Священного Алтаря */}
         <div className="fantasy-window" style={{ padding: 28 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
@@ -1059,9 +1083,10 @@ function AltarAndTreasuryChamber({
                     <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 3 }}>
                       Вся гильдия получает <strong style={{ color: "var(--gold)" }}>+5% опыта</strong>. До конца:{" "}
                       {treasury.boost_until
-                        ? `${Math.max(0, Math.round((new Date(`${treasury.boost_until}Z`).getTime() - Date.now()) / 60000))} мин.`
+                        ? `${Math.max(0, Math.round((new Date(/Z$|[+-]\d{2}:\d{2}$/.test(treasury.boost_until) ? treasury.boost_until : `${treasury.boost_until}Z`).getTime() - Date.now()) / 60000))} мин.`
                         : "несколько минут"}
                     </div>
+                    {treasury.my_can_feast && <button className="guild-secondary-action" type="button" onClick={handleFeast} disabled={feastBusy || treasury.amount < treasury.feast_cost}>{feastBusy ? "Продлеваем…" : `Продлить пир · ${fmt(treasury.feast_cost)} золота`}</button>}
                   </div>
                 </div>
               ) : (
@@ -1215,7 +1240,7 @@ function AltarAndTreasuryChamber({
 }
 
 // ── Chamber 2: Лавка Соратников (полноэкранная витрина) ───────────────────────
-function ShopChamber() {
+function ShopChamber({ onChanged }: { onChanged: () => void }) {
   const [catalog, setCatalog] = useState<any[]>([])
   const [myPoints, setMyPoints] = useState<number | null>(null)
   const [buyingName, setBuyingName] = useState<string | null>(null)
@@ -1226,7 +1251,9 @@ function ShopChamber() {
       const res = await api.getGuildShop()
       setCatalog(res.catalog ?? [])
       setMyPoints(res.my_points)
-    } catch {}
+    } catch {
+      setNotice("Не удалось загрузить лавку. Открой этот зал повторно, чтобы обновить каталог.")
+    }
   }, [])
 
   useEffect(() => {
@@ -1241,6 +1268,7 @@ function ShopChamber() {
       const res = await api.buyGuildItem(name)
       setNotice(`📦 Приобретено: «${res.item.name}»! Остаток очков: ${res.points_left}.`)
       await load()
+      onChanged()
     } catch (e: any) {
       const msg = e?.message || String(e)
       setNotice(msg.includes("not_enough_points") ? "Недостаточно очков верности гильдии." : "Не удалось совершить покупку.")
@@ -1443,7 +1471,7 @@ function RosterAndAppsChamber({
       const res = await api.getGuildApplications(guildId)
       setApps(res.applications ?? [])
     } catch {
-      setApps([])
+      setNotice("Не удалось загрузить заявки. Открой зал соратников повторно, чтобы попробовать ещё раз.")
     }
   }, [guildId, isOfficer])
 
@@ -1459,6 +1487,7 @@ function RosterAndAppsChamber({
       await loadApps()
       onChanged()
     } catch {
+      setNotice("Не удалось обработать заявку. Проверь список и повтори действие.")
       await loadApps()
     } finally {
       setAppsBusy(null)
@@ -1628,6 +1657,7 @@ function RosterAndAppsChamber({
               style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "var(--muted)" }}
             />
             <input
+              aria-label="Поиск соратника"
               value={filterSearch}
               onChange={(e) => setFilterSearch(e.target.value)}
               placeholder="Поиск соратника…"
@@ -1645,6 +1675,7 @@ function RosterAndAppsChamber({
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          {filteredMembers.length === 0 && <p role="status" style={{ color: "var(--muted)" }}>Соратники не найдены. Попробуй другое имя или очисти поиск.</p>}
           {filteredMembers.map((m) => {
             const isUserLeader = m.role === "leader"
             const isUserOfficer = m.role === "officer"
@@ -1743,14 +1774,14 @@ function CouncilAndNewsChamber({
     try {
       const res = await api.getGuildMessages(guildId)
       setMessages(res.messages ?? [])
-    } catch {}
+    } catch { setNotice("Чат не обновился. Повторим загрузку автоматически через несколько секунд.") }
   }, [guildId])
 
   const loadNews = useCallback(async () => {
     try {
       const res = await api.getGuildNews()
       setNews(res.news ?? [])
-    } catch {}
+    } catch { setNotice("Не удалось загрузить вести гильдий. Открой зал повторно, чтобы обновить их.") }
   }, [])
 
   useEffect(() => {
@@ -1792,7 +1823,7 @@ function CouncilAndNewsChamber({
   }
 
   return (
-    <div className="anim-fade-up" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(460px, 1fr))", gap: 24, width: "100%" }}>
+    <div className="anim-fade-up" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 460px), 1fr))", gap: 24, width: "100%" }}>
       {/* Левая колонка: Чат братства */}
       <div className="fantasy-window" style={{ padding: 26, display: "flex", flexDirection: "column" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
@@ -1838,7 +1869,7 @@ function CouncilAndNewsChamber({
                   >
                     {isMine ? "Ты" : m.username}
                   </span>
-                  <span style={{ fontSize: 10, color: "var(--muted)", fontFamily: "var(--font-mono)" }}>
+                  <span style={{ fontSize: 13, color: "var(--muted)", fontFamily: "var(--font-mono)" }}>
                     {fmtTime(m.inserted_at)}
                   </span>
                 </div>
@@ -1849,7 +1880,7 @@ function CouncilAndNewsChamber({
         </div>
 
         {notice && (
-          <div style={{ fontSize: 12, color: "var(--gold)", marginTop: 8 }}>
+          <div role="alert" style={{ fontSize: 12, color: "var(--danger)", marginTop: 8 }}>
             {notice}
           </div>
         )}
@@ -1857,6 +1888,7 @@ function CouncilAndNewsChamber({
         {/* Поле ввода */}
         <div style={{ display: "flex", gap: 10, marginTop: 14 }}>
           <input
+            aria-label="Сообщение соратникам, до 200 символов"
             value={text}
             onChange={(e) => setText(e.target.value)}
             onKeyDown={(e) => {
@@ -1974,6 +2006,7 @@ function GuildHome({
   const [activeTab, setActiveTab] = useState<"altar" | "shop" | "roster" | "council">("altar")
   const [leaveModalOpen, setLeaveModalOpen] = useState(false)
   const [leaveBusy, setLeaveBusy] = useState(false)
+  const [leaveError, setLeaveError] = useState<string | null>(null)
   const [myUserId, setMyUserId] = useState<string | null>(null)
 
   const hero = useGameStore((s) => s.hero)
@@ -2000,12 +2033,14 @@ function GuildHome({
   const handleConfirmLeave = async () => {
     if (leaveBusy) return
     setLeaveBusy(true)
+    setLeaveError(null)
     try {
       await api.leaveGuild(guild.id)
       setLeaveModalOpen(false)
       onLeft()
     } catch {
       setLeaveModalOpen(false)
+      setLeaveError("Не удалось подтвердить выход. Обнови данные, чтобы проверить членство в гильдии.")
     } finally {
       setLeaveBusy(false)
     }
@@ -2025,10 +2060,12 @@ function GuildHome({
         />
       )}
 
+      {leaveError && <div className="guild-notice guild-notice-error" role="alert"><span>{leaveError}</span><button type="button" onClick={onLeft}>Обновить данные</button></div>}
       {/* Величественное знамя Оплота на всю ширину */}
-      <div className="guild-bastion-banner">
-        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 24, justifyContent: "space-between" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 20, minWidth: 320, flex: 1 }}>
+      <header className="guild-bastion-banner guild-home-banner">
+        <div className="guild-hall-eyebrow"><Shield size={16} /> Зал гильдии <span>{GUILD_POLICY_RU[guild.policy] || guild.policy}</span></div>
+        <div className="guild-banner-inner" style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 24, justifyContent: "space-between" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 20, minWidth: 0, flex: "1 1 320px" }}>
             <div className="guild-emblem-crest">
               {guild.emblem}
             </div>
@@ -2113,11 +2150,19 @@ function GuildHome({
             </div>
           </div>
         </div>
-      </div>
+        <dl className="guild-hall-ledger">
+          <div><dt>Под одним знаменем</dt><dd>{fmt(members.length)} <span>соратников</span></dd></div>
+          <div><dt>Общая казна</dt><dd>{fmt(treasury?.amount)} <span>золота</span></dd></div>
+          <div><dt>Мои очки гильдии</dt><dd>{fmt(detail.my_altar?.points)} <span>для лавки</span></dd></div>
+          <div><dt>Золото героя</dt><dd>{fmt(hero?.gold)} <span>доступно</span></dd></div>
+        </dl>
+      </header>
 
       {/* Навигация по залам гильдии */}
       <nav className="guild-chambers-nav" aria-label="Залы гильдии">
         <button
+          aria-current={activeTab === "altar" ? "page" : undefined}
+          aria-controls="guild-chamber-content"
           onClick={() => setActiveTab("altar")}
           className={`guild-chamber-tab ${activeTab === "altar" ? "active" : ""}`}
         >
@@ -2126,6 +2171,8 @@ function GuildHome({
         </button>
 
         <button
+          aria-current={activeTab === "shop" ? "page" : undefined}
+          aria-controls="guild-chamber-content"
           onClick={() => setActiveTab("shop")}
           className={`guild-chamber-tab ${activeTab === "shop" ? "active" : ""}`}
         >
@@ -2134,6 +2181,8 @@ function GuildHome({
         </button>
 
         <button
+          aria-current={activeTab === "roster" ? "page" : undefined}
+          aria-controls="guild-chamber-content"
           onClick={() => setActiveTab("roster")}
           className={`guild-chamber-tab ${activeTab === "roster" ? "active" : ""}`}
         >
@@ -2143,6 +2192,8 @@ function GuildHome({
         </button>
 
         <button
+          aria-current={activeTab === "council" ? "page" : undefined}
+          aria-controls="guild-chamber-content"
           onClick={() => setActiveTab("council")}
           className={`guild-chamber-tab ${activeTab === "council" ? "active" : ""}`}
         >
@@ -2151,12 +2202,18 @@ function GuildHome({
         </button>
       </nav>
 
+      <div className="guild-section-intro">
+        <div><p className="guild-eyebrow">{activeTab === "altar" ? "Общее дело" : activeTab === "shop" ? "Награда за верность" : activeTab === "roster" ? "Братство" : "У общего очага"}</p>
+        <h2>{activeTab === "altar" ? "Сила знамени начинается с вклада" : activeTab === "shop" ? "Снаряжение соратников" : activeTab === "roster" ? "Те, кто держит знамя" : "Совет и вести"}</h2></div>
+        <p>{activeTab === "altar" ? "Алтарь даёт опыт гильдии и личные очки. Казна хранит золото для общего пира — без начисления очков." : activeTab === "shop" ? "Трать очки, заработанные подношениями. Купленные вещи попадают в инвентарь героя." : activeTab === "roster" ? "Вклад, роли и прошения о вступлении — всё в одном месте." : "Договоритесь о следующем вкладе и узнайте, чем живут другие гильдии."}</p>
+      </div>
+      <section id="guild-chamber-content" aria-label={activeTab === "altar" ? "Алтарь и казна" : activeTab === "shop" ? "Лавка" : activeTab === "roster" ? "Состав и заявки" : "Чат и вести"}>
       {/* Контент активного зала */}
       {activeTab === "altar" && (
         <AltarAndTreasuryChamber detail={detail} heroGold={hero?.gold ?? 0} onChanged={refreshAll} />
       )}
 
-      {activeTab === "shop" && <ShopChamber />}
+      {activeTab === "shop" && <ShopChamber onChanged={refreshAll} />}
 
       {activeTab === "roster" && (
         <RosterAndAppsChamber
@@ -2171,6 +2228,7 @@ function GuildHome({
       {activeTab === "council" && (
         <CouncilAndNewsChamber guildId={guild.id} myUserId={myUserId} />
       )}
+      </section>
     </div>
   )
 }
@@ -2182,18 +2240,17 @@ export function GuildPage() {
   const [my, setMy] = useState<{ guild_id: string; role: string } | null>(null)
   const [detail, setDetail] = useState<GuildDetail | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   const fetchData = useCallback(async () => {
-    setLoading(true)
+    setError(null)
     try {
       const res = await api.getGuilds()
       setGuilds(res.guilds || [])
       setMy(res.my ? { guild_id: res.my.guild_id, role: res.my.role } : null)
       setDetail(res.my ? await api.getGuild(res.my.guild_id) : null)
     } catch {
-      setGuilds([])
-      setMy(null)
-      setDetail(null)
+      setError("Не удалось открыть зал гильдии. Проверь соединение и повтори загрузку.")
     } finally {
       setLoading(false)
     }
@@ -2216,16 +2273,21 @@ export function GuildPage() {
 
   if (loading) {
     return (
-      <div style={{ textAlign: "center", padding: "80px 20px", color: "var(--muted)", fontSize: "var(--text-sm)" }}>
+      <div className="guild-observatory guild-loading" role="status" style={{ textAlign: "center", padding: "80px 20px", color: "var(--muted)", fontSize: "var(--text-sm)" }}>
         <div style={{ fontSize: 36, marginBottom: 14 }}>🛡️</div>
         Знамёна соратников разворачиваются…
       </div>
     )
   }
 
-  return detail && my ? (
-    <GuildHome key={detail.guild.id} detail={detail} myRole={my.role} onLeft={fetchData} />
-  ) : (
-    <GuildLanding guilds={guilds} heroGold={hero?.gold ?? 0} onJoin={join} onCreated={fetchData} />
+  return (
+    <div className="guild-observatory">
+      {error && <div className="guild-notice guild-notice-error" role="alert"><AlertCircle size={20} /><span>{error}</span><button onClick={fetchData}>Повторить загрузку</button></div>}
+      {detail && my ? (
+        <GuildHome key={detail.guild.id} detail={detail} myRole={my.role} onLeft={fetchData} />
+      ) : !error ? (
+        <GuildLanding guilds={guilds} heroGold={hero?.gold ?? 0} onJoin={join} onCreated={fetchData} />
+      ) : null}
+    </div>
   )
 }

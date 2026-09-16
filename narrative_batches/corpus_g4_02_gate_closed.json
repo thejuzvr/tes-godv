@@ -1,0 +1,130 @@
+﻿{
+    "activation_policy":  "pending",
+    "templates":  [
+                      {
+                          "template_type":  "gate_closed",
+                          "source":  "community",
+                          "text_template":  "Багровый разлом у {location_name} затих: Врата закрыты. Писарь занёс этот миг в книгу без помарок."
+                      },
+                      {
+                          "template_type":  "gate_closed",
+                          "source":  "community",
+                          "text_template":  "{location_name} снова видит обычное небо — Врата Обливиона запечатаны. Дорога приняла решение и не стала возражать."
+                      },
+                      {
+                          "template_type":  "gate_closed",
+                          "source":  "community",
+                          "text_template":  "Врата у {location_name} исчезли, оставив лишь пепел и облегчение. Сумерки легли на Скайрим особенно спокойно."
+                      },
+                      {
+                          "template_type":  "gate_closed",
+                          "source":  "community",
+                          "text_template":  "Багровый разлом у {location_name} затих: Врата закрыты. Эта весть дошла до ближайшего костра."
+                      },
+                      {
+                          "template_type":  "gate_closed",
+                          "source":  "community",
+                          "text_template":  "{location_name} снова видит обычное небо — Врата Обливиона запечатаны. Старый камень у дороги сохранил молчаливую память."
+                      },
+                      {
+                          "template_type":  "gate_closed",
+                          "source":  "community",
+                          "text_template":  "Врата у {location_name} исчезли, оставив лишь пепел и облегчение. Поступок оказался тише славы, но весомее слухов."
+                      },
+                      {
+                          "template_type":  "gate_closed",
+                          "source":  "community",
+                          "text_template":  "Багровый разлом у {location_name} затих: Врата закрыты. Холодный воздух словно стал немного добрее."
+                      },
+                      {
+                          "template_type":  "gate_closed",
+                          "source":  "community",
+                          "text_template":  "{location_name} снова видит обычное небо — Врата Обливиона запечатаны. В истории края появилась ещё одна честная строка."
+                      },
+                      {
+                          "template_type":  "gate_closed",
+                          "source":  "community",
+                          "text_template":  "Врата у {location_name} исчезли, оставив лишь пепел и облегчение. Путники взглянули вслед с уважением."
+                      },
+                      {
+                          "template_type":  "gate_closed",
+                          "source":  "community",
+                          "text_template":  "Багровый разлом у {location_name} затих: Врата закрыты. Далёкий колокол будто отметил этот час."
+                      },
+                      {
+                          "template_type":  "gate_closed",
+                          "source":  "community",
+                          "text_template":  "{location_name} снова видит обычное небо — Врата Обливиона запечатаны. Рассвет найдёт эту историю уже известной."
+                      },
+                      {
+                          "template_type":  "gate_closed",
+                          "source":  "community",
+                          "text_template":  "Врата у {location_name} исчезли, оставив лишь пепел и облегчение. Север помнит дела лучше громких обещаний."
+                      },
+                      {
+                          "template_type":  "gate_closed",
+                          "source":  "community",
+                          "text_template":  "Багровый разлом у {location_name} затих: Врата закрыты. Ворона проверила карманы взглядом и улетела довольной."
+                      },
+                      {
+                          "template_type":  "gate_closed",
+                          "source":  "community",
+                          "text_template":  "{location_name} снова видит обычное небо — Врата Обливиона запечатаны. Бард уже ищет рифму, и это немного тревожит."
+                      },
+                      {
+                          "template_type":  "gate_closed",
+                          "source":  "community",
+                          "text_template":  "Врата у {location_name} исчезли, оставив лишь пепел и облегчение. Стражник одобрил всё настолько, насколько позволяет шлем."
+                      },
+                      {
+                          "template_type":  "gate_closed",
+                          "source":  "community",
+                          "text_template":  "Багровый разлом у {location_name} затих: Врата закрыты. Кот из таверны сделал вид, что это его заслуга."
+                      },
+                      {
+                          "template_type":  "gate_closed",
+                          "source":  "community",
+                          "text_template":  "{location_name} снова видит обычное небо — Врата Обливиона запечатаны. Снег скрипнул так торжественно, будто был свидетелем."
+                      },
+                      {
+                          "template_type":  "gate_closed",
+                          "source":  "community",
+                          "text_template":  "Врата у {location_name} исчезли, оставив лишь пепел и облегчение. Один сыр в лавке созрел от важности момента."
+                      },
+                      {
+                          "template_type":  "gate_closed",
+                          "source":  "community",
+                          "text_template":  "Багровый разлом у {location_name} затих: Врата закрыты. Скелет в крипте не сказал ничего, как всегда по делу."
+                      },
+                      {
+                          "template_type":  "gate_closed",
+                          "source":  "community",
+                          "text_template":  "{location_name} снова видит обычное небо — Врата Обливиона запечатаны. Грязекраб прислушался и решил не вмешиваться."
+                      },
+                      {
+                          "template_type":  "gate_closed",
+                          "source":  "community",
+                          "text_template":  "Врата у {location_name} исчезли, оставив лишь пепел и облегчение. Кузнечный молот отозвался с лишним энтузиазмом."
+                      },
+                      {
+                          "template_type":  "gate_closed",
+                          "source":  "community",
+                          "text_template":  "Багровый разлом у {location_name} затих: Врата закрыты. Уличный петух объявил событие без спроса."
+                      },
+                      {
+                          "template_type":  "gate_closed",
+                          "source":  "community",
+                          "text_template":  "{location_name} снова видит обычное небо — Врата Обливиона запечатаны. Мешок с репой выглядел удивительно вдохновлённым."
+                      },
+                      {
+                          "template_type":  "gate_closed",
+                          "source":  "community",
+                          "text_template":  "Врата у {location_name} исчезли, оставив лишь пепел и облегчение. Три септима под лавкой решили остаться на месте."
+                      },
+                      {
+                          "template_type":  "gate_closed",
+                          "source":  "community",
+                          "text_template":  "Багровый разлом у {location_name} затих: Врата закрыты. Даже лошадь кивнула, хотя могла просто чесаться."
+                      }
+                  ]
+}

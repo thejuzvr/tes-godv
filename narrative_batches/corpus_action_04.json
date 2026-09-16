@@ -1,0 +1,1005 @@
+﻿{
+    "activation_policy":  "pending",
+    "templates":  [
+                      {
+                          "template_type":  "jail",
+                          "text_template":  "Под серым небом {hero_name} провёл время за решёткой, размышляя о последствиях с привычной нордской выдержкой.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "jail",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} изучил тюремную стену: она не оценила ни шуток, ни планов побега пока судьба листала свиток с пометкой «обычный вторник».",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "jail",
+                          "text_template":  "На окраине поселения {hero_name} провёл время за решёткой, размышляя о последствиях не забывая о цели пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "jail",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} изучил тюремную стену: она не оценила ни шуток, ни планов побега а местный грязекраб ничего не понял, но одобрил.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "jail",
+                          "text_template":  "В час, когда ветер стих {hero_name} провёл время за решёткой, размышляя о последствиях перед следующей главой пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "jail",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} изучил тюремную стену: она не оценила ни шуток, ни планов побега и пообещал больше не доверять советам летающих стрел.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "jail",
+                          "text_template":  "На рассвете {hero_name} провёл время за решёткой, размышляя о последствиях и запомнил эту минуту.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "jail",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} изучил тюремную стену: она не оценила ни шуток, ни планов побега и даже Талос, вероятно, не стал спорить.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "jail",
+                          "text_template":  "После долгой дороги {hero_name} провёл время за решёткой, размышляя о последствиях не теряя осторожности.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "jail",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} изучил тюремную стену: она не оценила ни шуток, ни планов побега но барды ещё не придумали для этого подходящий куплет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "jail",
+                          "text_template":  "Под серым небом {hero_name} провёл время за решёткой, размышляя о последствиях оставив след лишь на пыльной дороге.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "jail",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} изучил тюремную стену: она не оценила ни шуток, ни планов побега а ближайший куст сохранил дипломатическое молчание.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "jail",
+                          "text_template":  "На окраине поселения {hero_name} провёл время за решёткой, размышляя о последствиях с твёрдой мыслью идти дальше.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "jail",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} изучил тюремную стену: она не оценила ни шуток, ни планов побега и решил не рассказывать об этом трактирщику.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "jail",
+                          "text_template":  "В час, когда ветер стих {hero_name} провёл время за решёткой, размышляя о последствиях прислушиваясь к миру вокруг.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "jail",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} изучил тюремную стену: она не оценила ни шуток, ни планов побега хотя инвентарь выглядел слегка озадаченным.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "jail",
+                          "text_template":  "На рассвете {hero_name} провёл время за решёткой, размышляя о последствиях сохраняя спокойствие.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "jail",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} изучил тюремную стену: она не оценила ни шуток, ни планов побега но ни один мамонт не подал жалобу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "jail",
+                          "text_template":  "После долгой дороги {hero_name} провёл время за решёткой, размышляя о последствиях с надеждой на удачу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "jail",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} изучил тюремную стену: она не оценила ни шуток, ни планов побега и мысленно потребовал за это достижение сладкий рулет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "jail",
+                          "text_template":  "Под серым небом {hero_name} провёл время за решёткой, размышляя о последствиях с привычной нордской выдержкой.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "jail",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} изучил тюремную стену: она не оценила ни шуток, ни планов побега пока судьба листала свиток с пометкой «обычный вторник».",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "На рассвете {hero_name} разработал {ore_name} в холодной шахте и запомнил эту минуту.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} постучал по {ore_name}, и жила ответила доходчивым молчанием и даже Талос, вероятно, не стал спорить.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "После долгой дороги {hero_name} разработал {ore_name} в холодной шахте не теряя осторожности.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} постучал по {ore_name}, и жила ответила доходчивым молчанием но барды ещё не придумали для этого подходящий куплет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "Под серым небом {hero_name} разработал {ore_name} в холодной шахте оставив след лишь на пыльной дороге.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} постучал по {ore_name}, и жила ответила доходчивым молчанием а ближайший куст сохранил дипломатическое молчание.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "На окраине поселения {hero_name} разработал {ore_name} в холодной шахте с твёрдой мыслью идти дальше.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} постучал по {ore_name}, и жила ответила доходчивым молчанием и решил не рассказывать об этом трактирщику.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "В час, когда ветер стих {hero_name} разработал {ore_name} в холодной шахте прислушиваясь к миру вокруг.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} постучал по {ore_name}, и жила ответила доходчивым молчанием хотя инвентарь выглядел слегка озадаченным.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "На рассвете {hero_name} разработал {ore_name} в холодной шахте сохраняя спокойствие.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} постучал по {ore_name}, и жила ответила доходчивым молчанием но ни один мамонт не подал жалобу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "После долгой дороги {hero_name} разработал {ore_name} в холодной шахте с надеждой на удачу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} постучал по {ore_name}, и жила ответила доходчивым молчанием и мысленно потребовал за это достижение сладкий рулет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "Под серым небом {hero_name} разработал {ore_name} в холодной шахте с привычной нордской выдержкой.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} постучал по {ore_name}, и жила ответила доходчивым молчанием пока судьба листала свиток с пометкой «обычный вторник».",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "На окраине поселения {hero_name} разработал {ore_name} в холодной шахте не забывая о цели пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} постучал по {ore_name}, и жила ответила доходчивым молчанием а местный грязекраб ничего не понял, но одобрил.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "В час, когда ветер стих {hero_name} разработал {ore_name} в холодной шахте перед следующей главой пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} постучал по {ore_name}, и жила ответила доходчивым молчанием и пообещал больше не доверять советам летающих стрел.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "На рассвете {hero_name} разработал {ore_name} в холодной шахте и запомнил эту минуту.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} постучал по {ore_name}, и жила ответила доходчивым молчанием и даже Талос, вероятно, не стал спорить.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "После долгой дороги {hero_name} разработал {ore_name} в холодной шахте не теряя осторожности.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} постучал по {ore_name}, и жила ответила доходчивым молчанием но барды ещё не придумали для этого подходящий куплет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "Под серым небом {hero_name} разработал {ore_name} в холодной шахте оставив след лишь на пыльной дороге.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} постучал по {ore_name}, и жила ответила доходчивым молчанием а ближайший куст сохранил дипломатическое молчание.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "На окраине поселения {hero_name} разработал {ore_name} в холодной шахте с твёрдой мыслью идти дальше.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} постучал по {ore_name}, и жила ответила доходчивым молчанием и решил не рассказывать об этом трактирщику.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "В час, когда ветер стих {hero_name} разработал {ore_name} в холодной шахте прислушиваясь к миру вокруг.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} постучал по {ore_name}, и жила ответила доходчивым молчанием хотя инвентарь выглядел слегка озадаченным.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "На рассвете {hero_name} разработал {ore_name} в холодной шахте сохраняя спокойствие.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} постучал по {ore_name}, и жила ответила доходчивым молчанием но ни один мамонт не подал жалобу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "После долгой дороги {hero_name} разработал {ore_name} в холодной шахте с надеждой на удачу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} постучал по {ore_name}, и жила ответила доходчивым молчанием и мысленно потребовал за это достижение сладкий рулет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "Под серым небом {hero_name} разработал {ore_name} в холодной шахте с привычной нордской выдержкой.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} постучал по {ore_name}, и жила ответила доходчивым молчанием пока судьба листала свиток с пометкой «обычный вторник».",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "На окраине поселения {hero_name} разработал {ore_name} в холодной шахте не забывая о цели пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} постучал по {ore_name}, и жила ответила доходчивым молчанием а местный грязекраб ничего не понял, но одобрил.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "В час, когда ветер стих {hero_name} разработал {ore_name} в холодной шахте перед следующей главой пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} постучал по {ore_name}, и жила ответила доходчивым молчанием и пообещал больше не доверять советам летающих стрел.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "На рассвете {hero_name} разработал {ore_name} в холодной шахте и запомнил эту минуту.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} постучал по {ore_name}, и жила ответила доходчивым молчанием и даже Талос, вероятно, не стал спорить.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "После долгой дороги {hero_name} разработал {ore_name} в холодной шахте не теряя осторожности.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} постучал по {ore_name}, и жила ответила доходчивым молчанием но барды ещё не придумали для этого подходящий куплет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "Под серым небом {hero_name} разработал {ore_name} в холодной шахте оставив след лишь на пыльной дороге.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} постучал по {ore_name}, и жила ответила доходчивым молчанием а ближайший куст сохранил дипломатическое молчание.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "На окраине поселения {hero_name} разработал {ore_name} в холодной шахте с твёрдой мыслью идти дальше.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} постучал по {ore_name}, и жила ответила доходчивым молчанием и решил не рассказывать об этом трактирщику.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "В час, когда ветер стих {hero_name} разработал {ore_name} в холодной шахте прислушиваясь к миру вокруг.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} постучал по {ore_name}, и жила ответила доходчивым молчанием хотя инвентарь выглядел слегка озадаченным.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "На рассвете {hero_name} разработал {ore_name} в холодной шахте сохраняя спокойствие.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} постучал по {ore_name}, и жила ответила доходчивым молчанием но ни один мамонт не подал жалобу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "После долгой дороги {hero_name} разработал {ore_name} в холодной шахте с надеждой на удачу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} постучал по {ore_name}, и жила ответила доходчивым молчанием и мысленно потребовал за это достижение сладкий рулет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "Под серым небом {hero_name} разработал {ore_name} в холодной шахте с привычной нордской выдержкой.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} постучал по {ore_name}, и жила ответила доходчивым молчанием пока судьба листала свиток с пометкой «обычный вторник».",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "На окраине поселения {hero_name} разработал {ore_name} в холодной шахте не забывая о цели пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} постучал по {ore_name}, и жила ответила доходчивым молчанием а местный грязекраб ничего не понял, но одобрил.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "В час, когда ветер стих {hero_name} разработал {ore_name} в холодной шахте перед следующей главой пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "mining",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} постучал по {ore_name}, и жила ответила доходчивым молчанием и пообещал больше не доверять советам летающих стрел.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "На рассвете {hero_name} позаботился о питомце {pet_name} и запомнил эту минуту.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} убедил питомца {pet_name}, что миска не является политическим заявлением и даже Талос, вероятно, не стал спорить.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "После долгой дороги {hero_name} позаботился о питомце {pet_name} не теряя осторожности.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} убедил питомца {pet_name}, что миска не является политическим заявлением но барды ещё не придумали для этого подходящий куплет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "Под серым небом {hero_name} позаботился о питомце {pet_name} оставив след лишь на пыльной дороге.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} убедил питомца {pet_name}, что миска не является политическим заявлением а ближайший куст сохранил дипломатическое молчание.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "На окраине поселения {hero_name} позаботился о питомце {pet_name} с твёрдой мыслью идти дальше.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} убедил питомца {pet_name}, что миска не является политическим заявлением и решил не рассказывать об этом трактирщику.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "В час, когда ветер стих {hero_name} позаботился о питомце {pet_name} прислушиваясь к миру вокруг.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} убедил питомца {pet_name}, что миска не является политическим заявлением хотя инвентарь выглядел слегка озадаченным.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "На рассвете {hero_name} позаботился о питомце {pet_name} сохраняя спокойствие.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} убедил питомца {pet_name}, что миска не является политическим заявлением но ни один мамонт не подал жалобу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "После долгой дороги {hero_name} позаботился о питомце {pet_name} с надеждой на удачу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} убедил питомца {pet_name}, что миска не является политическим заявлением и мысленно потребовал за это достижение сладкий рулет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "Под серым небом {hero_name} позаботился о питомце {pet_name} с привычной нордской выдержкой.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} убедил питомца {pet_name}, что миска не является политическим заявлением пока судьба листала свиток с пометкой «обычный вторник».",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "На окраине поселения {hero_name} позаботился о питомце {pet_name} не забывая о цели пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} убедил питомца {pet_name}, что миска не является политическим заявлением а местный грязекраб ничего не понял, но одобрил.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "В час, когда ветер стих {hero_name} позаботился о питомце {pet_name} перед следующей главой пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} убедил питомца {pet_name}, что миска не является политическим заявлением и пообещал больше не доверять советам летающих стрел.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "На рассвете {hero_name} позаботился о питомце {pet_name} и запомнил эту минуту.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} убедил питомца {pet_name}, что миска не является политическим заявлением и даже Талос, вероятно, не стал спорить.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "После долгой дороги {hero_name} позаботился о питомце {pet_name} не теряя осторожности.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} убедил питомца {pet_name}, что миска не является политическим заявлением но барды ещё не придумали для этого подходящий куплет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "Под серым небом {hero_name} позаботился о питомце {pet_name} оставив след лишь на пыльной дороге.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} убедил питомца {pet_name}, что миска не является политическим заявлением а ближайший куст сохранил дипломатическое молчание.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "На окраине поселения {hero_name} позаботился о питомце {pet_name} с твёрдой мыслью идти дальше.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} убедил питомца {pet_name}, что миска не является политическим заявлением и решил не рассказывать об этом трактирщику.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "В час, когда ветер стих {hero_name} позаботился о питомце {pet_name} прислушиваясь к миру вокруг.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} убедил питомца {pet_name}, что миска не является политическим заявлением хотя инвентарь выглядел слегка озадаченным.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "На рассвете {hero_name} позаботился о питомце {pet_name} сохраняя спокойствие.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} убедил питомца {pet_name}, что миска не является политическим заявлением но ни один мамонт не подал жалобу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "После долгой дороги {hero_name} позаботился о питомце {pet_name} с надеждой на удачу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} убедил питомца {pet_name}, что миска не является политическим заявлением и мысленно потребовал за это достижение сладкий рулет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "Под серым небом {hero_name} позаботился о питомце {pet_name} с привычной нордской выдержкой.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} убедил питомца {pet_name}, что миска не является политическим заявлением пока судьба листала свиток с пометкой «обычный вторник».",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "На окраине поселения {hero_name} позаботился о питомце {pet_name} не забывая о цели пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} убедил питомца {pet_name}, что миска не является политическим заявлением а местный грязекраб ничего не понял, но одобрил.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "В час, когда ветер стих {hero_name} позаботился о питомце {pet_name} перед следующей главой пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} убедил питомца {pet_name}, что миска не является политическим заявлением и пообещал больше не доверять советам летающих стрел.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "На рассвете {hero_name} позаботился о питомце {pet_name} и запомнил эту минуту.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} убедил питомца {pet_name}, что миска не является политическим заявлением и даже Талос, вероятно, не стал спорить.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "pet_care",
+                          "text_template":  "После долгой дороги {hero_name} позаботился о питомце {pet_name} не теряя осторожности.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest",
+                          "text_template":  "На рассвете {hero_name} устроил короткий отдых и перевёл дух и запомнил эту минуту.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} отдохнул так основательно, что даже сапоги стали выглядеть мудрее и даже Талос, вероятно, не стал спорить.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest",
+                          "text_template":  "После долгой дороги {hero_name} устроил короткий отдых и перевёл дух не теряя осторожности.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} отдохнул так основательно, что даже сапоги стали выглядеть мудрее но барды ещё не придумали для этого подходящий куплет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest",
+                          "text_template":  "Под серым небом {hero_name} устроил короткий отдых и перевёл дух оставив след лишь на пыльной дороге.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} отдохнул так основательно, что даже сапоги стали выглядеть мудрее а ближайший куст сохранил дипломатическое молчание.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest",
+                          "text_template":  "На окраине поселения {hero_name} устроил короткий отдых и перевёл дух с твёрдой мыслью идти дальше.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} отдохнул так основательно, что даже сапоги стали выглядеть мудрее и решил не рассказывать об этом трактирщику.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest",
+                          "text_template":  "В час, когда ветер стих {hero_name} устроил короткий отдых и перевёл дух прислушиваясь к миру вокруг.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} отдохнул так основательно, что даже сапоги стали выглядеть мудрее хотя инвентарь выглядел слегка озадаченным.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest",
+                          "text_template":  "На рассвете {hero_name} устроил короткий отдых и перевёл дух сохраняя спокойствие.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} отдохнул так основательно, что даже сапоги стали выглядеть мудрее но ни один мамонт не подал жалобу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest",
+                          "text_template":  "После долгой дороги {hero_name} устроил короткий отдых и перевёл дух с надеждой на удачу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} отдохнул так основательно, что даже сапоги стали выглядеть мудрее и мысленно потребовал за это достижение сладкий рулет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest",
+                          "text_template":  "Под серым небом {hero_name} устроил короткий отдых и перевёл дух с привычной нордской выдержкой.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} отдохнул так основательно, что даже сапоги стали выглядеть мудрее пока судьба листала свиток с пометкой «обычный вторник».",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest",
+                          "text_template":  "На окраине поселения {hero_name} устроил короткий отдых и перевёл дух не забывая о цели пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} отдохнул так основательно, что даже сапоги стали выглядеть мудрее а местный грязекраб ничего не понял, но одобрил.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest",
+                          "text_template":  "В час, когда ветер стих {hero_name} устроил короткий отдых и перевёл дух перед следующей главой пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} отдохнул так основательно, что даже сапоги стали выглядеть мудрее и пообещал больше не доверять советам летающих стрел.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest",
+                          "text_template":  "На рассвете {hero_name} устроил короткий отдых и перевёл дух и запомнил эту минуту.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} отдохнул так основательно, что даже сапоги стали выглядеть мудрее и даже Талос, вероятно, не стал спорить.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest",
+                          "text_template":  "После долгой дороги {hero_name} устроил короткий отдых и перевёл дух не теряя осторожности.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} отдохнул так основательно, что даже сапоги стали выглядеть мудрее но барды ещё не придумали для этого подходящий куплет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest",
+                          "text_template":  "Под серым небом {hero_name} устроил короткий отдых и перевёл дух оставив след лишь на пыльной дороге.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} отдохнул так основательно, что даже сапоги стали выглядеть мудрее а ближайший куст сохранил дипломатическое молчание.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest",
+                          "text_template":  "На окраине поселения {hero_name} устроил короткий отдых и перевёл дух с твёрдой мыслью идти дальше.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} отдохнул так основательно, что даже сапоги стали выглядеть мудрее и решил не рассказывать об этом трактирщику.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest",
+                          "text_template":  "В час, когда ветер стих {hero_name} устроил короткий отдых и перевёл дух прислушиваясь к миру вокруг.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} отдохнул так основательно, что даже сапоги стали выглядеть мудрее хотя инвентарь выглядел слегка озадаченным.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest",
+                          "text_template":  "На рассвете {hero_name} устроил короткий отдых и перевёл дух сохраняя спокойствие.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} отдохнул так основательно, что даже сапоги стали выглядеть мудрее но ни один мамонт не подал жалобу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest_by_fire",
+                          "text_template":  "На рассвете {hero_name} согрелся у костра и осмотрел путь впереди и запомнил эту минуту.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest_by_fire",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} посидел у костра, который потрескивал с осуждением и даже Талос, вероятно, не стал спорить.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest_by_fire",
+                          "text_template":  "После долгой дороги {hero_name} согрелся у костра и осмотрел путь впереди не теряя осторожности.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest_by_fire",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} посидел у костра, который потрескивал с осуждением но барды ещё не придумали для этого подходящий куплет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest_by_fire",
+                          "text_template":  "Под серым небом {hero_name} согрелся у костра и осмотрел путь впереди оставив след лишь на пыльной дороге.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest_by_fire",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} посидел у костра, который потрескивал с осуждением а ближайший куст сохранил дипломатическое молчание.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest_by_fire",
+                          "text_template":  "На окраине поселения {hero_name} согрелся у костра и осмотрел путь впереди с твёрдой мыслью идти дальше.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest_by_fire",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} посидел у костра, который потрескивал с осуждением и решил не рассказывать об этом трактирщику.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest_by_fire",
+                          "text_template":  "В час, когда ветер стих {hero_name} согрелся у костра и осмотрел путь впереди прислушиваясь к миру вокруг.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest_by_fire",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} посидел у костра, который потрескивал с осуждением хотя инвентарь выглядел слегка озадаченным.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest_by_fire",
+                          "text_template":  "На рассвете {hero_name} согрелся у костра и осмотрел путь впереди сохраняя спокойствие.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest_by_fire",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} посидел у костра, который потрескивал с осуждением но ни один мамонт не подал жалобу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest_by_fire",
+                          "text_template":  "После долгой дороги {hero_name} согрелся у костра и осмотрел путь впереди с надеждой на удачу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest_by_fire",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} посидел у костра, который потрескивал с осуждением и мысленно потребовал за это достижение сладкий рулет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest_by_fire",
+                          "text_template":  "Под серым небом {hero_name} согрелся у костра и осмотрел путь впереди с привычной нордской выдержкой.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest_by_fire",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} посидел у костра, который потрескивал с осуждением пока судьба листала свиток с пометкой «обычный вторник».",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest_by_fire",
+                          "text_template":  "На окраине поселения {hero_name} согрелся у костра и осмотрел путь впереди не забывая о цели пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest_by_fire",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} посидел у костра, который потрескивал с осуждением а местный грязекраб ничего не понял, но одобрил.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest_by_fire",
+                          "text_template":  "В час, когда ветер стих {hero_name} согрелся у костра и осмотрел путь впереди перед следующей главой пути.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest_by_fire",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} посидел у костра, который потрескивал с осуждением и пообещал больше не доверять советам летающих стрел.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest_by_fire",
+                          "text_template":  "На рассвете {hero_name} согрелся у костра и осмотрел путь впереди и запомнил эту минуту.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest_by_fire",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} посидел у костра, который потрескивал с осуждением и даже Талос, вероятно, не стал спорить.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest_by_fire",
+                          "text_template":  "После долгой дороги {hero_name} согрелся у костра и осмотрел путь впереди не теряя осторожности.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest_by_fire",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} посидел у костра, который потрескивал с осуждением но барды ещё не придумали для этого подходящий куплет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest_by_fire",
+                          "text_template":  "Под серым небом {hero_name} согрелся у костра и осмотрел путь впереди оставив след лишь на пыльной дороге.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest_by_fire",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} посидел у костра, который потрескивал с осуждением а ближайший куст сохранил дипломатическое молчание.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest_by_fire",
+                          "text_template":  "На окраине поселения {hero_name} согрелся у костра и осмотрел путь впереди с твёрдой мыслью идти дальше.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest_by_fire",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} посидел у костра, который потрескивал с осуждением и решил не рассказывать об этом трактирщику.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "rest_by_fire",
+                          "text_template":  "В час, когда ветер стих {hero_name} согрелся у костра и осмотрел путь впереди прислушиваясь к миру вокруг.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "sleep",
+                          "text_template":  "На рассвете {hero_name} погрузился в сон под шорох ночного ветра и запомнил эту минуту.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "sleep",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} уснул так быстро, что даже тревоги не успели сформулировать возражение и даже Талос, вероятно, не стал спорить.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "sleep",
+                          "text_template":  "После долгой дороги {hero_name} погрузился в сон под шорох ночного ветра не теряя осторожности.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "sleep",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} уснул так быстро, что даже тревоги не успели сформулировать возражение но барды ещё не придумали для этого подходящий куплет.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "sleep",
+                          "text_template":  "Под серым небом {hero_name} погрузился в сон под шорох ночного ветра оставив след лишь на пыльной дороге.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "sleep",
+                          "text_template":  "Под внимательным взглядом случайной курицы, {hero_name} уснул так быстро, что даже тревоги не успели сформулировать возражение а ближайший куст сохранил дипломатическое молчание.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "sleep",
+                          "text_template":  "На окраине поселения {hero_name} погрузился в сон под шорох ночного ветра с твёрдой мыслью идти дальше.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "sleep",
+                          "text_template":  "Вопреки совету внутреннего скептика, {hero_name} уснул так быстро, что даже тревоги не успели сформулировать возражение и решил не рассказывать об этом трактирщику.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "sleep",
+                          "text_template":  "В час, когда ветер стих {hero_name} погрузился в сон под шорох ночного ветра прислушиваясь к миру вокруг.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "sleep",
+                          "text_template":  "После коротких переговоров с дорогой, {hero_name} уснул так быстро, что даже тревоги не успели сформулировать возражение хотя инвентарь выглядел слегка озадаченным.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "sleep",
+                          "text_template":  "На рассвете {hero_name} погрузился в сон под шорох ночного ветра сохраняя спокойствие.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "sleep",
+                          "text_template":  "По мнению ближайшего камня, {hero_name} уснул так быстро, что даже тревоги не успели сформулировать возражение но ни один мамонт не подал жалобу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "sleep",
+                          "text_template":  "После долгой дороги {hero_name} погрузился в сон под шорох ночного ветра с надеждой на удачу.",
+                          "source":  "community"
+                      },
+                      {
+                          "template_type":  "sleep",
+                          "text_template":  "Пока где-то ворчал недовольный драугр, {hero_name} уснул так быстро, что даже тревоги не успели сформулировать возражение и мысленно потребовал за это достижение сладкий рулет.",
+                          "source":  "community"
+                      }
+                  ]
+}

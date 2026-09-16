@@ -1,0 +1,130 @@
+﻿{
+    "activation_policy":  "pending",
+    "templates":  [
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "{god_name} дал {hero_name} знак повернуть к нужной дороге. Писарь занёс этот миг в книгу без помарок."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "{hero_name} распознал волю {god_name} в неожиданной детали пути. Дорога приняла решение и не стала возражать."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "Незримый совет {god_name} направил {hero_name} дальше. Сумерки легли на Скайрим особенно спокойно."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "{god_name} дал {hero_name} знак повернуть к нужной дороге. Эта весть дошла до ближайшего костра."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "{hero_name} распознал волю {god_name} в неожиданной детали пути. Старый камень у дороги сохранил молчаливую память."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "Незримый совет {god_name} направил {hero_name} дальше. Поступок оказался тише славы, но весомее слухов."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "{god_name} дал {hero_name} знак повернуть к нужной дороге. Холодный воздух словно стал немного добрее."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "{hero_name} распознал волю {god_name} в неожиданной детали пути. В истории края появилась ещё одна честная строка."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "Незримый совет {god_name} направил {hero_name} дальше. Путники взглянули вслед с уважением."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "{god_name} дал {hero_name} знак повернуть к нужной дороге. Далёкий колокол будто отметил этот час."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "{hero_name} распознал волю {god_name} в неожиданной детали пути. Рассвет найдёт эту историю уже известной."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "Незримый совет {god_name} направил {hero_name} дальше. Север помнит дела лучше громких обещаний."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "{god_name} дал {hero_name} знак повернуть к нужной дороге. Ворона проверила карманы взглядом и улетела довольной."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "{hero_name} распознал волю {god_name} в неожиданной детали пути. Бард уже ищет рифму, и это немного тревожит."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "Незримый совет {god_name} направил {hero_name} дальше. Стражник одобрил всё настолько, насколько позволяет шлем."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "{god_name} дал {hero_name} знак повернуть к нужной дороге. Кот из таверны сделал вид, что это его заслуга."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "{hero_name} распознал волю {god_name} в неожиданной детали пути. Снег скрипнул так торжественно, будто был свидетелем."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "Незримый совет {god_name} направил {hero_name} дальше. Один сыр в лавке созрел от важности момента."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "{god_name} дал {hero_name} знак повернуть к нужной дороге. Скелет в крипте не сказал ничего, как всегда по делу."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "{hero_name} распознал волю {god_name} в неожиданной детали пути. Грязекраб прислушался и решил не вмешиваться."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "Незримый совет {god_name} направил {hero_name} дальше. Кузнечный молот отозвался с лишним энтузиазмом."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "{god_name} дал {hero_name} знак повернуть к нужной дороге. Уличный петух объявил событие без спроса."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "{hero_name} распознал волю {god_name} в неожиданной детали пути. Мешок с репой выглядел удивительно вдохновлённым."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "Незримый совет {god_name} направил {hero_name} дальше. Три септима под лавкой решили остаться на месте."
+                      },
+                      {
+                          "template_type":  "god_direct",
+                          "source":  "community",
+                          "text_template":  "{god_name} дал {hero_name} знак повернуть к нужной дороге. Даже лошадь кивнула, хотя могла просто чесаться."
+                      }
+                  ]
+}

@@ -1,0 +1,130 @@
+﻿{
+    "activation_policy":  "pending",
+    "templates":  [
+                      {
+                          "template_type":  "gate_donation",
+                          "source":  "community",
+                          "text_template":  "{hero_name} пожертвовал {amount} септимов на защиту {location_name} от Врат Обливиона. Северный ветер отметил этот поступок без лишних слов."
+                      },
+                      {
+                          "template_type":  "gate_donation",
+                          "source":  "community",
+                          "text_template":  "У {location_name} {hero_name} внёс {amount} септимов в фонд экспедиции. Свидетели запомнили этот выбор как достойный рассказ у очага."
+                      },
+                      {
+                          "template_type":  "gate_donation",
+                          "source":  "community",
+                          "text_template":  "{hero_name} отдал {amount} септимов, чтобы Врата у {location_name} не поглотили дорогу. В хронике дня появилась спокойная, но важная строка."
+                      },
+                      {
+                          "template_type":  "gate_donation",
+                          "source":  "community",
+                          "text_template":  "{hero_name} пожертвовал {amount} септимов на защиту {location_name} от Врат Обливиона. Дорога впереди будто стала немного яснее."
+                      },
+                      {
+                          "template_type":  "gate_donation",
+                          "source":  "community",
+                          "text_template":  "У {location_name} {hero_name} внёс {amount} септимов в фонд экспедиции. Старые камни Скайрима приняли эту весть молча."
+                      },
+                      {
+                          "template_type":  "gate_donation",
+                          "source":  "community",
+                          "text_template":  "{hero_name} отдал {amount} септимов, чтобы Врата у {location_name} не поглотили дорогу. Над делом героя на миг воцарилась редкая ясность."
+                      },
+                      {
+                          "template_type":  "gate_donation",
+                          "source":  "community",
+                          "text_template":  "{hero_name} пожертвовал {amount} септимов на защиту {location_name} от Врат Обливиона. Такой шаг не приносит славы сразу, зато меняет путь."
+                      },
+                      {
+                          "template_type":  "gate_donation",
+                          "source":  "community",
+                          "text_template":  "У {location_name} {hero_name} внёс {amount} септимов в фонд экспедиции. Вечер сохранил его в памяти города."
+                      },
+                      {
+                          "template_type":  "gate_donation",
+                          "source":  "community",
+                          "text_template":  "{hero_name} отдал {amount} септимов, чтобы Врата у {location_name} не поглотили дорогу. Даже суровый край умеет замечать добрые решения."
+                      },
+                      {
+                          "template_type":  "gate_donation",
+                          "source":  "community",
+                          "text_template":  "{hero_name} пожертвовал {amount} септимов на защиту {location_name} от Врат Обливиона. Эхо поступка ушло дальше ближайшей площади."
+                      },
+                      {
+                          "template_type":  "gate_donation",
+                          "source":  "community",
+                          "text_template":  "У {location_name} {hero_name} внёс {amount} септимов в фонд экспедиции. Небо над Скайримом не спорило с этим решением."
+                      },
+                      {
+                          "template_type":  "gate_donation",
+                          "source":  "community",
+                          "text_template":  "{hero_name} отдал {amount} септимов, чтобы Врата у {location_name} не поглотили дорогу. Путники ещё долго будут пересказывать эту историю."
+                      },
+                      {
+                          "template_type":  "gate_donation",
+                          "source":  "community",
+                          "text_template":  "{hero_name} пожертвовал {amount} септимов на защиту {location_name} от Врат Обливиона. Голубь рядом кивнул так серьёзно, будто был главным мастером."
+                      },
+                      {
+                          "template_type":  "gate_donation",
+                          "source":  "community",
+                          "text_template":  "У {location_name} {hero_name} внёс {amount} септимов в фонд экспедиции. Кошелёк вздохнул, но спорить с судьбой не стал."
+                      },
+                      {
+                          "template_type":  "gate_donation",
+                          "source":  "community",
+                          "text_template":  "{hero_name} отдал {amount} септимов, чтобы Врата у {location_name} не поглотили дорогу. Ближайший норд одобрительно хмыкнул и уронил булку."
+                      },
+                      {
+                          "template_type":  "gate_donation",
+                          "source":  "community",
+                          "text_template":  "{hero_name} пожертвовал {amount} септимов на защиту {location_name} от Врат Обливиона. Даже стражник на миг перестал подозревать всех подряд."
+                      },
+                      {
+                          "template_type":  "gate_donation",
+                          "source":  "community",
+                          "text_template":  "У {location_name} {hero_name} внёс {amount} септимов в фонд экспедиции. Где-то бард уже рифмует это с словом «капуста»."
+                      },
+                      {
+                          "template_type":  "gate_donation",
+                          "source":  "community",
+                          "text_template":  "{hero_name} отдал {amount} септимов, чтобы Врата у {location_name} не поглотили дорогу. Случайный грязекраб выглядел впечатлённым, насколько умеют грязекрабы."
+                      },
+                      {
+                          "template_type":  "gate_donation",
+                          "source":  "community",
+                          "text_template":  "{hero_name} пожертвовал {amount} септимов на защиту {location_name} от Врат Обливиона. Тавернский кот записал событие лапой в воображаемую книгу."
+                      },
+                      {
+                          "template_type":  "gate_donation",
+                          "source":  "community",
+                          "text_template":  "У {location_name} {hero_name} внёс {amount} септимов в фонд экспедиции. Ветер попытался аплодировать, но вышел обычный сквозняк."
+                      },
+                      {
+                          "template_type":  "gate_donation",
+                          "source":  "community",
+                          "text_template":  "{hero_name} отдал {amount} септимов, чтобы Врата у {location_name} не поглотили дорогу. Один скелет в старой крипте наверняка одобрил бы этот жест."
+                      },
+                      {
+                          "template_type":  "gate_donation",
+                          "source":  "community",
+                          "text_template":  "{hero_name} пожертвовал {amount} септимов на защиту {location_name} от Врат Обливиона. Торговец рядом немедленно назвал это выгодой для души."
+                      },
+                      {
+                          "template_type":  "gate_donation",
+                          "source":  "community",
+                          "text_template":  "У {location_name} {hero_name} внёс {amount} септимов в фонд экспедиции. Снежный ком с крыши выбрал именно этот момент для поклона."
+                      },
+                      {
+                          "template_type":  "gate_donation",
+                          "source":  "community",
+                          "text_template":  "{hero_name} отдал {amount} септимов, чтобы Врата у {location_name} не поглотили дорогу. Драконов не было видно, но слухи уже начали расти."
+                      },
+                      {
+                          "template_type":  "gate_donation",
+                          "source":  "community",
+                          "text_template":  "{hero_name} пожертвовал {amount} септимов на защиту {location_name} от Врат Обливиона. Картошка в ближайшем котле закипела с особым смыслом."
+                      }
+                  ]
+}

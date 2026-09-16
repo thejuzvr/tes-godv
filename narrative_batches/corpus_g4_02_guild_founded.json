@@ -1,0 +1,130 @@
+﻿{
+    "activation_policy":  "pending",
+    "templates":  [
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "{leader} поднял знамя {emblem} и назвал новую гильдию «{guild_name}». Писарь занёс этот миг в книгу без помарок."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "«{guild_name}» возникла под символом {emblem}; первым слово сказал {leader}. Дорога приняла решение и не стала возражать."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "{leader} собрал «{guild_name}» вокруг знамени {emblem}. Сумерки легли на Скайрим особенно спокойно."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "{leader} поднял знамя {emblem} и назвал новую гильдию «{guild_name}». Эта весть дошла до ближайшего костра."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "«{guild_name}» возникла под символом {emblem}; первым слово сказал {leader}. Старый камень у дороги сохранил молчаливую память."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "{leader} собрал «{guild_name}» вокруг знамени {emblem}. Поступок оказался тише славы, но весомее слухов."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "{leader} поднял знамя {emblem} и назвал новую гильдию «{guild_name}». Холодный воздух словно стал немного добрее."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "«{guild_name}» возникла под символом {emblem}; первым слово сказал {leader}. В истории края появилась ещё одна честная строка."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "{leader} собрал «{guild_name}» вокруг знамени {emblem}. Путники взглянули вслед с уважением."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "{leader} поднял знамя {emblem} и назвал новую гильдию «{guild_name}». Далёкий колокол будто отметил этот час."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "«{guild_name}» возникла под символом {emblem}; первым слово сказал {leader}. Рассвет найдёт эту историю уже известной."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "{leader} собрал «{guild_name}» вокруг знамени {emblem}. Север помнит дела лучше громких обещаний."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "{leader} поднял знамя {emblem} и назвал новую гильдию «{guild_name}». Ворона проверила карманы взглядом и улетела довольной."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "«{guild_name}» возникла под символом {emblem}; первым слово сказал {leader}. Бард уже ищет рифму, и это немного тревожит."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "{leader} собрал «{guild_name}» вокруг знамени {emblem}. Стражник одобрил всё настолько, насколько позволяет шлем."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "{leader} поднял знамя {emblem} и назвал новую гильдию «{guild_name}». Кот из таверны сделал вид, что это его заслуга."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "«{guild_name}» возникла под символом {emblem}; первым слово сказал {leader}. Снег скрипнул так торжественно, будто был свидетелем."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "{leader} собрал «{guild_name}» вокруг знамени {emblem}. Один сыр в лавке созрел от важности момента."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "{leader} поднял знамя {emblem} и назвал новую гильдию «{guild_name}». Скелет в крипте не сказал ничего, как всегда по делу."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "«{guild_name}» возникла под символом {emblem}; первым слово сказал {leader}. Грязекраб прислушался и решил не вмешиваться."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "{leader} собрал «{guild_name}» вокруг знамени {emblem}. Кузнечный молот отозвался с лишним энтузиазмом."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "{leader} поднял знамя {emblem} и назвал новую гильдию «{guild_name}». Уличный петух объявил событие без спроса."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "«{guild_name}» возникла под символом {emblem}; первым слово сказал {leader}. Мешок с репой выглядел удивительно вдохновлённым."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "{leader} собрал «{guild_name}» вокруг знамени {emblem}. Три септима под лавкой решили остаться на месте."
+                      },
+                      {
+                          "template_type":  "guild_founded",
+                          "source":  "community",
+                          "text_template":  "{leader} поднял знамя {emblem} и назвал новую гильдию «{guild_name}». Даже лошадь кивнула, хотя могла просто чесаться."
+                      }
+                  ]
+}

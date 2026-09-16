@@ -25,6 +25,7 @@ defmodule TesIdle.Game.Narrative.TemplateEngine do
     "dead" => "death",
     "fishing" => "fishing",
     "gathering" => "gather",
+    "mining" => "mining",
     "sneaking" => "steal",
     "breaking_in" => "break_in",
     "jailed" => "jail",
@@ -230,6 +231,7 @@ defmodule TesIdle.Game.Narrative.TemplateEngine do
       e when e in ~w(generic_action) -> "explore"
       e when e in ~w(fishing_catch fishing_wait) -> "fishing"
       e when e in ~w(gather_plants) -> "gather"
+      e when e in ~w(mining_start mining_work mining_yield) -> "mining"
       e when e in ~w(steal_clean steal_spotted) -> "steal"
       e when e in ~w(break_in_ok break_in_trap) -> "break_in"
       e when e in ~w(jail_time) -> "jail"

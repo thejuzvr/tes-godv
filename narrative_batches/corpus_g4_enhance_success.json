@@ -1,0 +1,130 @@
+﻿{
+    "activation_policy":  "pending",
+    "templates":  [
+                      {
+                          "template_type":  "enhance_success",
+                          "source":  "community",
+                          "text_template":  "{hero_name} улучшил {item_name} до уровня {level}, заплатив {price} септимов кузнецу. Северный ветер отметил этот поступок без лишних слов."
+                      },
+                      {
+                          "template_type":  "enhance_success",
+                          "source":  "community",
+                          "text_template":  "За {price} септимов {hero_name} довёл {item_name} до заточки +{level}. Свидетели запомнили этот выбор как достойный рассказ у очага."
+                      },
+                      {
+                          "template_type":  "enhance_success",
+                          "source":  "community",
+                          "text_template":  "{item_name} героя {hero_name} достиг уровня {level}; кузница получила {price} септимов. В хронике дня появилась спокойная, но важная строка."
+                      },
+                      {
+                          "template_type":  "enhance_success",
+                          "source":  "community",
+                          "text_template":  "{hero_name} улучшил {item_name} до уровня {level}, заплатив {price} септимов кузнецу. Дорога впереди будто стала немного яснее."
+                      },
+                      {
+                          "template_type":  "enhance_success",
+                          "source":  "community",
+                          "text_template":  "За {price} септимов {hero_name} довёл {item_name} до заточки +{level}. Старые камни Скайрима приняли эту весть молча."
+                      },
+                      {
+                          "template_type":  "enhance_success",
+                          "source":  "community",
+                          "text_template":  "{item_name} героя {hero_name} достиг уровня {level}; кузница получила {price} септимов. Над делом героя на миг воцарилась редкая ясность."
+                      },
+                      {
+                          "template_type":  "enhance_success",
+                          "source":  "community",
+                          "text_template":  "{hero_name} улучшил {item_name} до уровня {level}, заплатив {price} септимов кузнецу. Такой шаг не приносит славы сразу, зато меняет путь."
+                      },
+                      {
+                          "template_type":  "enhance_success",
+                          "source":  "community",
+                          "text_template":  "За {price} септимов {hero_name} довёл {item_name} до заточки +{level}. Вечер сохранил его в памяти города."
+                      },
+                      {
+                          "template_type":  "enhance_success",
+                          "source":  "community",
+                          "text_template":  "{item_name} героя {hero_name} достиг уровня {level}; кузница получила {price} септимов. Даже суровый край умеет замечать добрые решения."
+                      },
+                      {
+                          "template_type":  "enhance_success",
+                          "source":  "community",
+                          "text_template":  "{hero_name} улучшил {item_name} до уровня {level}, заплатив {price} септимов кузнецу. Эхо поступка ушло дальше ближайшей площади."
+                      },
+                      {
+                          "template_type":  "enhance_success",
+                          "source":  "community",
+                          "text_template":  "За {price} септимов {hero_name} довёл {item_name} до заточки +{level}. Небо над Скайримом не спорило с этим решением."
+                      },
+                      {
+                          "template_type":  "enhance_success",
+                          "source":  "community",
+                          "text_template":  "{item_name} героя {hero_name} достиг уровня {level}; кузница получила {price} септимов. Путники ещё долго будут пересказывать эту историю."
+                      },
+                      {
+                          "template_type":  "enhance_success",
+                          "source":  "community",
+                          "text_template":  "{hero_name} улучшил {item_name} до уровня {level}, заплатив {price} септимов кузнецу. Голубь рядом кивнул так серьёзно, будто был главным мастером."
+                      },
+                      {
+                          "template_type":  "enhance_success",
+                          "source":  "community",
+                          "text_template":  "За {price} септимов {hero_name} довёл {item_name} до заточки +{level}. Кошелёк вздохнул, но спорить с судьбой не стал."
+                      },
+                      {
+                          "template_type":  "enhance_success",
+                          "source":  "community",
+                          "text_template":  "{item_name} героя {hero_name} достиг уровня {level}; кузница получила {price} септимов. Ближайший норд одобрительно хмыкнул и уронил булку."
+                      },
+                      {
+                          "template_type":  "enhance_success",
+                          "source":  "community",
+                          "text_template":  "{hero_name} улучшил {item_name} до уровня {level}, заплатив {price} септимов кузнецу. Даже стражник на миг перестал подозревать всех подряд."
+                      },
+                      {
+                          "template_type":  "enhance_success",
+                          "source":  "community",
+                          "text_template":  "За {price} септимов {hero_name} довёл {item_name} до заточки +{level}. Где-то бард уже рифмует это с словом «капуста»."
+                      },
+                      {
+                          "template_type":  "enhance_success",
+                          "source":  "community",
+                          "text_template":  "{item_name} героя {hero_name} достиг уровня {level}; кузница получила {price} септимов. Случайный грязекраб выглядел впечатлённым, насколько умеют грязекрабы."
+                      },
+                      {
+                          "template_type":  "enhance_success",
+                          "source":  "community",
+                          "text_template":  "{hero_name} улучшил {item_name} до уровня {level}, заплатив {price} септимов кузнецу. Тавернский кот записал событие лапой в воображаемую книгу."
+                      },
+                      {
+                          "template_type":  "enhance_success",
+                          "source":  "community",
+                          "text_template":  "За {price} септимов {hero_name} довёл {item_name} до заточки +{level}. Ветер попытался аплодировать, но вышел обычный сквозняк."
+                      },
+                      {
+                          "template_type":  "enhance_success",
+                          "source":  "community",
+                          "text_template":  "{item_name} героя {hero_name} достиг уровня {level}; кузница получила {price} септимов. Один скелет в старой крипте наверняка одобрил бы этот жест."
+                      },
+                      {
+                          "template_type":  "enhance_success",
+                          "source":  "community",
+                          "text_template":  "{hero_name} улучшил {item_name} до уровня {level}, заплатив {price} септимов кузнецу. Торговец рядом немедленно назвал это выгодой для души."
+                      },
+                      {
+                          "template_type":  "enhance_success",
+                          "source":  "community",
+                          "text_template":  "За {price} септимов {hero_name} довёл {item_name} до заточки +{level}. Снежный ком с крыши выбрал именно этот момент для поклона."
+                      },
+                      {
+                          "template_type":  "enhance_success",
+                          "source":  "community",
+                          "text_template":  "{item_name} героя {hero_name} достиг уровня {level}; кузница получила {price} септимов. Драконов не было видно, но слухи уже начали расти."
+                      },
+                      {
+                          "template_type":  "enhance_success",
+                          "source":  "community",
+                          "text_template":  "{hero_name} улучшил {item_name} до уровня {level}, заплатив {price} септимов кузнецу. Картошка в ближайшем котле закипела с особым смыслом."
+                      }
+                  ]
+}

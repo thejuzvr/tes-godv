@@ -1,36 +1,38 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import { Link } from "react-router-dom"
+import { ArrowLeft, ArrowRight, Check, ChevronDown, ChevronUp, Cloud, CloudLightning, CloudRain, Compass, DoorOpen, Fish, Flag, Footprints, Leaf, MapPin, Moon, RefreshCw, ScrollText, ShieldAlert, Snowflake, Sparkles, Store, Sun, Swords, Tent, TriangleAlert, Users, Wine } from "lucide-react"
+import type { LucideIcon } from "lucide-react"
 import { useGameStore } from "@/stores/gameStore"
 import { api } from "@/lib/api"
-import { WorldMap, dangerColor, TYPE_RU, WEATHER_RU } from "@/components/map/WorldMap"
+import { WorldMap, TYPE_RU, WEATHER_RU } from "@/components/map/WorldMap"
 import type { MapLocation } from "@/components/map/WorldMap"
 import type { World } from "@/stores/gameStore"
+import "./map-dossier.css"
 
 const PRICE_RU: Record<string, string> = {
   food: "Провизия", gear: "Снаряжение", rare: "Редкое", lodging: "Ночлег",
 }
-
-const FLAG_RU: Record<string, { icon: string; label: string }> = {
-  water: { icon: "🎣", label: "Рыбалка" },
-  gather_nodes: { icon: "🌿", label: "Сбор трав" },
-  locked_buildings: { icon: "🚪", label: "Взлом" },
+const FLAG_RU: Record<string, { icon: LucideIcon; label: string }> = {
+  water: { icon: Fish, label: "Рыбалка" },
+  gather_nodes: { icon: Leaf, label: "Сбор трав" },
+  locked_buildings: { icon: DoorOpen, label: "Взлом" },
 }
-
+const WEATHER_ICONS: Record<string, LucideIcon> = { clear: Sun, cloud: Cloud, rain: CloudRain, storm: CloudLightning, snow: Snowflake }
+const EVENT_ICONS: Record<string, LucideIcon> = { fair: Tent, dragon: ShieldAlert, monster_wave: Swords, eclipse: Moon, defection: Flag }
 const busyKeys = ["fighting", "traveling", "jailed", "fishing", "gathering", "stealing", "breaking_in"]
 
-/* ─── Карта мира (M-3b): полноэкранная страница.
-   Канвас карты занимает всю рабочую область; досье локации, войны и события —
-   плавающие оверлеи поверх карты. Путь героя — пилюля снизу. ─── */
 export function MapPage({ onWs }: { onWs?: (type: string, handler: (data: any) => void) => () => void }) {
   const { hero, setHero, world, setWorld } = useGameStore()
   const [locations, setLocations] = useState<MapLocation[] | null>(null)
   const [failed, setFailed] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
-  const [notice, setNotice] = useState<string | null>(null)
+  const [notice, setNotice] = useState<{ kind: "success" | "error"; text: string } | null>(null)
   const [dossierOpen, setDossierOpen] = useState(true)
 
   const fetchData = useCallback(async () => {
+    setLoading(true)
     try {
       const [locs, w, h] = await Promise.all([api.getLocations(), api.getWorld(), api.getHero()])
       setLocations(locs as MapLocation[])
@@ -40,6 +42,8 @@ export function MapPage({ onWs }: { onWs?: (type: string, handler: (data: any) =
     } catch (e) {
       console.error(e)
       setFailed(true)
+    } finally {
+      setLoading(false)
     }
   }, [setHero, setWorld])
 
@@ -49,7 +53,6 @@ export function MapPage({ onWs }: { onWs?: (type: string, handler: (data: any) =
     return () => clearInterval(id)
   }, [fetchData])
 
-  // WS-живость: герой и мир обновляются так же, как на дашборде
   const heroRef = useRef(hero)
   heroRef.current = hero
   useEffect(() => {
@@ -65,7 +68,6 @@ export function MapPage({ onWs }: { onWs?: (type: string, handler: (data: any) =
     return () => unsubs.forEach((u) => u())
   }, [onWs, setHero, setWorld])
 
-  // Выбор по умолчанию — локация героя
   useEffect(() => {
     if (!selectedId && hero?.location?.id) setSelectedId(hero.location.id)
   }, [hero?.location?.id, selectedId])
@@ -78,233 +80,135 @@ export function MapPage({ onWs }: { onWs?: (type: string, handler: (data: any) =
   const heroBusy = !!hero?.state && busyKeys.includes(hero.state)
   const heroLocId = hero?.location?.id || null
   const travelDestId = isTraveling ? travel.destination_id || null : null
-
   const selected = locations?.find((l) => l.id === selectedId) || null
 
+  const selectLocation = (id: string) => {
+    setSelectedId(id)
+    setDossierOpen(true)
+    setNotice(null)
+  }
   const go = async (loc: MapLocation) => {
     if (busy || heroBusy) return
     setBusy(true)
     setNotice(null)
     try {
       const res = await api.travel(loc.id)
-      setNotice(res?.message?.replace(/^Traveling to\s+/, "В путь: ") || `В путь: ${loc.name}`)
-      const h = await api.getHero()
-      setHero(h)
+      setNotice({ kind: "success", text: res?.message?.replace(/^Traveling to\s+/, "В путь: ") || `В путь: ${loc.name}` })
       setDossierOpen(true)
+      try {
+        const h = await api.getHero()
+        setHero(h)
+      } catch {
+        setNotice({ kind: "error", text: "Путешествие начато, но статус героя не обновился. Обновите данные карты." })
+        setFailed(true)
+      }
     } catch (e: any) {
-      setNotice(e?.message || "Не получилось отправиться в путь")
+      setNotice({ kind: "error", text: e?.message || "Не получилось отправиться в путь. Попробуйте ещё раз." })
     } finally {
       setBusy(false)
     }
   }
 
   const regionWeather = selected ? world?.weather?.[selected.region] : null
-  const selWeather = regionWeather ? (WEATHER_RU[regionWeather] || { label: regionWeather, icon: "🌤️", desc: "" }) : null
+  const selWeather = regionWeather ? (WEATHER_RU[regionWeather] || { label: regionWeather, desc: "" }) : null
   const heroRegionWeather = (hero?.location?.region && world?.weather?.[hero.location.region]) || "clear"
-  const heroW = WEATHER_RU[heroRegionWeather] || { label: heroRegionWeather, icon: "🌤️", desc: "" }
+  const heroW = WEATHER_RU[heroRegionWeather] || { label: heroRegionWeather }
+  const HeroWeatherIcon = WEATHER_ICONS[heroRegionWeather] || Cloud
+  const WeatherIcon = WEATHER_ICONS[regionWeather || ""] || Cloud
 
   return (
     <div className="map-stage">
-      {/* Канвас: карта занимает всю рабочую область */}
       {locations === null ? (
-        <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", color: "var(--muted)" }}>
-          {failed ? "Карта недоступна — сервер не отвечает. Обнови страницу." : "Прорисовка карты…"}
+        <div className="map-frame">
+          <div className="map-load-state" role={failed ? "alert" : "status"}>
+            <Compass size={36} aria-hidden="true" />
+            <h2>{failed ? "Карта недоступна" : "Загружаем атлас…"}</h2>
+            <p>{failed ? "Не удалось получить данные мира. Проверьте соединение и повторите попытку." : "Локации, погода и события Скайрима."}</p>
+            {failed && <button className="map-retry" onClick={fetchData} disabled={loading}><RefreshCw size={15} aria-hidden="true" />{loading ? "Обновляем…" : "Повторить загрузку"}</button>}
+          </div>
         </div>
       ) : (
-        <WorldMap
-          locations={locations}
-          selectedId={selectedId}
-          onSelect={setSelectedId}
-          heroLocId={heroLocId}
-          travelDestId={travelDestId}
-          world={world}
-        />
+        <WorldMap locations={locations} selectedId={selectedId} onSelect={selectLocation} heroLocId={heroLocId} travelDestId={travelDestId} world={world} />
       )}
 
-      {/* Верхний левый чип: атлас · календарь · погода региона героя */}
-      <div className="map-overlay map-title-chip">
-        <span className="map-title">Карта мира</span>
-        <span className="map-meta">
-          {world ? `${world.season} · день ${world.day}` : "календарь загружается…"}
-          {hero?.location?.region ? ` · ${heroW.icon} ${heroW.label} · ${hero.location.region}` : ""}
-        </span>
-        {heroLocId && <Link to="/" style={{ fontSize: "var(--text-xs)", color: "var(--accent)", textDecoration: "none" }}>← Панель</Link>}
-      </div>
-
-      {/* Пилюля пути */}
-      {isTraveling && (
-        <div className="map-overlay map-travel-pill" role="status" aria-live="polite">
-          🚶 Путь к {travel.destination_name} · ~{travel.ticks_left} тик{travel.ticks_left === 1 ? "" : "ов"}
+      <header className="map-overlay map-title-chip">
+        <div className="atlas-title-row">
+          <Compass className="atlas-title-mark" size={32} aria-hidden="true" />
+          <div><span className="atlas-eyebrow">Атлас провинции</span><h1 className="map-title">Скайрим</h1></div>
+          <Link className="atlas-back" to="/" aria-label="Вернуться на панель героя"><ArrowLeft size={15} aria-hidden="true" /><span>К герою</span></Link>
         </div>
-      )}
-
-      {/* Досье локации + мир + события: плавающий оверлей справа */}
-      {dossierOpen ? (
-        <aside className="map-overlay map-dossier" aria-label="Досье локации">
-          <button className="map-dossier-toggle" onClick={() => setDossierOpen(false)} aria-expanded="true" aria-label="Свернуть досье">
-            ▸ Досье локации — свернуть
-          </button>
-
-          {/* Локация */}
-          <section className="map-dossier-section">
-            {!selected ? (
-              <div style={{ fontSize: "var(--text-sm)", color: "var(--muted)" }}>
-                Выбери станцию на карте — здесь появится её досье.
-              </div>
-            ) : (
-              <>
-                <div style={{ display: "flex", alignItems: "baseline", gap: "var(--space-2)", flexWrap: "wrap" }}>
-                  <span style={{ fontFamily: "var(--font-display)", fontSize: "var(--text-xl)", fontWeight: 700 }}>{selected.name}</span>
-                  {selected.id === heroLocId && (
-                    <span style={{ fontSize: "var(--text-xs)", color: "var(--success)", fontFamily: "var(--font-mono)" }}>★ герой здесь</span>
-                  )}
-                </div>
-                <div style={{ display: "flex", gap: "var(--space-2)", margin: "var(--space-2) 0", flexWrap: "wrap" }}>
-                  <span style={chip}>{TYPE_RU[selected.location_type] || selected.location_type}</span>
-                  <span style={{ ...chip, color: dangerColor(selected.danger_level), borderColor: dangerColor(selected.danger_level) }}>
-                    ⚠ {selected.danger_level}
-                  </span>
-                  <span style={{ ...chip, fontFamily: "var(--font-mono)" }}>ур. {selected.min_level}–{selected.max_level}</span>
-                </div>
-                {selected.description && (
-                  <p style={{ fontSize: "var(--text-sm)", color: "var(--muted)", margin: 0 }}>{selected.description}</p>
-                )}
-                <div style={{ display: "flex", gap: "var(--space-3)", marginTop: "var(--space-2)", fontSize: "var(--text-xs)", flexWrap: "wrap" }}>
-                  <span>{selected.has_shop ? "🏪 Магазин" : <span style={{ color: "var(--muted)" }}>🏪 Нет лавки</span>}</span>
-                  <span>{selected.has_inn ? "🍺 Таверна" : <span style={{ color: "var(--muted)" }}>🍺 Нет ночлега</span>}</span>
-                </div>
-                {Object.keys(selected.flags || {}).length > 0 && (
-                  <div style={{ display: "flex", gap: "var(--space-2)", marginTop: "var(--space-2)", flexWrap: "wrap" }}>
-                    {Object.keys(selected.flags).filter((f) => FLAG_RU[f]).map((f) => (
-                      <span key={f} style={chip}>{FLAG_RU[f].icon} {FLAG_RU[f].label}</span>
-                    ))}
-                  </div>
-                )}
-
-                {/* Путь — бывшая TravelPanel (P-2b → M-3) */}
-                <div style={{ marginTop: "var(--space-3)" }}>
-                  {selected.id === heroLocId ? (
-                    <div style={{ fontSize: "var(--text-xs)", color: "var(--success)", fontFamily: "var(--font-mono)" }}>Герой уже здесь</div>
-                  ) : (
-                    <button
-                      onClick={() => go(selected)}
-                      disabled={heroBusy || busy}
-                      aria-label={`Идти в ${selected.name}`}
-                      style={{
-                        width: "100%", padding: "8px 12px", fontWeight: 600, fontSize: "var(--text-sm)",
-                        border: "1px solid var(--accent)", borderRadius: "var(--radius-sm)",
-                        background: "transparent", color: "var(--accent)",
-                        cursor: heroBusy || busy ? "wait" : "pointer",
-                        opacity: heroBusy || busy ? 0.4 : 1,
-                        transition: "opacity 0.2s",
-                        touchAction: "manipulation",
-                      }}
-                    >
-                      Идти в {selected.name}
-                    </button>
-                  )}
-                  {heroBusy && selected.id !== heroLocId && (
-                    <div style={{ fontSize: "var(--text-xs)", color: "var(--warn)", marginTop: "var(--space-1)" }}>
-                      Герой занят{isTraveling ? " — в пути" : ""}.
-                    </div>
-                  )}
-                  {notice && (
-                    <div role="status" style={{ fontSize: "var(--text-xs)", fontFamily: "var(--font-mono)", color: "var(--success)", marginTop: "var(--space-2)" }}>
-                      {notice}
-                    </div>
-                  )}
-                </div>
-              </>
-            )}
-          </section>
-
-          {/* Мир здесь */}
-          <section className="map-dossier-section">
-            <div style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--muted)", marginBottom: "var(--space-2)" }}>
-              🌍 Мир здесь
-            </div>
-            {selected ? (
-              <>
-                <div style={{ display: "flex", alignItems: "center", gap: "var(--space-2)", marginBottom: "var(--space-2)" }}>
-                  <span style={{ fontSize: 22 }}>{selWeather?.icon || "🌤️"}</span>
-                  <div>
-                    <div style={{ fontWeight: 600, fontSize: "var(--text-sm)" }}>{selWeather?.label || "Погода неизвестна"}</div>
-                    <div style={{ fontSize: "var(--text-xs)", color: "var(--muted)" }}>
-                      {selWeather?.desc || selected.region}
-                    </div>
-                  </div>
-                </div>
-                {world?.density?.[selected.id] != null && (
-                  <div style={{ fontSize: "var(--text-xs)", fontFamily: "var(--font-mono)", color: "var(--muted)", marginBottom: "var(--space-2)" }}>
-                    Столкновения ×{Number(world.density[selected.id]).toFixed(2)}
-                  </div>
-                )}
-                {selected.location_type === "city" && world?.prices?.[selected.id] && (
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-1) var(--space-3)" }}>
-                    {Object.entries(world.prices[selected.id]).map(([cat, mult]) => (
-                      <div key={cat} style={{ display: "flex", justifyContent: "space-between", fontSize: "var(--text-xs)" }}>
-                        <span style={{ color: "var(--muted)" }}>{PRICE_RU[cat] || cat}</span>
-                        <span style={{ fontFamily: "var(--font-mono)", fontVariantNumeric: "tabular-nums" }}>
-                          ×{Number(mult).toFixed(2)}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </>
-            ) : (
-              <div style={{ fontSize: "var(--text-sm)", color: "var(--muted)" }}>Выбери локацию на карте.</div>
-            )}
-          </section>
-
-          {/* Войны и события */}
-          <section className="map-dossier-section">
-            <div style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--muted)", marginBottom: "var(--space-2)" }}>
-              ⚔️ Войны и события
-            </div>
-            {(world?.wars?.length ?? 0) === 0 && (world?.events?.length ?? 0) === 0 ? (
-              <div style={{ fontSize: "var(--text-xs)", color: "var(--muted)", textAlign: "center" }}>
-                Тишина. Ни войн, ни событий.
-              </div>
-            ) : (
-              <>
-                {(world?.wars || []).map((pair) => {
-                  const [a, b] = pair.split("|")
-                  return (
-                    <div key={pair} style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 10px", marginBottom: 6, background: "color-mix(in oklab, var(--danger), transparent 90%)", borderRadius: "var(--radius-md)", fontSize: "var(--text-sm)" }}>
-                      <span>⚔️</span>
-                      <span><b>{a}</b> против <b>{b}</b></span>
-                    </div>
-                  )
-                })}
-                {(world?.events || []).map((e) => (
-                  <div key={e.id} style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 10px", marginBottom: 6, background: "var(--bg-elevated)", borderRadius: "var(--radius-md)", fontSize: "var(--text-sm)" }}>
-                    <span>{e.type === "fair" ? "🎪" : e.type === "dragon" ? "🐉" : e.type === "monster_wave" ? "👹" : e.type === "eclipse" ? "🌑" : e.type === "defection" ? "🔄" : "📜"}</span>
-                    <span style={{ flex: 1 }}><b>{e.name}</b>{e.desc ? ` — ${e.desc}` : ""}</span>
-                    <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", color: "var(--muted)" }}>{e.ttl}т</span>
-                  </div>
-                ))}
-              </>
-            )}
-          </section>
-        </aside>
-      ) : (
-        <div className="map-overlay map-dossier-collapsed">
-          <button className="map-dossier-toggle" onClick={() => setDossierOpen(true)} aria-expanded="false" aria-label="Развернуть досье">
-            ◂ Досье{selected ? ` · ${selected.name}` : ""}
-          </button>
+        <div className="map-meta">
+          <span>{world ? `${world.season} · день ${world.day}` : "Календарь загружается…"}</span>
+          {hero?.location?.region && <span><HeroWeatherIcon size={13} aria-hidden="true" />{heroW.label} · {hero.location.region}</span>}
         </div>
-      )}
+      </header>
+
+      {isTraveling && <div className="map-overlay map-travel-pill" role="status"><Footprints size={17} aria-hidden="true" /><span>Путь к <b>{travel.destination_name}</b> · ~{travel.ticks_left} тик{travel.ticks_left === 1 ? "" : "ов"}</span></div>}
+
+      <aside className={`map-overlay map-dossier${dossierOpen ? "" : " map-dossier-collapsed"}`} aria-label="Досье локации">
+        <button className="map-dossier-toggle" onClick={() => setDossierOpen(!dossierOpen)} aria-expanded={dossierOpen} aria-controls="map-dossier-content">
+          <span><MapPin size={15} aria-hidden="true" />Досье локации</span>
+          {dossierOpen ? <ChevronUp size={17} aria-hidden="true" /> : <ChevronDown size={17} aria-hidden="true" />}
+        </button>
+        <div id="map-dossier-content" hidden={!dossierOpen}>
+          <div className="atlas-location-picker">
+            <label htmlFor="atlas-location">Выбрать локацию</label>
+            <select id="atlas-location" value={selected?.id || ""} onChange={(e) => selectLocation(e.target.value)} disabled={!locations?.length}>
+              <option value="" disabled>{locations === null ? "Загрузка локаций…" : "Все локации Скайрима"}</option>
+              {(locations || []).map((loc) => <option key={loc.id} value={loc.id}>{loc.name} · {loc.region}</option>)}
+            </select>
+          </div>
+          {failed && locations !== null && <div className="atlas-notice" data-kind="error" role="alert"><TriangleAlert size={16} aria-hidden="true" /><div>Данные не обновились. Показана последняя версия.<button className="map-retry" onClick={fetchData} disabled={loading}><RefreshCw size={14} aria-hidden="true" />{loading ? "Обновляем…" : "Обновить данные"}</button></div></div>}
+
+          <section className="map-dossier-section atlas-location">
+            {!selected ? <div className="atlas-empty"><MapPin size={26} aria-hidden="true" /><p>Выберите точку на карте или локацию из списка — здесь появятся условия и маршрут.</p></div> : <>
+              <p className="atlas-eyebrow">{selected.region}</p>
+              <h2 className="atlas-location-name">{selected.name}</h2>
+              {selected.id === heroLocId && <p className="atlas-here"><MapPin size={13} aria-hidden="true" />Герой здесь</p>}
+              <div className="atlas-tags">
+                <span>{TYPE_RU[selected.location_type] || selected.location_type}</span>
+                <span className="atlas-danger" data-danger={selected.danger_level}><ShieldAlert size={13} aria-hidden="true" />{selected.danger_level}</span>
+                <span>ур. {selected.min_level}–{selected.max_level}</span>
+              </div>
+              {selected.description && <p className="atlas-description">{selected.description}</p>}
+              <div className="atlas-amenities">
+                <span data-available={selected.has_shop}><Store size={15} aria-hidden="true" />{selected.has_shop ? "Магазин" : "Нет лавки"}</span>
+                <span data-available={selected.has_inn}><Wine size={15} aria-hidden="true" />{selected.has_inn ? "Таверна" : "Нет ночлега"}</span>
+              </div>
+              <div className="atlas-activities">
+                {Object.keys(selected.flags || {}).filter((f) => FLAG_RU[f]).map((f) => { const Icon = FLAG_RU[f].icon; return <span key={f}><Icon size={14} aria-hidden="true" />{FLAG_RU[f].label}</span> })}
+              </div>
+              <div className="atlas-travel-action">
+                {selected.id === heroLocId ? <div className="atlas-current"><Check size={16} aria-hidden="true" />Герой уже здесь</div> : <>
+                  <button className="atlas-travel-button" onClick={() => go(selected)} disabled={heroBusy || busy || !hero} aria-describedby={heroBusy ? "atlas-travel-reason" : undefined}>
+                    <Footprints size={19} aria-hidden="true" /><span>{busy ? "Отправляемся…" : `Идти в ${selected.name}`}</span><ArrowRight size={17} aria-hidden="true" />
+                  </button>
+                  {heroBusy && <p className="atlas-travel-reason" id="atlas-travel-reason">{isTraveling ? "Герой в пути. Новый маршрут можно выбрать после прибытия." : "Герой занят. Отправиться можно после завершения действия."}</p>}
+                  {!hero && <p className="atlas-travel-reason">Для путешествия нужен герой.</p>}
+                </>}
+              </div>
+            </>}
+            {notice && <div className="atlas-notice" data-kind={notice.kind} role={notice.kind === "error" ? "alert" : "status"}>{notice.kind === "error" ? <TriangleAlert size={16} aria-hidden="true" /> : <Check size={16} aria-hidden="true" />}<span>{notice.text}</span></div>}
+          </section>
+
+          <section className="map-dossier-section">
+            <h3 className="atlas-section-heading"><Cloud size={15} aria-hidden="true" />Погода и условия</h3>
+            {selected ? <>
+              <div className="atlas-weather"><WeatherIcon size={30} strokeWidth={1.4} aria-hidden="true" /><div><strong>{selWeather?.label || "Погода неизвестна"}</strong><p>{selWeather?.desc || selected.region}</p></div></div>
+              {world?.density?.[selected.id] != null && <div className="atlas-density"><Users size={14} aria-hidden="true" /><span>Столкновения</span><b>×{Number(world.density[selected.id]).toFixed(2)}</b></div>}
+              {selected.location_type === "city" && world?.prices?.[selected.id] && <div className="atlas-prices"><h4>Цены в городе</h4><dl>{Object.entries(world.prices[selected.id]).map(([cat, mult]) => <div key={cat}><dt>{PRICE_RU[cat] || cat}</dt><dd>×{Number(mult).toFixed(2)}</dd></div>)}</dl></div>}
+            </> : <p className="atlas-muted">Выберите локацию, чтобы узнать условия региона.</p>}
+          </section>
+
+          <section className="map-dossier-section">
+            <h3 className="atlas-section-heading"><ScrollText size={15} aria-hidden="true" />Войны и события<span className="atlas-event-count">{(world?.wars?.length || 0) + (world?.events?.length || 0)}</span></h3>
+            {!world ? <p className="atlas-muted">Сведения о мире загружаются…</p> : (world.wars?.length ?? 0) === 0 && (world.events?.length ?? 0) === 0 ? <div className="atlas-peace"><Sparkles size={18} aria-hidden="true" /><p>В провинции спокойно.<br /><span>Сейчас нет войн и событий.</span></p></div> : <div className="atlas-events">
+              {(world?.wars || []).map((pair) => { const [a, b] = pair.split("|"); return <div key={pair} className="atlas-event atlas-war"><Swords size={17} aria-hidden="true" /><p><b>{a}</b> против <b>{b}</b></p></div> })}
+              {(world?.events || []).map((e) => { const Icon = EVENT_ICONS[e.type] || ScrollText; return <div key={e.id} className="atlas-event"><Icon size={17} aria-hidden="true" /><p><b>{e.name}</b>{e.desc && <span>{e.desc}</span>}</p><span className="atlas-event-ttl" title="Осталось тиков">{e.ttl} т.</span></div> })}
+            </div>}
+          </section>
+        </div>
+      </aside>
     </div>
   )
-}
-
-const chip: React.CSSProperties = {
-  fontSize: "var(--text-xs)",
-  padding: "2px 8px",
-  borderRadius: "999px",
-  border: "1px solid var(--border)",
-  color: "var(--muted)",
-  background: "var(--bg-elevated)",
-  whiteSpace: "nowrap",
 }

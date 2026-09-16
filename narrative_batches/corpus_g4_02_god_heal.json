@@ -1,0 +1,130 @@
+﻿{
+    "activation_policy":  "pending",
+    "templates":  [
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "{god_name} пролил на {hero_name} свет исцеления. Писарь занёс этот миг в книгу без помарок."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "Сила {god_name} вернула {hero_name} дыхание и стойкость. Дорога приняла решение и не стала возражать."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "{hero_name} ощутил, как милость {god_name} унимает боль. Сумерки легли на Скайрим особенно спокойно."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "{god_name} пролил на {hero_name} свет исцеления. Эта весть дошла до ближайшего костра."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "Сила {god_name} вернула {hero_name} дыхание и стойкость. Старый камень у дороги сохранил молчаливую память."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "{hero_name} ощутил, как милость {god_name} унимает боль. Поступок оказался тише славы, но весомее слухов."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "{god_name} пролил на {hero_name} свет исцеления. Холодный воздух словно стал немного добрее."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "Сила {god_name} вернула {hero_name} дыхание и стойкость. В истории края появилась ещё одна честная строка."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "{hero_name} ощутил, как милость {god_name} унимает боль. Путники взглянули вслед с уважением."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "{god_name} пролил на {hero_name} свет исцеления. Далёкий колокол будто отметил этот час."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "Сила {god_name} вернула {hero_name} дыхание и стойкость. Рассвет найдёт эту историю уже известной."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "{hero_name} ощутил, как милость {god_name} унимает боль. Север помнит дела лучше громких обещаний."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "{god_name} пролил на {hero_name} свет исцеления. Ворона проверила карманы взглядом и улетела довольной."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "Сила {god_name} вернула {hero_name} дыхание и стойкость. Бард уже ищет рифму, и это немного тревожит."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "{hero_name} ощутил, как милость {god_name} унимает боль. Стражник одобрил всё настолько, насколько позволяет шлем."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "{god_name} пролил на {hero_name} свет исцеления. Кот из таверны сделал вид, что это его заслуга."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "Сила {god_name} вернула {hero_name} дыхание и стойкость. Снег скрипнул так торжественно, будто был свидетелем."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "{hero_name} ощутил, как милость {god_name} унимает боль. Один сыр в лавке созрел от важности момента."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "{god_name} пролил на {hero_name} свет исцеления. Скелет в крипте не сказал ничего, как всегда по делу."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "Сила {god_name} вернула {hero_name} дыхание и стойкость. Грязекраб прислушался и решил не вмешиваться."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "{hero_name} ощутил, как милость {god_name} унимает боль. Кузнечный молот отозвался с лишним энтузиазмом."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "{god_name} пролил на {hero_name} свет исцеления. Уличный петух объявил событие без спроса."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "Сила {god_name} вернула {hero_name} дыхание и стойкость. Мешок с репой выглядел удивительно вдохновлённым."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "{hero_name} ощутил, как милость {god_name} унимает боль. Три септима под лавкой решили остаться на месте."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "{god_name} пролил на {hero_name} свет исцеления. Даже лошадь кивнула, хотя могла просто чесаться."
+                      }
+                  ]
+}

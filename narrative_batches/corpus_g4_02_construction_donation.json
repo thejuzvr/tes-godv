@@ -1,0 +1,130 @@
+﻿{
+    "activation_policy":  "pending",
+    "templates":  [
+                      {
+                          "template_type":  "construction_donation",
+                          "source":  "community",
+                          "text_template":  "{hero_name} пополнил счёт «{project_name}» на {amount} септимов. Писарь занёс этот миг в книгу без помарок."
+                      },
+                      {
+                          "template_type":  "construction_donation",
+                          "source":  "community",
+                          "text_template":  "{amount} септимов от {hero_name} отправились строителям «{project_name}». Дорога приняла решение и не стала возражать."
+                      },
+                      {
+                          "template_type":  "construction_donation",
+                          "source":  "community",
+                          "text_template":  "{hero_name} выбрал для «{project_name}» взнос в {amount} септимов. Сумерки легли на Скайрим особенно спокойно."
+                      },
+                      {
+                          "template_type":  "construction_donation",
+                          "source":  "community",
+                          "text_template":  "{hero_name} пополнил счёт «{project_name}» на {amount} септимов. Эта весть дошла до ближайшего костра."
+                      },
+                      {
+                          "template_type":  "construction_donation",
+                          "source":  "community",
+                          "text_template":  "{amount} септимов от {hero_name} отправились строителям «{project_name}». Старый камень у дороги сохранил молчаливую память."
+                      },
+                      {
+                          "template_type":  "construction_donation",
+                          "source":  "community",
+                          "text_template":  "{hero_name} выбрал для «{project_name}» взнос в {amount} септимов. Поступок оказался тише славы, но весомее слухов."
+                      },
+                      {
+                          "template_type":  "construction_donation",
+                          "source":  "community",
+                          "text_template":  "{hero_name} пополнил счёт «{project_name}» на {amount} септимов. Холодный воздух словно стал немного добрее."
+                      },
+                      {
+                          "template_type":  "construction_donation",
+                          "source":  "community",
+                          "text_template":  "{amount} септимов от {hero_name} отправились строителям «{project_name}». В истории края появилась ещё одна честная строка."
+                      },
+                      {
+                          "template_type":  "construction_donation",
+                          "source":  "community",
+                          "text_template":  "{hero_name} выбрал для «{project_name}» взнос в {amount} септимов. Путники взглянули вслед с уважением."
+                      },
+                      {
+                          "template_type":  "construction_donation",
+                          "source":  "community",
+                          "text_template":  "{hero_name} пополнил счёт «{project_name}» на {amount} септимов. Далёкий колокол будто отметил этот час."
+                      },
+                      {
+                          "template_type":  "construction_donation",
+                          "source":  "community",
+                          "text_template":  "{amount} септимов от {hero_name} отправились строителям «{project_name}». Рассвет найдёт эту историю уже известной."
+                      },
+                      {
+                          "template_type":  "construction_donation",
+                          "source":  "community",
+                          "text_template":  "{hero_name} выбрал для «{project_name}» взнос в {amount} септимов. Север помнит дела лучше громких обещаний."
+                      },
+                      {
+                          "template_type":  "construction_donation",
+                          "source":  "community",
+                          "text_template":  "{hero_name} пополнил счёт «{project_name}» на {amount} септимов. Ворона проверила карманы взглядом и улетела довольной."
+                      },
+                      {
+                          "template_type":  "construction_donation",
+                          "source":  "community",
+                          "text_template":  "{amount} септимов от {hero_name} отправились строителям «{project_name}». Бард уже ищет рифму, и это немного тревожит."
+                      },
+                      {
+                          "template_type":  "construction_donation",
+                          "source":  "community",
+                          "text_template":  "{hero_name} выбрал для «{project_name}» взнос в {amount} септимов. Стражник одобрил всё настолько, насколько позволяет шлем."
+                      },
+                      {
+                          "template_type":  "construction_donation",
+                          "source":  "community",
+                          "text_template":  "{hero_name} пополнил счёт «{project_name}» на {amount} септимов. Кот из таверны сделал вид, что это его заслуга."
+                      },
+                      {
+                          "template_type":  "construction_donation",
+                          "source":  "community",
+                          "text_template":  "{amount} септимов от {hero_name} отправились строителям «{project_name}». Снег скрипнул так торжественно, будто был свидетелем."
+                      },
+                      {
+                          "template_type":  "construction_donation",
+                          "source":  "community",
+                          "text_template":  "{hero_name} выбрал для «{project_name}» взнос в {amount} септимов. Один сыр в лавке созрел от важности момента."
+                      },
+                      {
+                          "template_type":  "construction_donation",
+                          "source":  "community",
+                          "text_template":  "{hero_name} пополнил счёт «{project_name}» на {amount} септимов. Скелет в крипте не сказал ничего, как всегда по делу."
+                      },
+                      {
+                          "template_type":  "construction_donation",
+                          "source":  "community",
+                          "text_template":  "{amount} септимов от {hero_name} отправились строителям «{project_name}». Грязекраб прислушался и решил не вмешиваться."
+                      },
+                      {
+                          "template_type":  "construction_donation",
+                          "source":  "community",
+                          "text_template":  "{hero_name} выбрал для «{project_name}» взнос в {amount} септимов. Кузнечный молот отозвался с лишним энтузиазмом."
+                      },
+                      {
+                          "template_type":  "construction_donation",
+                          "source":  "community",
+                          "text_template":  "{hero_name} пополнил счёт «{project_name}» на {amount} септимов. Уличный петух объявил событие без спроса."
+                      },
+                      {
+                          "template_type":  "construction_donation",
+                          "source":  "community",
+                          "text_template":  "{amount} септимов от {hero_name} отправились строителям «{project_name}». Мешок с репой выглядел удивительно вдохновлённым."
+                      },
+                      {
+                          "template_type":  "construction_donation",
+                          "source":  "community",
+                          "text_template":  "{hero_name} выбрал для «{project_name}» взнос в {amount} септимов. Три септима под лавкой решили остаться на месте."
+                      },
+                      {
+                          "template_type":  "construction_donation",
+                          "source":  "community",
+                          "text_template":  "{hero_name} пополнил счёт «{project_name}» на {amount} септимов. Даже лошадь кивнула, хотя могла просто чесаться."
+                      }
+                  ]
+}

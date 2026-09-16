@@ -1,0 +1,130 @@
+﻿{
+    "activation_policy":  "pending",
+    "templates":  [
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "{hero_name} обменял {price} очков гильдии на «{item_name}». Северный ветер отметил этот поступок без лишних слов."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "В лавке гильдии {hero_name} выбрал «{item_name}» за {price} очков. Свидетели запомнили этот выбор как достойный рассказ у очага."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "{hero_name} получил «{item_name}», расплатившись {price} очками гильдии. В хронике дня появилась спокойная, но важная строка."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "{hero_name} обменял {price} очков гильдии на «{item_name}». Дорога впереди будто стала немного яснее."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "В лавке гильдии {hero_name} выбрал «{item_name}» за {price} очков. Старые камни Скайрима приняли эту весть молча."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "{hero_name} получил «{item_name}», расплатившись {price} очками гильдии. Над делом героя на миг воцарилась редкая ясность."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "{hero_name} обменял {price} очков гильдии на «{item_name}». Такой шаг не приносит славы сразу, зато меняет путь."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "В лавке гильдии {hero_name} выбрал «{item_name}» за {price} очков. Вечер сохранил его в памяти города."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "{hero_name} получил «{item_name}», расплатившись {price} очками гильдии. Даже суровый край умеет замечать добрые решения."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "{hero_name} обменял {price} очков гильдии на «{item_name}». Эхо поступка ушло дальше ближайшей площади."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "В лавке гильдии {hero_name} выбрал «{item_name}» за {price} очков. Небо над Скайримом не спорило с этим решением."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "{hero_name} получил «{item_name}», расплатившись {price} очками гильдии. Путники ещё долго будут пересказывать эту историю."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "{hero_name} обменял {price} очков гильдии на «{item_name}». Голубь рядом кивнул так серьёзно, будто был главным мастером."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "В лавке гильдии {hero_name} выбрал «{item_name}» за {price} очков. Кошелёк вздохнул, но спорить с судьбой не стал."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "{hero_name} получил «{item_name}», расплатившись {price} очками гильдии. Ближайший норд одобрительно хмыкнул и уронил булку."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "{hero_name} обменял {price} очков гильдии на «{item_name}». Даже стражник на миг перестал подозревать всех подряд."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "В лавке гильдии {hero_name} выбрал «{item_name}» за {price} очков. Где-то бард уже рифмует это с словом «капуста»."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "{hero_name} получил «{item_name}», расплатившись {price} очками гильдии. Случайный грязекраб выглядел впечатлённым, насколько умеют грязекрабы."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "{hero_name} обменял {price} очков гильдии на «{item_name}». Тавернский кот записал событие лапой в воображаемую книгу."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "В лавке гильдии {hero_name} выбрал «{item_name}» за {price} очков. Ветер попытался аплодировать, но вышел обычный сквозняк."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "{hero_name} получил «{item_name}», расплатившись {price} очками гильдии. Один скелет в старой крипте наверняка одобрил бы этот жест."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "{hero_name} обменял {price} очков гильдии на «{item_name}». Торговец рядом немедленно назвал это выгодой для души."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "В лавке гильдии {hero_name} выбрал «{item_name}» за {price} очков. Снежный ком с крыши выбрал именно этот момент для поклона."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "{hero_name} получил «{item_name}», расплатившись {price} очками гильдии. Драконов не было видно, но слухи уже начали расти."
+                      },
+                      {
+                          "template_type":  "guild_shop_purchase",
+                          "source":  "community",
+                          "text_template":  "{hero_name} обменял {price} очков гильдии на «{item_name}». Картошка в ближайшем котле закипела с особым смыслом."
+                      }
+                  ]
+}

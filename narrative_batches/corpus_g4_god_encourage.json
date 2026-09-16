@@ -1,0 +1,130 @@
+﻿{
+    "activation_policy":  "pending",
+    "templates":  [
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "{god_name} послал {hero_name} тихую уверенность перед долгой дорогой. Северный ветер отметил этот поступок без лишних слов."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "{hero_name} услышал в сердце голос {god_name}: «Не сворачивай». Свидетели запомнили этот выбор как достойный рассказ у очага."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "Благословение {god_name} укрепило дух {hero_name}. В хронике дня появилась спокойная, но важная строка."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "{god_name} послал {hero_name} тихую уверенность перед долгой дорогой. Дорога впереди будто стала немного яснее."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "{hero_name} услышал в сердце голос {god_name}: «Не сворачивай». Старые камни Скайрима приняли эту весть молча."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "Благословение {god_name} укрепило дух {hero_name}. Над делом героя на миг воцарилась редкая ясность."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "{god_name} послал {hero_name} тихую уверенность перед долгой дорогой. Такой шаг не приносит славы сразу, зато меняет путь."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "{hero_name} услышал в сердце голос {god_name}: «Не сворачивай». Вечер сохранил его в памяти города."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "Благословение {god_name} укрепило дух {hero_name}. Даже суровый край умеет замечать добрые решения."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "{god_name} послал {hero_name} тихую уверенность перед долгой дорогой. Эхо поступка ушло дальше ближайшей площади."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "{hero_name} услышал в сердце голос {god_name}: «Не сворачивай». Небо над Скайримом не спорило с этим решением."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "Благословение {god_name} укрепило дух {hero_name}. Путники ещё долго будут пересказывать эту историю."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "{god_name} послал {hero_name} тихую уверенность перед долгой дорогой. Голубь рядом кивнул так серьёзно, будто был главным мастером."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "{hero_name} услышал в сердце голос {god_name}: «Не сворачивай». Кошелёк вздохнул, но спорить с судьбой не стал."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "Благословение {god_name} укрепило дух {hero_name}. Ближайший норд одобрительно хмыкнул и уронил булку."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "{god_name} послал {hero_name} тихую уверенность перед долгой дорогой. Даже стражник на миг перестал подозревать всех подряд."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "{hero_name} услышал в сердце голос {god_name}: «Не сворачивай». Где-то бард уже рифмует это с словом «капуста»."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "Благословение {god_name} укрепило дух {hero_name}. Случайный грязекраб выглядел впечатлённым, насколько умеют грязекрабы."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "{god_name} послал {hero_name} тихую уверенность перед долгой дорогой. Тавернский кот записал событие лапой в воображаемую книгу."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "{hero_name} услышал в сердце голос {god_name}: «Не сворачивай». Ветер попытался аплодировать, но вышел обычный сквозняк."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "Благословение {god_name} укрепило дух {hero_name}. Один скелет в старой крипте наверняка одобрил бы этот жест."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "{god_name} послал {hero_name} тихую уверенность перед долгой дорогой. Торговец рядом немедленно назвал это выгодой для души."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "{hero_name} услышал в сердце голос {god_name}: «Не сворачивай». Снежный ком с крыши выбрал именно этот момент для поклона."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "Благословение {god_name} укрепило дух {hero_name}. Драконов не было видно, но слухи уже начали расти."
+                      },
+                      {
+                          "template_type":  "god_encourage",
+                          "source":  "community",
+                          "text_template":  "{god_name} послал {hero_name} тихую уверенность перед долгой дорогой. Картошка в ближайшем котле закипела с особым смыслом."
+                      }
+                  ]
+}

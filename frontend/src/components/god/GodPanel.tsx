@@ -1,225 +1,142 @@
-import { useState } from "react"
-import { Zap, Sparkles, Heart, Compass, Scroll, CloudRain } from "lucide-react"
+import { useEffect, useId, useRef, useState, type MouseEvent } from "react"
+import { Zap, Sparkles, Heart, Compass, Scroll, CloudRain, Clock, Check, CircleAlert, LoaderCircle } from "lucide-react"
 
-/* ─── God Panel — Небесный Алтарь: божественные вмешательства ─── */
+const actions = [
+  { type: "encourage", icon: Sparkles, label: "Вдохновить", desc: "+15 мораль" },
+  { type: "punish", icon: Zap, label: "Наказать", desc: "−10 мораль" },
+  { type: "heal", icon: Heart, label: "Исцелить", desc: "+30 HP" },
+  { type: "direct", icon: Compass, label: "Направить", desc: "Смена цели" },
+  { type: "quest", icon: Scroll, label: "Задание", desc: "Новый квест" },
+  { type: "weather", icon: CloudRain, label: "Погода", desc: "Знак небес" },
+] as const
+
+// Preserve the existing five-second pause after each request settles.
+const COOLDOWN_MS = 5000
+
 export function GodPanel({ onAction, hero }: { onAction: (t: string) => Promise<string | null>; hero: any }) {
-  const [cooldown, setCooldown] = useState(false)
+  const id = useId()
+  const [pending, setPending] = useState(false)
+  const [secondsLeft, setSecondsLeft] = useState(0)
   const [lastAction, setLastAction] = useState<string | null>(null)
   const [narrative, setNarrative] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const locked = useRef(false)
+  const timer = useRef<ReturnType<typeof setInterval> | null>(null)
+  const lifetime = useRef({ active: false })
 
-  const actions = [
-    { type: "encourage", icon: <Sparkles size={16} />, label: "Вдохновить", color: "var(--accent)", desc: "+15 мораль" },
-    { type: "punish", icon: <Zap size={16} />, label: "Наказать", color: "var(--danger)", desc: "−10 мораль" },
-    { type: "heal", icon: <Heart size={16} />, label: "Исцелить", color: "var(--success)", desc: "+30 HP" },
-    { type: "direct", icon: <Compass size={16} />, label: "Направить", color: "var(--mp)", desc: "Смена цели" },
-    { type: "quest", icon: <Scroll size={16} />, label: "Задание", color: "var(--gold)", desc: "Новый квест" },
-    { type: "weather", icon: <CloudRain size={16} />, label: "Погода", color: "#38bdf8", desc: "Знак небес" },
-  ]
+  useEffect(() => {
+    const current = { active: true }
+    lifetime.current = current
+    return () => {
+      current.active = false
+      if (timer.current !== null) {
+        clearInterval(timer.current)
+        timer.current = null
+      }
+    }
+  }, [])
 
-  const handleClick = async (type: string, label: string) => {
-    if (cooldown) return
-    setCooldown(true)
-    setLastAction(label)
+  const handleActionClick = async (event: MouseEvent<HTMLButtonElement>) => {
+    const action = actions.find(({ type }) => type === event.currentTarget.dataset.action)
+    if (!action || locked.current) return
+
+    const current = lifetime.current
+    locked.current = true
+    setPending(true)
+    setLastAction(action.label)
     setNarrative(null)
+    setError(null)
+
     try {
-      const text = await onAction(type)
-      setNarrative(text)
+      const text = await onAction(action.type)
+      if (current.active) setNarrative(text)
+    } catch (cause: unknown) {
+      if (current.active) {
+        const detail = cause instanceof Error ? cause.message : typeof cause === "string" ? cause : ""
+        setError(detail.trim() || "Не удалось выполнить вмешательство.")
+      }
     } finally {
-      setTimeout(() => setCooldown(false), 5000)
+      // A settled request must not update state or start a timer after unmount.
+      if (current.active) {
+        setPending(false)
+        setSecondsLeft(COOLDOWN_MS / 1000)
+        const deadline = Date.now() + COOLDOWN_MS
+        timer.current = setInterval(() => {
+          const remaining = Math.max(0, Math.ceil((deadline - Date.now()) / 1000))
+          setSecondsLeft(remaining)
+          if (remaining === 0) {
+            locked.current = false
+            if (timer.current !== null) clearInterval(timer.current)
+            timer.current = null
+          }
+        }, 250)
+      }
     }
   }
 
-  const soulPct = Math.min(100, Math.max(0, Math.round(hero.soul_energy || 0)))
+  const soulEnergy = Number(hero?.soul_energy ?? 0)
+  const soulPct = Number.isFinite(soulEnergy) ? Math.min(100, Math.max(0, Math.round(soulEnergy))) : 0
+  const disabled = pending || secondsLeft > 0
+  const state = pending ? "pending" : secondsLeft > 0 ? "cooldown" : "ready"
 
   return (
-    <div className="panel god-panel fantasy-window parchment-glow">
-      <div className="panel-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <div className="flex items-center gap-2">
-          <span className="panel-icon" style={{ color: "var(--accent)" }}>
-            <Sparkles size={15} />
-          </span>
-          <span style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontWeight: 700, fontSize: 16 }}>
-            Алтарь Богов
-          </span>
+    <section className="observatory-intervention" aria-labelledby={`${id}-title`}>
+      <header className="observatory-intervention-header">
+        <div className="observatory-intervention-heading">
+          <Sparkles className="observatory-intervention-icon" size={20} aria-hidden="true" />
+          <h2 id={`${id}-title`} className="observatory-intervention-title">Вмешательство</h2>
         </div>
-        <span
-          style={{
-            fontFamily: "var(--font-mono)",
-            fontSize: 10,
-            textTransform: "uppercase",
-            letterSpacing: "0.1em",
-            color: "var(--muted)",
-          }}
-        >
-          Воля небес
-        </span>
-      </div>
+        <p id={`${id}-availability`} className={`observatory-intervention-availability observatory-intervention-availability--${state}`}>
+          {pending ? <LoaderCircle size={16} aria-hidden="true" /> : secondsLeft > 0 ? <Clock size={16} aria-hidden="true" /> : <Check size={16} aria-hidden="true" />}
+          <span>{pending ? "Ожидаем ответ…" : secondsLeft > 0 ? `Восстановление · ${secondsLeft} с` : "Готово к вмешательству"}</span>
+        </p>
+      </header>
 
-      <div className="panel-body" style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-        {/* Soul Energy Vessel */}
-        <div
-          className="anim-celestial-pulse"
-          style={{
-            padding: "10px 14px",
-            background: "color-mix(in srgb, var(--surface-raised) 90%, black)",
-            borderRadius: "var(--radius-md)",
-            border: "1px solid color-mix(in srgb, var(--border) 70%, var(--xp) 40%)",
-          }}
-        >
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-            <span
-              style={{
-                fontFamily: "var(--font-mono)",
-                fontSize: 10,
-                textTransform: "uppercase",
-                letterSpacing: "0.08em",
-                color: "var(--xp)",
-                display: "flex",
-                alignItems: "center",
-                gap: 6,
-              }}
-            >
-              <span style={{ display: "inline-block", width: 6, height: 6, borderRadius: "50%", background: "var(--xp)", boxShadow: "0 0 8px var(--xp)" }} />
-              Сила Душ
-            </span>
-            <span
-              style={{
-                fontFamily: "var(--font-mono)",
-                fontSize: 12,
-                fontWeight: 700,
-                color: "var(--xp)",
-              }}
-            >
-              {soulPct}%
-            </span>
+      <div className="observatory-intervention-body">
+        <div className="observatory-intervention-energy">
+          <div className="observatory-intervention-energy-heading">
+            <label id={`${id}-energy-label`} htmlFor={`${id}-energy`} className="observatory-intervention-energy-label">Сила Душ</label>
+            <span className="observatory-intervention-energy-value">{soulPct}%</span>
           </div>
-          <div
-            style={{
-              height: 6,
-              background: "color-mix(in srgb, var(--bg) 90%, black)",
-              borderRadius: "var(--radius-pill)",
-              overflow: "hidden",
-            }}
-          >
-            <div
-              style={{
-                height: "100%",
-                width: `${soulPct}%`,
-                background: "linear-gradient(90deg, #4c2882, var(--xp), var(--accent))",
-                boxShadow: "0 0 10px color-mix(in srgb, var(--xp) 60%, transparent)",
-                borderRadius: "var(--radius-pill)",
-                transition: "width 0.5s ease",
-              }}
-            />
-          </div>
+          <meter id={`${id}-energy`} className="observatory-intervention-energy-meter" min={0} max={100} value={soulPct} aria-labelledby={`${id}-energy-label`}>{soulPct}%</meter>
         </div>
 
-        {/* 6 Intervention Action Cards */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(2, 1fr)",
-            gap: 8,
-          }}
-        >
-          {actions.map(({ type, icon, label, color, desc }) => (
+        <div className="observatory-intervention-actions" role="group" aria-label="Действия вмешательства" aria-busy={pending} aria-describedby={`${id}-availability`}>
+          {actions.map(({ type, icon: Icon, label, desc }) => (
             <button
               key={type}
-              onClick={() => handleClick(type, label)}
-              disabled={cooldown}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 10,
-                padding: "8px 12px",
-                background: "color-mix(in srgb, var(--surface) 90%, black)",
-                border: "1px solid color-mix(in srgb, var(--border) 80%, transparent)",
-                borderRadius: "var(--radius-sm)",
-                color: "var(--fg)",
-                cursor: cooldown ? "not-allowed" : "pointer",
-                opacity: cooldown ? 0.5 : 1,
-                transition: "all 0.18s ease",
-                textAlign: "left",
-              }}
-              onMouseEnter={(e) => {
-                if (!cooldown) {
-                  e.currentTarget.style.borderColor = color
-                  e.currentTarget.style.boxShadow = `0 0 14px color-mix(in srgb, ${color} 35%, transparent)`
-                  e.currentTarget.style.transform = "translateY(-1px)"
-                }
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "color-mix(in srgb, var(--border) 80%, transparent)"
-                e.currentTarget.style.boxShadow = "none"
-                e.currentTarget.style.transform = "translateY(0)"
-              }}
+              type="button"
+              className={`observatory-intervention-action observatory-intervention-action--${type}`}
+              data-action={type}
+              onClick={handleActionClick}
+              disabled={disabled}
             >
-              <div
-                style={{
-                  width: 28,
-                  height: 28,
-                  borderRadius: "var(--radius-sm)",
-                  background: `color-mix(in srgb, ${color} 15%, transparent)`,
-                  color: color,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flexShrink: 0,
-                }}
-              >
-                {icon}
-              </div>
-              <div style={{ minWidth: 0, flex: 1 }}>
-                <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 600, letterSpacing: "0.02em" }}>
-                  {label}
-                </div>
-                <div style={{ fontSize: 9, color: "var(--muted)", fontFamily: "var(--font-mono)" }}>
-                  {desc}
-                </div>
-              </div>
+              <Icon className="observatory-intervention-action-icon" size={20} aria-hidden="true" />
+              <span className="observatory-intervention-action-copy">
+                <span className="observatory-intervention-action-label">{label}</span>
+                <span className="observatory-intervention-action-effect">{desc}</span>
+              </span>
             </button>
           ))}
         </div>
 
-        {/* Recent Intervention Log */}
-        {lastAction && (
-          <div
-            style={{
-              paddingTop: 10,
-              borderTop: "1px dashed var(--border)",
-              display: "flex",
-              flexDirection: "column",
-              gap: 6,
-            }}
-          >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <span style={{ fontSize: 10, color: "var(--muted)", fontFamily: "var(--font-mono)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
-                Последнее знамение:
-              </span>
-              <span style={{ fontSize: 10, color: "var(--accent)", fontFamily: "var(--font-mono)" }}>
-                «{lastAction}»
-              </span>
-            </div>
-            {narrative && (
-              <div
-                style={{
-                  padding: "8px 12px",
-                  background: "color-mix(in srgb, var(--accent) 10%, var(--surface))",
-                  borderLeft: "2px solid var(--accent)",
-                  borderRadius: "0 var(--radius-sm) var(--radius-sm) 0",
-                  fontSize: 12,
-                  fontStyle: "italic",
-                  fontFamily: "var(--font-body)",
-                  lineHeight: 1.5,
-                  color: "var(--fg)",
-                }}
-              >
-                {narrative}
-              </div>
-            )}
-          </div>
-        )}
+        <div className={`observatory-intervention-feedback${error ? " observatory-intervention-feedback--error" : ""}`} role="status" aria-live="polite" aria-atomic="true">
+          {lastAction && (
+            <>
+              <p className="observatory-intervention-feedback-title">
+                {pending ? <LoaderCircle size={16} aria-hidden="true" /> : error ? <CircleAlert size={16} aria-hidden="true" /> : <Check size={16} aria-hidden="true" />}
+                <span>{pending ? `«${lastAction}»: выполняется…` : error ? `«${lastAction}»: не выполнено` : `«${lastAction}»: выполнено`}</span>
+              </p>
+              {error ? (
+                <>
+                  <p className="observatory-intervention-error">{error}</p>
+                  <p className="observatory-intervention-hint">Повторите попытку после восстановления.</p>
+                </>
+              ) : narrative && <p className="observatory-intervention-narrative">{narrative}</p>}
+            </>
+          )}
+        </div>
       </div>
-    </div>
+    </section>
   )
 }

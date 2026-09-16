@@ -1,12 +1,30 @@
 defmodule TesIdleWeb.HeroChannel do
   use Phoenix.Channel
 
+  alias TesIdle.Repo
+  alias TesIdle.Schemas.Hero
+  import Ecto.Query, only: [from: 2]
+
   def join("hero:" <> hero_id, _params, socket) do
-    if socket.assigns.user_id do
+    user_id = socket.assigns[:user_id]
+
+    if owned_by?(hero_id, user_id) do
       send(self(), :after_join)
       {:ok, %{hero_id: hero_id}, assign(socket, :hero_id, hero_id)}
     else
       {:error, %{reason: "unauthorized"}}
+    end
+  end
+
+  defp owned_by?(_hero_id, nil), do: false
+
+  defp owned_by?(hero_id, user_id) do
+    case Ecto.UUID.cast(hero_id) do
+      {:ok, hero_id} ->
+        Repo.exists?(from hero in Hero, where: hero.id == ^hero_id and hero.user_id == ^user_id)
+
+      :error ->
+        false
     end
   end
 

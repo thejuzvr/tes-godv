@@ -29,25 +29,25 @@ defmodule TesIdle.Game.Narrative.NarrativeContext do
   ]
 
   @type t :: %__MODULE__{
-    hero: map(),
-    location: map() | nil,
-    location_type: String.t(),
-    weather: String.t(),
-    configs: map(),
-    game_hour: float(),
-    daytime: String.t(),
-    mood: float(),
-    hero_state: String.t(),
-    travel: map() | nil,
-    combat: map() | nil,
-    quest: map() | nil,
-    personality: map(),
-    memories: list(),
-    quirks: list(atom()),
-    inventory_count: integer(),
-    equipment_slots: integer(),
-    tags: list(String.t())
-  }
+          hero: map(),
+          location: map() | nil,
+          location_type: String.t(),
+          weather: String.t(),
+          configs: map(),
+          game_hour: float(),
+          daytime: String.t(),
+          mood: float(),
+          hero_state: String.t(),
+          travel: map() | nil,
+          combat: map() | nil,
+          quest: map() | nil,
+          personality: map(),
+          memories: list(),
+          quirks: list(atom()),
+          inventory_count: integer(),
+          equipment_slots: integer(),
+          tags: list(String.t())
+        }
 
   @doc "Build context from GameContext + result."
   def build(ctx, result) do
@@ -75,7 +75,7 @@ defmodule TesIdle.Game.Narrative.NarrativeContext do
       inventory_count: length(ctx.inventory),
       equipment_slots: count_equipment(ctx.equipment),
       action_context: result[:context] || %{},
-      tags: tags,
+      tags: tags
     }
   end
 
@@ -91,6 +91,7 @@ defmodule TesIdle.Game.Narrative.NarrativeContext do
   defp quirks(_), do: []
 
   defp count_equipment(nil), do: 0
+
   defp count_equipment(equip) do
     [:weapon_id, :head_id, :body_id, :legs_id, :ring_id, :amulet_id]
     |> Enum.count(&(Map.get(equip, &1) != nil))
@@ -165,6 +166,10 @@ defmodule TesIdle.Game.Narrative.NarrativeContext do
     |> add_tag(result[:state_to] == "resting", "resting")
     |> add_tag(result[:state_to] == "fishing", "fishing")
     |> add_tag(result[:state_to] == "gathering", "gathering")
+    |> add_tag(result[:state_to] == "mining", "mining")
+    |> add_tag(get_in(result, [:context, "mining_phase"]) == "start", "mining_start")
+    |> add_tag(get_in(result, [:context, "mining_phase"]) == "wait", "mining_work")
+    |> add_tag(get_in(result, [:context, "mining_phase"]) == "found", "mining_yield")
     |> add_tag(result[:state_to] == "sneaking", "sneaking")
     |> add_tag(result[:state_to] == "breaking_in", "breaking_in")
     |> add_tag(result[:state_to] == "jailed", "jailed")
@@ -202,7 +207,14 @@ defmodule TesIdle.Game.Narrative.NarrativeContext do
       alias TesIdle.Repo
       alias TesIdle.Schemas.Monster
       import Ecto.Query
-      count = Repo.one(from m in Monster, where: m.location_id == ^ctx.location.id and m.is_active == true, select: count())
+
+      count =
+        Repo.one(
+          from m in Monster,
+            where: m.location_id == ^ctx.location.id and m.is_active == true,
+            select: count()
+        )
+
       tags
       |> add_tag(count && count > 0, "monsters_nearby")
       |> add_tag(count && count >= 3, "dangerous")

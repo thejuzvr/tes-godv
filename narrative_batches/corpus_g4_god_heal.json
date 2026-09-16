@@ -1,0 +1,130 @@
+﻿{
+    "activation_policy":  "pending",
+    "templates":  [
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "Свет {god_name} сомкнул раны {hero_name}. Северный ветер отметил этот поступок без лишних слов."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "{god_name} вернул {hero_name} силы тёплым прикосновением. Свидетели запомнили этот выбор как достойный рассказ у очага."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "Благословение {god_name} исцелило {hero_name} среди суровой дороги. В хронике дня появилась спокойная, но важная строка."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "Свет {god_name} сомкнул раны {hero_name}. Дорога впереди будто стала немного яснее."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "{god_name} вернул {hero_name} силы тёплым прикосновением. Старые камни Скайрима приняли эту весть молча."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "Благословение {god_name} исцелило {hero_name} среди суровой дороги. Над делом героя на миг воцарилась редкая ясность."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "Свет {god_name} сомкнул раны {hero_name}. Такой шаг не приносит славы сразу, зато меняет путь."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "{god_name} вернул {hero_name} силы тёплым прикосновением. Вечер сохранил его в памяти города."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "Благословение {god_name} исцелило {hero_name} среди суровой дороги. Даже суровый край умеет замечать добрые решения."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "Свет {god_name} сомкнул раны {hero_name}. Эхо поступка ушло дальше ближайшей площади."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "{god_name} вернул {hero_name} силы тёплым прикосновением. Небо над Скайримом не спорило с этим решением."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "Благословение {god_name} исцелило {hero_name} среди суровой дороги. Путники ещё долго будут пересказывать эту историю."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "Свет {god_name} сомкнул раны {hero_name}. Голубь рядом кивнул так серьёзно, будто был главным мастером."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "{god_name} вернул {hero_name} силы тёплым прикосновением. Кошелёк вздохнул, но спорить с судьбой не стал."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "Благословение {god_name} исцелило {hero_name} среди суровой дороги. Ближайший норд одобрительно хмыкнул и уронил булку."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "Свет {god_name} сомкнул раны {hero_name}. Даже стражник на миг перестал подозревать всех подряд."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "{god_name} вернул {hero_name} силы тёплым прикосновением. Где-то бард уже рифмует это с словом «капуста»."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "Благословение {god_name} исцелило {hero_name} среди суровой дороги. Случайный грязекраб выглядел впечатлённым, насколько умеют грязекрабы."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "Свет {god_name} сомкнул раны {hero_name}. Тавернский кот записал событие лапой в воображаемую книгу."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "{god_name} вернул {hero_name} силы тёплым прикосновением. Ветер попытался аплодировать, но вышел обычный сквозняк."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "Благословение {god_name} исцелило {hero_name} среди суровой дороги. Один скелет в старой крипте наверняка одобрил бы этот жест."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "Свет {god_name} сомкнул раны {hero_name}. Торговец рядом немедленно назвал это выгодой для души."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "{god_name} вернул {hero_name} силы тёплым прикосновением. Снежный ком с крыши выбрал именно этот момент для поклона."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "Благословение {god_name} исцелило {hero_name} среди суровой дороги. Драконов не было видно, но слухи уже начали расти."
+                      },
+                      {
+                          "template_type":  "god_heal",
+                          "source":  "community",
+                          "text_template":  "Свет {god_name} сомкнул раны {hero_name}. Картошка в ближайшем котле закипела с особым смыслом."
+                      }
+                  ]
+}

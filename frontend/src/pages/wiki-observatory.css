@@ -1,0 +1,218 @@
+/* Archive of Tamriel: Observatory-aligned, page-scoped Wiki treatment. */
+.wiki-observatory {
+  --wo-line: color-mix(in srgb, var(--muted) 23%, transparent);
+  --wo-faint: color-mix(in srgb, var(--accent) 7%, transparent);
+  --wo-ink: var(--fg);
+  --wo-paper: var(--surface);
+  --wo-raised: var(--surface-raised);
+  width: 100%;
+  min-width: 0;
+  color: var(--wo-ink);
+  font-family: var(--font-body, Inter, sans-serif);
+  background: var(--bg);
+}
+
+.wiki-observatory *, .wiki-observatory *::before, .wiki-observatory *::after { box-sizing: border-box; }
+.wiki-observatory :is(button, input, textarea, select) { font: inherit; }
+.wiki-observatory :is(button, a, input, textarea, select):focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.wiki-observatory button { cursor: pointer; }
+.wiki-observatory button:disabled { cursor: not-allowed; opacity: .55; }
+
+/* The parent .wiki-shell owns the viewport and its top/status bars.
+   This route fills only the remaining flex slot, avoiding guessed chrome heights. */
+.dashboard.wiki-shell > .wiki-observatory.wiki-layout {
+  flex: 1 1 auto;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  isolation: isolate;
+  background: linear-gradient(115deg, color-mix(in srgb, var(--bg) 92%, var(--accent)) 0%, var(--bg) 42%, color-mix(in srgb, var(--bg) 96%, var(--accent)) 100%);
+}
+
+/* Navigation is a catalog spine, not a card stack. */
+.wiki-observatory .wiki-sidebar {
+  width: clamp(250px, 20vw, 304px);
+  padding: 20px 14px 16px;
+  gap: 16px;
+  border-right: 1px solid var(--wo-line);
+  background: color-mix(in srgb, var(--surface) 92%, var(--bg));
+}
+.wiki-observatory .wiki-sidebar::before {
+  content: "КАТАЛОГ · VII";
+  display: block;
+  padding: 0 8px 13px;
+  border-bottom: 1px solid var(--wo-line);
+  color: var(--muted);
+  font: 11px/1 var(--font-mono, monospace);
+  letter-spacing: .14em;
+}
+.wiki-observatory .wiki-sidebar-title {
+  padding: 0 8px 2px;
+  border: 0;
+  color: var(--fg);
+  font: 600 19px/1.15 var(--font-display, Georgia, serif);
+  letter-spacing: -.01em;
+  text-transform: none;
+}
+.wiki-observatory .wiki-sidebar-title svg { color: var(--accent); }
+.wiki-observatory .wiki-sidebar input {
+  min-height: 38px;
+  border: 1px solid var(--wo-line);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--fg);
+  box-shadow: none;
+}
+.wiki-observatory .wiki-sidebar input:focus { border-color: var(--accent); }
+.wiki-observatory .wiki-sidebar > .space-y-4 { display: grid; gap: 17px; }
+.wiki-observatory .wiki-sidebar-section-label {
+  padding: 0 8px 5px;
+  color: var(--muted);
+  font: 11px/1.4 var(--font-mono, monospace);
+  font-weight: 500;
+  letter-spacing: .11em;
+}
+.wiki-observatory .wiki-sidebar button {
+  min-height: 42px;
+  padding: 8px 9px;
+  border-radius: 5px;
+  border-left: 2px solid transparent;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.3;
+  transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease;
+}
+.wiki-observatory .wiki-sidebar button:hover {
+  transform: none;
+  border-color: var(--wo-line);
+  border-left-color: var(--accent);
+  background: var(--wo-faint);
+  color: var(--fg);
+}
+.wiki-observatory .wiki-sidebar button.active {
+  border: 1px solid var(--wo-line);
+  border-left: 2px solid var(--accent);
+  border-radius: 5px;
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+  box-shadow: none;
+  color: var(--fg);
+}
+.wiki-observatory .wiki-sidebar button .font-mono { font-size: 10px !important; letter-spacing: .03em; }
+.wiki-observatory .wiki-sidebar-icon { width: 19px; height: 19px; font-size: 14px; }
+.wiki-observatory .wiki-sidebar > .mt-auto { border-color: var(--wo-line); font-size: 11px; }
+
+/* Reading area: a restrained archive sheet with a single catalog mark. */
+.wiki-observatory .wiki-content { padding: clamp(18px, 3vw, 38px); }
+.wiki-observatory .wiki-content > div { max-width: 1480px; margin: 0 auto; }
+.wiki-observatory .wiki-manuscript-panel {
+  border: 1px solid var(--wo-line);
+  border-radius: 10px;
+  background: var(--wo-paper);
+  box-shadow: none;
+}
+.wiki-observatory .wiki-content > div > .flex-1 > .wiki-manuscript-panel:first-child {
+  min-height: 190px;
+  padding: clamp(22px, 4vw, 42px);
+  border-top: 2px solid var(--accent);
+  background: linear-gradient(105deg, color-mix(in srgb, var(--surface) 93%, var(--accent)) 0%, var(--surface) 46%);
+}
+.wiki-observatory .wiki-content > div > .flex-1 > .wiki-manuscript-panel:first-child::after {
+  content: "АРХИВ ТАМРИЭЛЯ";
+  position: absolute;
+  right: clamp(18px, 4vw, 42px);
+  bottom: 17px;
+  color: color-mix(in srgb, var(--accent) 52%, transparent);
+  font: 10px/1 var(--font-mono, monospace);
+  letter-spacing: .16em;
+}
+.wiki-observatory .wiki-title {
+  gap: 14px;
+  font: 600 clamp(35px, 4.3vw, 58px)/1 var(--font-display, Georgia, serif) !important;
+  letter-spacing: -.035em;
+}
+.wiki-observatory .wiki-title > span:first-child {
+  width: 45px !important;
+  height: 54px !important;
+  border: 0 !important;
+  border-top: 2px solid var(--accent) !important;
+  border-radius: 0 !important;
+  background: var(--wo-raised) !important;
+  font-size: 21px !important;
+}
+.wiki-observatory .wiki-content .font-mono.uppercase { font-size: 11px !important; letter-spacing: .13em; }
+.wiki-observatory .wiki-content .wiki-title + p { max-width: 62ch; font-size: 14px; line-height: 1.7; }
+.wiki-observatory .wiki-content button { border-radius: 6px !important; }
+
+.wiki-observatory .wiki-content > div > .flex-1 > .wiki-manuscript-panel:nth-child(2) {
+  padding: clamp(22px, 3.5vw, 46px);
+  min-height: 580px;
+}
+.wiki-observatory .wiki-markdown {
+  max-width: 78ch;
+  font-size: 16px;
+  line-height: 1.8;
+  color: var(--fg);
+}
+.wiki-observatory .wiki-markdown h1,
+.wiki-observatory .wiki-markdown h2,
+.wiki-observatory .wiki-markdown h3 { color: var(--fg); font-family: var(--font-display, Georgia, serif); }
+.wiki-observatory .wiki-markdown h1 { font-size: 32px; border-color: var(--wo-line); }
+.wiki-observatory .wiki-markdown h2 {
+  margin-top: 44px;
+  padding-top: 9px;
+  border-top: 1px solid var(--wo-line);
+  color: var(--fg);
+  font-size: 28px;
+  letter-spacing: -.015em;
+}
+.wiki-observatory .wiki-markdown h2::before { content: "§"; margin-right: 10px; color: var(--accent); font-family: var(--font-mono, monospace); font-size: .65em; vertical-align: .22em; }
+.wiki-observatory .wiki-markdown h3 { font-size: 20px; }
+.wiki-observatory .wiki-markdown p { margin: 18px 0; }
+.wiki-observatory .wiki-markdown :is(code, pre, table) { border-color: var(--wo-line); }
+.wiki-observatory .wiki-markdown code { border-radius: 4px; background: var(--bg); }
+.wiki-observatory .wiki-markdown pre { border-radius: 7px; background: var(--bg); }
+.wiki-observatory .wiki-markdown table { border-radius: 7px; background: var(--surface); }
+.wiki-observatory .wiki-markdown th { background: var(--wo-faint); color: var(--fg); font-size: 11px; }
+.wiki-observatory .wiki-markdown :is(th, td) { border-color: var(--wo-line); }
+.wiki-observatory .wiki-markdown blockquote { border-radius: 0 6px 6px 0; background: var(--wo-faint); border-left-color: var(--accent); }
+
+/* Outline reads as a durable finding aid on wide displays. */
+.wiki-observatory aside .wiki-manuscript-panel { padding: 17px !important; border-radius: 8px; }
+.wiki-observatory aside nav a { border-left: 1px solid transparent; border-radius: 0 !important; line-height: 1.35; }
+.wiki-observatory aside nav a:hover { border-left-color: var(--accent); background: var(--wo-faint) !important; }
+.wiki-observatory aside > div:last-child { border-color: var(--wo-line) !important; border-radius: 8px !important; background: var(--surface) !important; }
+
+/* Inline tools retain functionality while becoming quieter research instruments. */
+.wiki-observatory .space-y-6 > .rounded-xl,
+.wiki-observatory .space-y-4 > .rounded-xl { border-radius: 8px !important; border-color: var(--wo-line) !important; box-shadow: none !important; }
+.wiki-observatory textarea { border-radius: 7px !important; border-color: var(--wo-line) !important; }
+.wiki-observatory textarea:focus { border-color: var(--accent) !important; }
+
+@media (max-width: 900px) {
+  .dashboard.wiki-shell > .wiki-observatory.wiki-layout { height: auto; min-height: 0; overflow: visible; flex-direction: column; }
+  .wiki-observatory .wiki-sidebar { width: 100%; max-height: none; overflow: visible; padding: 16px; border-right: 0; border-bottom: 1px solid var(--wo-line); }
+  .wiki-observatory .wiki-sidebar::before { display: none; }
+  .wiki-observatory .wiki-sidebar > .space-y-4 { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 3px; }
+  .wiki-observatory .wiki-sidebar > .space-y-4 > div { min-width: 210px; }
+  .wiki-observatory .wiki-sidebar > .mt-auto { display: none; }
+  .wiki-observatory .wiki-content { overflow: visible; padding: 18px 16px 30px; }
+}
+
+@media (max-width: 620px) {
+  .wiki-observatory .wiki-sidebar { gap: 12px; }
+  .wiki-observatory .wiki-sidebar-title { font-size: 18px; }
+  .wiki-observatory .wiki-content > div { gap: 18px !important; }
+  .wiki-observatory .wiki-content > div > .flex-1 { gap: 18px !important; }
+  .wiki-observatory .wiki-content > div > .flex-1 > .wiki-manuscript-panel:first-child { min-height: 0; padding-bottom: 47px; }
+  .wiki-observatory .wiki-title { align-items: flex-start; font-size: clamp(32px, 11vw, 44px) !important; }
+  .wiki-observatory .wiki-title > span:first-child { width: 37px !important; height: 45px !important; }
+  .wiki-observatory .wiki-content > div > .flex-1 > .wiki-manuscript-panel:nth-child(2) { padding: 22px 18px; min-height: 470px; }
+  .wiki-observatory .wiki-markdown { font-size: 15px; line-height: 1.75; }
+  .wiki-observatory .wiki-markdown h2 { margin-top: 34px; font-size: 25px; }
+  .wiki-observatory .wiki-markdown :is(th, td) { padding: 10px 12px; font-size: 13px; }
+  .wiki-observatory .wiki-markdown table { display: block; overflow-x: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wiki-observatory *, .wiki-observatory *::before, .wiki-observatory *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}

@@ -1,0 +1,100 @@
+/* The provincial atlas shares the Observatory palette without touching other routes. */
+.dashboard.map-shell {
+  --bg: #101c22;
+  --surface: #17262d;
+  --surface-raised: #20333b;
+  --bg-elevated: #20333b;
+  --fg: #e9e9de;
+  --muted: #a3b4b9;
+  --border: #33464d;
+  --accent: #d6b87c;
+  --accent-on: #16242b;
+  --gold: #d6b87c;
+  --success: #94bb9f;
+  --warn: #dfab70;
+  --danger: #ed8d83;
+  --mp: #7eb9d1;
+  background: var(--bg);
+  height: 100dvh;
+  min-height: 100dvh;
+}
+[data-theme="light"] .dashboard.map-shell {
+  --bg: #e8eeed;
+  --surface: #f5f7f3;
+  --surface-raised: #dce6e3;
+  --bg-elevated: #e1e9e7;
+  --fg: #20353c;
+  --muted: #516970;
+  --border: #c9d5d2;
+  --accent: #80622c;
+  --accent-on: #fffaf0;
+  --gold: #80622c;
+  --success: #477453;
+  --warn: #9a6426;
+  --danger: #a34239;
+  --mp: #366f89;
+}
+.dashboard.map-shell .top-bar { background: var(--bg); padding: 16px 28px; border-bottom: 1px solid var(--border); gap: 16px; }
+.map-shell .logo { font-family: var(--font-display); color: var(--fg); font-size: 26px; letter-spacing: .01em; }
+.map-shell .logo svg { color: var(--accent); width: 22px; }
+.map-shell .nav-pill { font-size: 13px; padding: 9px 12px; border-radius: 6px; }
+.map-shell .nav-pill.active { color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, transparent); box-shadow: none; }
+.map-shell .nav-pill:hover { background: var(--surface-raised); color: var(--fg); }
+.dashboard.map-shell .status-bar { background: var(--bg); border-top: 1px solid var(--border); padding: 10px 28px; font-size: 11px; }
+.map-shell .map-stage { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 340px; grid-template-rows: minmax(0, 1fr); flex: 1; min-height: 0; margin: 0; overflow: hidden; }
+.map-shell .map-stage:has(.map-dossier-collapsed) { grid-template-columns: minmax(0, 1fr); }
+.map-shell .map-frame { position: relative; inset: auto; grid-column: 1; grid-row: 1; width: 100%; height: 100%; min-width: 0; min-height: 0; overflow: hidden; background: radial-gradient(ellipse at 50% 45%, var(--surface-raised), var(--bg) 75%); }
+.map-shell .map-stage .map-frame .map-canvas { width: 100%; height: 100%; cursor: grab; }
+.map-shell .map-canvas:active { cursor: grabbing; }
+.map-shell .map-overlay { background: color-mix(in srgb, var(--surface) 93%, transparent); border-color: var(--border); border-radius: 9px; box-shadow: 0 8px 30px #00000012; backdrop-filter: blur(16px); }
+.map-shell .map-title-chip { top: 24px; left: 24px; max-width: calc(100% - 460px); padding: 0; background: transparent; border: 0; box-shadow: none; backdrop-filter: none; pointer-events: none; }
+.map-shell .map-title-chip a { pointer-events: auto; }
+.map-shell .map-dossier { position: relative; inset: auto; grid-column: 2; grid-row: 1; width: auto; max-height: none; border-radius: 0; border: 0; border-left: 1px solid var(--border); background: var(--surface); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--border) transparent; box-shadow: -14px 0 36px #0000000a; }
+.map-shell .map-dossier.map-dossier-collapsed { position: absolute; top: 24px; right: 24px; bottom: auto; left: auto; width: min(300px, calc(100% - 48px)); max-height: none; border: 1px solid var(--border); border-radius: 9px; }
+.map-shell .map-zoom-cluster { inset: auto auto 24px 24px; display: flex; flex-direction: row; gap: 3px; padding: 6px; border-radius: 10px; background: var(--surface); box-shadow: 0 8px 24px #00000020; }
+.map-shell .map-zoom-btn { width: 40px; height: 40px; border-color: transparent; border-radius: 6px; }
+.map-shell .map-zoom-btn:hover:not(:disabled) { background: var(--surface-raised); border-color: var(--border); }
+.map-shell .map-zoom-btn.map-substrate-toggle[data-on="true"] { color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); border-color: transparent; }
+.map-shell .map-zoom-scale { padding: 0 8px; font-size: 12px; }
+.map-shell .map-legend { display: block; left: 24px; bottom: 90px; padding: 0; max-width: min(390px, calc(100% - 48px)); }
+.map-shell .map-legend summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 12px; min-height: 42px; padding: 10px 14px; }
+.map-shell .map-legend summary::-webkit-details-marker { display: none; }
+.map-shell .map-legend summary:hover { color: var(--fg); }
+.map-shell .map-legend summary > svg:last-child { margin-left: auto; }
+.map-shell .map-legend[open] summary > svg:last-child { transform: rotate(180deg); }
+.map-shell .map-legend-row { padding: 10px 14px; font-family: var(--font-body); font-size: 11px; text-transform: none; letter-spacing: 0; border-top: 1px solid var(--border); gap: 8px; }
+.map-shell .map-travel-pill { top: auto; bottom: 24px; left: auto; right: 364px; transform: none; max-width: calc(100% - 720px); white-space: normal; color: var(--accent); font-size: 12px; padding: 12px 16px; }
+.map-shell .map-stage:has(.map-dossier-collapsed) .map-travel-pill { right: 24px; max-width: calc(100% - 380px); }
+.map-shell .map-substrate[data-muted="true"] { opacity: .5; filter: grayscale(1) invert(.85) sepia(.15) saturate(.65); mix-blend-mode: screen; }
+[data-theme="light"] .map-shell .map-substrate[data-muted="true"] { opacity: .52; filter: grayscale(1); mix-blend-mode: multiply; }
+.map-shell .map-graticule line { stroke: var(--muted); opacity: .12; stroke-width: .6; stroke-dasharray: 2 6; }
+.map-shell .map-terrain-label { font-family: var(--font-display); font-style: italic; font-size: 14px; text-transform: none; letter-spacing: .08em; opacity: .55; }
+.map-shell .map-node { animation: none; }
+.map-shell .node-body { filter: drop-shadow(0 2px 3px #00000055); }
+.map-shell .map-node-label { font-family: var(--font-display); font-size: 17px; font-weight: 600; stroke: var(--bg); stroke-width: 4px; stroke-linejoin: round; }
+.map-shell .map-node[data-kind="city"] .map-node-label { font-size: 21px; }
+.map-shell .map-node[data-selected="true"] .map-node-label, .map-shell .map-node[data-hero="true"] .map-node-label { fill: var(--accent); }
+.map-shell .map-node-sub { font-family: var(--font-body); font-size: 9px; letter-spacing: .02em; opacity: 0; }
+.map-shell .map-node:hover .map-node-sub, .map-shell .map-node:focus-visible .map-node-sub, .map-shell .map-node[data-selected="true"] .map-node-sub { opacity: 1; }
+.map-shell .map-node:focus-visible .node-ring { stroke: var(--accent) !important; stroke-width: 3; }
+.map-shell .map-hero-pulse { animation: none; opacity: .16; r: 17; }
+.map-shell .map-route { animation: none; stroke-width: 2; stroke-dasharray: 5 6; }
+@media (max-width: 1100px) and (min-width: 801px) {
+  .map-shell .map-title-chip { max-width: calc(100% - 390px); }
+  .map-shell .map-travel-pill { bottom: 145px; right: auto; left: 24px; max-width: calc(100% - 390px); }
+}
+@media (max-width: 800px) {
+  .dashboard.map-shell .top-bar { padding: 12px 16px; gap: 10px; }
+  .map-shell .nav-pills { order: 3; width: 100%; overflow-x: auto; flex-wrap: nowrap; }
+  .map-shell .nav-pill { white-space: nowrap; }
+  .map-shell .map-stage { display: block; overflow-y: auto; overscroll-behavior: contain; }
+  .map-shell .map-frame { height: 55vh; min-height: 420px; }
+  .map-shell .map-title-chip { top: 16px; left: 16px; max-width: calc(100% - 32px); }
+  .map-shell .map-dossier { position: relative; inset: auto; width: 100%; height: auto; max-height: none; border-left: 0; border-top: 1px solid var(--border); overflow: visible; }
+  .map-shell .map-dossier.map-dossier-collapsed { position: relative; inset: auto; width: 100%; max-width: none; border-radius: 0; }
+  .map-shell .map-zoom-cluster { left: 16px; bottom: 16px; top: auto; right: auto; }
+  .map-shell .map-legend { left: 16px; bottom: 80px; max-width: calc(100% - 32px); }
+  .map-shell .map-travel-pill, .map-shell .map-stage:has(.map-dossier-collapsed) .map-travel-pill { position: relative; inset: auto; max-width: none; margin: 12px 16px; }
+  .dashboard.map-shell .status-bar { padding: 8px 16px; }
+}
+@media (prefers-reduced-motion: reduce) { .map-shell *, .map-shell *::before, .map-shell *::after { animation: none !important; transition: none !important; } }

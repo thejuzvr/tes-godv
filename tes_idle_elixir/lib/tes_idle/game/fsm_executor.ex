@@ -12,9 +12,11 @@ defmodule TesIdle.Game.FSMExecutor do
 
     case get_fsm_state(state_data) do
       :jailed ->
-        # Тюрьма — отдельная ветка FSM: план не трогаем, сидим/подкупаем/бежим
+        # Тюрьма прерывает преступный план навсегда: после освобождения герой
+        # должен принять новое решение, а не повторять кражу/взлом.
         jail_action = TesIdle.Game.Actions.JailAction
         {:ok, result_data} = jail_action.execute(ctx)
+        state_data = clear_plan(state_data)
 
         if multi_tick?(result_data) do
           {:ok, jail_action, result_data, merge_state_data(state_data, result_data)}
@@ -30,20 +32,35 @@ defmodule TesIdle.Game.FSMExecutor do
         end
 
       :execute ->
-        execute_plan_step(ctx, state_data)
+        # Travel, начатый текущим шагом плана, продолжает специальная ветка:
+        # она сохраняет дорожные encounter и продвигает plan только по прибытии.
+        if state_data["travel"] do
+          resume_travel(ctx, state_data)
+        else
+          execute_plan_step(ctx, state_data)
+        end
 
       :fight ->
         # Combat in progress — always process combat round
         fight_action = TesIdle.Game.Actions.FightAction
         result = fight_action.execute(ctx)
         {:ok, result_data} = result
+
         if multi_tick?(result_data) do
           {:ok, fight_action, result_data, merge_state_data(state_data, result_data)}
         else
-          # Бой завершён (победа/поражение/лимит раундов): шаг плана пройден.
-          # S-2 верификация: без advance план зацикливался на шаге Fight —
-          # герой вечно переигрывал бой и не принимал новых решений.
-          {:ok, fight_action, result_data, advance_plan(Map.delete(state_data, "combat"))}
+          combat_done_state = Map.delete(state_data, "combat")
+
+          # Дорожный encounter не является отдельным шагом plan: после боя надо
+          # продолжить тот же TravelAction и продвинуть plan только по прибытии.
+          next_state =
+            if combat_done_state["travel"] do
+              combat_done_state
+            else
+              advance_plan(combat_done_state)
+            end
+
+          {:ok, fight_action, result_data, next_state}
         end
     end
   end
@@ -53,10 +70,12 @@ defmodule TesIdle.Game.FSMExecutor do
     if encounter?(ctx) do
       fight_action = TesIdle.Game.Actions.FightAction
       result = fight_action.execute(ctx)
+
       case result do
         {:ok, %{combat_start: _} = result_data} ->
           # Combat started during travel — merge states
           {:ok, fight_action, result_data, merge_state_data(state_data, result_data)}
+
         _ ->
           # No monster — continue travel
           continue_travel(ctx, state_data)
@@ -70,16 +89,18 @@ defmodule TesIdle.Game.FSMExecutor do
   defp continue_travel(ctx, state_data) do
     travel_action = TesIdle.Game.Actions.TravelAction
     {:ok, result_data} = travel_action.execute(ctx)
+
     if multi_tick?(result_data) do
       {:ok, travel_action, result_data, merge_state_data(state_data, result_data)}
     else
-      {:ok, travel_action, result_data, Map.delete(state_data, "travel")}
+      arrived_state = Map.delete(state_data, "travel")
+      {:ok, travel_action, result_data, advance_plan(arrived_state)}
     end
   end
 
   defp encounter?(ctx) do
-    danger = %{"dungeon" => 0.30, "wilderness" => 0.20, "village" => 0.10, "city" => 0.05}
-    chance = Map.get(danger, ctx.location_type, 0.10)
+    cfg = get_in(ctx.configs || %{}, ["travel", "encounter_chance"]) || %{}
+    chance = Map.get(cfg, ctx.location_type, cfg["default"] || 0.0)
     :rand.uniform() < chance
   end
 
@@ -89,11 +110,13 @@ defmodule TesIdle.Game.FSMExecutor do
     plan = if plan == [], do: [TesIdle.Game.Actions.ExploreAction], else: plan
 
     # Мозг: лог решения («почему герой выбрал X»)
-    state_data = TesIdle.Game.Brain.Graph.log_decision(state_data, goal, ctx)
-    new_state = save_plan(state_data, goal.name, plan)
+    decision_state = TesIdle.Game.Brain.Graph.log_decision(state_data, goal, ctx)
+    TesIdle.Game.Brain.Audit.record_intent(ctx, state_data, decision_state)
+    new_state = save_plan(decision_state, goal.name, plan)
     [first_action | _rest] = plan
 
     result = first_action.execute(ctx)
+
     case result do
       {:ok, result_data} ->
         if multi_tick?(result_data) do
@@ -101,7 +124,9 @@ defmodule TesIdle.Game.FSMExecutor do
         else
           {:ok, first_action, result_data, advance_plan(new_state)}
         end
-      {:error, _} ->
+
+      {:error, reason} ->
+        TesIdle.Game.Brain.Audit.record_failed_action(ctx, new_state, first_action, reason)
         {:ok, first_action, nil, clear_plan(new_state)}
     end
   end
@@ -122,19 +147,23 @@ defmodule TesIdle.Game.FSMExecutor do
               {:ok, action_module, result_data, advance_plan(state_data)}
             end
 
-          {:error, _} ->
+          {:error, reason} ->
+            TesIdle.Game.Brain.Audit.record_failed_action(ctx, state_data, action_module, reason)
             {:ok, action_module, nil, clear_plan(state_data)}
         end
     end
   end
 
+  defp multi_tick?(%{activity_complete: true}), do: false
+
   defp multi_tick?(result) do
-    result[:state_to] in ["fighting", "traveling", "fishing", "jailed"] ||
+    result[:state_to] in ["fighting", "traveling", "fishing", "mining", "jailed"] ||
       result[:combat_progress] != nil ||
       result[:combat_start] != nil ||
       (result[:state_data_update] && result[:state_data_update]["combat"]) ||
       (result[:state_data_update] && result[:state_data_update]["travel"]) ||
       (result[:state_data_update] && result[:state_data_update]["fishing"]) ||
+      (result[:state_data_update] && result[:state_data_update]["mining"]) ||
       (result[:state_data_update] && result[:state_data_update]["jail"])
   end
 
@@ -142,13 +171,15 @@ defmodule TesIdle.Game.FSMExecutor do
     plan_data = %{
       "goal" => to_string(goal_name),
       "steps" => Enum.map(plan, fn mod -> to_string(mod) end),
-      "current_step" => 0,
+      "current_step" => 0
     }
+
     Map.put(state_data, "plan", plan_data)
   end
 
   defp get_plan(state_data) do
     plan_data = state_data["plan"]
+
     if plan_data do
       steps = plan_data["steps"] || []
       current = plan_data["current_step"] || 0
@@ -166,6 +197,7 @@ defmodule TesIdle.Game.FSMExecutor do
           "Elixir.TesIdle.Game.Actions.DeathAction" -> TesIdle.Game.Actions.DeathAction
           "Elixir.TesIdle.Game.Actions.FishingAction" -> TesIdle.Game.Actions.FishingAction
           "Elixir.TesIdle.Game.Actions.GatheringAction" -> TesIdle.Game.Actions.GatheringAction
+          "Elixir.TesIdle.Game.Actions.MiningAction" -> TesIdle.Game.Actions.MiningAction
           "Elixir.TesIdle.Game.Actions.StealingAction" -> TesIdle.Game.Actions.StealingAction
           "Elixir.TesIdle.Game.Actions.BreakInAction" -> TesIdle.Game.Actions.BreakInAction
           "Elixir.TesIdle.Game.Actions.JailAction" -> TesIdle.Game.Actions.JailAction
@@ -180,6 +212,7 @@ defmodule TesIdle.Game.FSMExecutor do
 
   defp advance_plan(state_data) do
     plan_data = state_data["plan"]
+
     if plan_data do
       current = plan_data["current_step"] || 0
       new_plan = Map.put(plan_data, "current_step", current + 1)

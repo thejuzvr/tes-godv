@@ -1,0 +1,130 @@
+﻿{
+    "activation_policy":  "pending",
+    "templates":  [
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "{god_name} послал {hero_name} суровое предостережение. Писарь занёс этот миг в книгу без помарок."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "{hero_name} понял: {god_name} недоволен выбранным шагом. Дорога приняла решение и не стала возражать."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "Строгий знак {god_name} заставил {hero_name} задуматься. Сумерки легли на Скайрим особенно спокойно."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "{god_name} послал {hero_name} суровое предостережение. Эта весть дошла до ближайшего костра."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "{hero_name} понял: {god_name} недоволен выбранным шагом. Старый камень у дороги сохранил молчаливую память."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "Строгий знак {god_name} заставил {hero_name} задуматься. Поступок оказался тише славы, но весомее слухов."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "{god_name} послал {hero_name} суровое предостережение. Холодный воздух словно стал немного добрее."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "{hero_name} понял: {god_name} недоволен выбранным шагом. В истории края появилась ещё одна честная строка."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "Строгий знак {god_name} заставил {hero_name} задуматься. Путники взглянули вслед с уважением."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "{god_name} послал {hero_name} суровое предостережение. Далёкий колокол будто отметил этот час."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "{hero_name} понял: {god_name} недоволен выбранным шагом. Рассвет найдёт эту историю уже известной."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "Строгий знак {god_name} заставил {hero_name} задуматься. Север помнит дела лучше громких обещаний."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "{god_name} послал {hero_name} суровое предостережение. Ворона проверила карманы взглядом и улетела довольной."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "{hero_name} понял: {god_name} недоволен выбранным шагом. Бард уже ищет рифму, и это немного тревожит."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "Строгий знак {god_name} заставил {hero_name} задуматься. Стражник одобрил всё настолько, насколько позволяет шлем."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "{god_name} послал {hero_name} суровое предостережение. Кот из таверны сделал вид, что это его заслуга."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "{hero_name} понял: {god_name} недоволен выбранным шагом. Снег скрипнул так торжественно, будто был свидетелем."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "Строгий знак {god_name} заставил {hero_name} задуматься. Один сыр в лавке созрел от важности момента."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "{god_name} послал {hero_name} суровое предостережение. Скелет в крипте не сказал ничего, как всегда по делу."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "{hero_name} понял: {god_name} недоволен выбранным шагом. Грязекраб прислушался и решил не вмешиваться."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "Строгий знак {god_name} заставил {hero_name} задуматься. Кузнечный молот отозвался с лишним энтузиазмом."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "{god_name} послал {hero_name} суровое предостережение. Уличный петух объявил событие без спроса."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "{hero_name} понял: {god_name} недоволен выбранным шагом. Мешок с репой выглядел удивительно вдохновлённым."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "Строгий знак {god_name} заставил {hero_name} задуматься. Три септима под лавкой решили остаться на месте."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "{god_name} послал {hero_name} суровое предостережение. Даже лошадь кивнула, хотя могла просто чесаться."
+                      }
+                  ]
+}

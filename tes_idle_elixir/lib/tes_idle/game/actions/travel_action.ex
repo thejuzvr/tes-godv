@@ -19,6 +19,9 @@ defmodule TesIdle.Game.Actions.TravelAction do
 
     if state_data["travel"] do
       # Continue existing travel
+      travel_cfg = get_in(ctx.configs || %{}, ["travel"]) || %{}
+      tick_fatigue_cost = travel_cfg["tick_fatigue_cost"] || 3
+      tick_sp_cost = travel_cfg["tick_sp_cost"] || 2
       travel = state_data["travel"]
       new_ticks = travel["ticks_left"] - 1
 
@@ -26,22 +29,27 @@ defmodule TesIdle.Game.Actions.TravelAction do
         # Arrive at destination
         dest_id = travel["destination_id"]
         dest = Repo.get(Location, dest_id)
-        {:ok, %{
-          state_to: "exploring",
-          location_change: dest_id,
-          fatigue_change: -3,
-          sp_change: -2,
-          events: ["arrived_#{dest && dest.name}"],
-        }}
+
+        {:ok,
+         %{
+           state_to: "exploring",
+           location_change: dest_id,
+           fatigue_change: -tick_fatigue_cost,
+           sp_change: -tick_sp_cost,
+           events: ["arrived_#{dest && dest.name}"],
+           context: %{"travel_arrived" => true, "destination_name" => dest && dest.name}
+         }}
       else
         # Still traveling
         new_travel = %{travel | "ticks_left" => new_ticks}
-        {:ok, %{
-          state_to: "traveling",
-          state_data_update: %{"travel" => new_travel},
-          fatigue_change: -3,
-          sp_change: -2,
-        }}
+
+        {:ok,
+         %{
+           state_to: "traveling",
+           state_data_update: %{"travel" => new_travel},
+           fatigue_change: -tick_fatigue_cost,
+           sp_change: -tick_sp_cost
+         }}
       end
     else
       # Start new journey
@@ -54,11 +62,12 @@ defmodule TesIdle.Game.Actions.TravelAction do
       hero_level = ctx.hero.level
       current_id = ctx.hero.location_id
 
-      destinations = Repo.all(
-        from l in Location,
-          where: l.id != ^current_id and l.min_level <= ^hero_level,
-          select: [:id, :name, :location_type]
-      )
+      destinations =
+        Repo.all(
+          from l in Location,
+            where: l.id != ^current_id and l.min_level <= ^hero_level,
+            select: [:id, :name, :location_type]
+        )
 
       if destinations != [] do
         # Фаза 2 (аудит): активный квест задаёт цель поездки — шаг collect
@@ -80,23 +89,24 @@ defmodule TesIdle.Game.Actions.TravelAction do
             Enum.random(destinations)
           end
 
-        ticks = Enum.random(2..5)
+        ticks = rand_in(travel_cfg["ticks"] || [2, 5])
 
         travel_data = %{
           "destination_id" => to_string(dest.id),
           "destination_name" => dest.name,
           "ticks_left" => ticks,
-          "total_ticks" => ticks,
+          "total_ticks" => ticks
         }
 
-        {:ok, %{
-          state_to: "traveling",
-          fatigue_change: -fatigue_cost,
-          gold_change: -gold_cost,
-          sp_change: -sp_cost,
-          state_data_update: %{"travel" => travel_data},
-          events: ["departed_to_#{dest.name}"],
-        }}
+        {:ok,
+         %{
+           state_to: "traveling",
+           fatigue_change: -fatigue_cost,
+           gold_change: -gold_cost,
+           sp_change: -sp_cost,
+           state_data_update: %{"travel" => travel_data},
+           events: ["departed_to_#{dest.name}"]
+         }}
       else
         # No valid destination — stay
         {:ok, %{state_to: "exploring"}}
@@ -115,6 +125,11 @@ defmodule TesIdle.Game.Actions.TravelAction do
       _ -> %{}
     end
   end
+
+  defp rand_in([lo, hi]) when is_number(lo) and is_number(hi),
+    do: Enum.random(round(lo)..round(hi))
+
+  defp rand_in(value) when is_number(value), do: round(value)
 
   defp location_weight("city", :traveling), do: 10
   defp location_weight("village", :traveling), do: 15

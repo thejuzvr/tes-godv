@@ -1,0 +1,130 @@
+﻿{
+    "activation_policy":  "pending",
+    "templates":  [
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "{god_name} напомнил {hero_name}, что за каждое решение бывает цена. Северный ветер отметил этот поступок без лишних слов."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "Тяжёлый знак {god_name} остановил {hero_name} на полпути. Свидетели запомнили этот выбор как достойный рассказ у очага."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "{hero_name} ощутил строгий взгляд {god_name} и стал осторожнее. В хронике дня появилась спокойная, но важная строка."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "{god_name} напомнил {hero_name}, что за каждое решение бывает цена. Дорога впереди будто стала немного яснее."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "Тяжёлый знак {god_name} остановил {hero_name} на полпути. Старые камни Скайрима приняли эту весть молча."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "{hero_name} ощутил строгий взгляд {god_name} и стал осторожнее. Над делом героя на миг воцарилась редкая ясность."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "{god_name} напомнил {hero_name}, что за каждое решение бывает цена. Такой шаг не приносит славы сразу, зато меняет путь."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "Тяжёлый знак {god_name} остановил {hero_name} на полпути. Вечер сохранил его в памяти города."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "{hero_name} ощутил строгий взгляд {god_name} и стал осторожнее. Даже суровый край умеет замечать добрые решения."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "{god_name} напомнил {hero_name}, что за каждое решение бывает цена. Эхо поступка ушло дальше ближайшей площади."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "Тяжёлый знак {god_name} остановил {hero_name} на полпути. Небо над Скайримом не спорило с этим решением."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "{hero_name} ощутил строгий взгляд {god_name} и стал осторожнее. Путники ещё долго будут пересказывать эту историю."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "{god_name} напомнил {hero_name}, что за каждое решение бывает цена. Голубь рядом кивнул так серьёзно, будто был главным мастером."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "Тяжёлый знак {god_name} остановил {hero_name} на полпути. Кошелёк вздохнул, но спорить с судьбой не стал."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "{hero_name} ощутил строгий взгляд {god_name} и стал осторожнее. Ближайший норд одобрительно хмыкнул и уронил булку."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "{god_name} напомнил {hero_name}, что за каждое решение бывает цена. Даже стражник на миг перестал подозревать всех подряд."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "Тяжёлый знак {god_name} остановил {hero_name} на полпути. Где-то бард уже рифмует это с словом «капуста»."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "{hero_name} ощутил строгий взгляд {god_name} и стал осторожнее. Случайный грязекраб выглядел впечатлённым, насколько умеют грязекрабы."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "{god_name} напомнил {hero_name}, что за каждое решение бывает цена. Тавернский кот записал событие лапой в воображаемую книгу."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "Тяжёлый знак {god_name} остановил {hero_name} на полпути. Ветер попытался аплодировать, но вышел обычный сквозняк."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "{hero_name} ощутил строгий взгляд {god_name} и стал осторожнее. Один скелет в старой крипте наверняка одобрил бы этот жест."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "{god_name} напомнил {hero_name}, что за каждое решение бывает цена. Торговец рядом немедленно назвал это выгодой для души."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "Тяжёлый знак {god_name} остановил {hero_name} на полпути. Снежный ком с крыши выбрал именно этот момент для поклона."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "{hero_name} ощутил строгий взгляд {god_name} и стал осторожнее. Драконов не было видно, но слухи уже начали расти."
+                      },
+                      {
+                          "template_type":  "god_punish",
+                          "source":  "community",
+                          "text_template":  "{god_name} напомнил {hero_name}, что за каждое решение бывает цена. Картошка в ближайшем котле закипела с особым смыслом."
+                      }
+                  ]
+}

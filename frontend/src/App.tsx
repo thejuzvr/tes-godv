@@ -1,6 +1,7 @@
 import { useEffect, useState, Component, type ReactNode } from "react"
 import { BrowserRouter, Routes, Route, Link, useLocation } from "react-router-dom"
 import { Moon, Sun } from "lucide-react"
+import "./realm-shell.css"
 import { useGameStore } from "@/stores/gameStore"
 import { api } from "@/lib/api"
 import { useWebSocket } from "@/hooks/useWebSocket"
@@ -154,7 +155,7 @@ function AppLayout() {
   if (!hero) return <CreateHeroPage />
 
   return (
-    <div className={`dashboard ${route.pathname === "/map" ? "map-shell" : ""} ${route.pathname === "/wiki" ? "wiki-shell" : ""}`}>
+    <div className={`dashboard ${["/guild", "/analytics", "/pantheon", "/wiki", "/admin", "/narratives"].includes(path) ? "realm-shell" : ""} ${route.pathname === "/" ? "observatory" : ""} ${route.pathname === "/map" ? "map-shell" : ""} ${route.pathname === "/wiki" ? "wiki-shell" : ""}`}>
       <TopBar />
       <Routes>
         <Route path="/" element={<DashboardPage onWs={onWs} />} />

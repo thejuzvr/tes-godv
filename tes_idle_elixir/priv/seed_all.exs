@@ -9,6 +9,9 @@ Code.require_file("seed_phase2.exs", __DIR__)
 IO.puts("== seed_all: fragments ==")
 Code.require_file("seed_fragments.exs", __DIR__)
 
+IO.puts("== seed_all: encounters ==")
+Code.require_file("seed_encounters.exs", __DIR__)
+
 IO.puts("== seed_all: construction ==")
 Code.require_file("seed_construction.exs", __DIR__)
 

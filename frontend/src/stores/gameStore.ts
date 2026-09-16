@@ -96,6 +96,15 @@ export interface Hero {
   max_soul_energy: number
   pets?: Pet[]
   bounty?: number
+  skills?: Record<"fishing" | "gathering" | "mining" | "stealth" | "lockpicking", number>
+  activity?: {
+    kind: string
+    phase?: string
+    ticks_left: number
+    total_ticks: number
+    ticks_done: number
+    target_name?: string | null
+  } | null
 }
 
 interface JournalEntry {

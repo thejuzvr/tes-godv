@@ -1,0 +1,130 @@
+﻿{
+    "activation_policy":  "pending",
+    "templates":  [
+                      {
+                          "template_type":  "world_news",
+                          "source":  "community",
+                          "text_template":  "Гонцы твердят на перекрёстках: {event}. Писарь занёс этот миг в книгу без помарок."
+                      },
+                      {
+                          "template_type":  "world_news",
+                          "source":  "community",
+                          "text_template":  "Новая весть обошла рынки и таверны: {event}. Дорога приняла решение и не стала возражать."
+                      },
+                      {
+                          "template_type":  "world_news",
+                          "source":  "community",
+                          "text_template":  "Скайрим слушает свежий слух: {event}. Сумерки легли на Скайрим особенно спокойно."
+                      },
+                      {
+                          "template_type":  "world_news",
+                          "source":  "community",
+                          "text_template":  "Гонцы твердят на перекрёстках: {event}. Эта весть дошла до ближайшего костра."
+                      },
+                      {
+                          "template_type":  "world_news",
+                          "source":  "community",
+                          "text_template":  "Новая весть обошла рынки и таверны: {event}. Старый камень у дороги сохранил молчаливую память."
+                      },
+                      {
+                          "template_type":  "world_news",
+                          "source":  "community",
+                          "text_template":  "Скайрим слушает свежий слух: {event}. Поступок оказался тише славы, но весомее слухов."
+                      },
+                      {
+                          "template_type":  "world_news",
+                          "source":  "community",
+                          "text_template":  "Гонцы твердят на перекрёстках: {event}. Холодный воздух словно стал немного добрее."
+                      },
+                      {
+                          "template_type":  "world_news",
+                          "source":  "community",
+                          "text_template":  "Новая весть обошла рынки и таверны: {event}. В истории края появилась ещё одна честная строка."
+                      },
+                      {
+                          "template_type":  "world_news",
+                          "source":  "community",
+                          "text_template":  "Скайрим слушает свежий слух: {event}. Путники взглянули вслед с уважением."
+                      },
+                      {
+                          "template_type":  "world_news",
+                          "source":  "community",
+                          "text_template":  "Гонцы твердят на перекрёстках: {event}. Далёкий колокол будто отметил этот час."
+                      },
+                      {
+                          "template_type":  "world_news",
+                          "source":  "community",
+                          "text_template":  "Новая весть обошла рынки и таверны: {event}. Рассвет найдёт эту историю уже известной."
+                      },
+                      {
+                          "template_type":  "world_news",
+                          "source":  "community",
+                          "text_template":  "Скайрим слушает свежий слух: {event}. Север помнит дела лучше громких обещаний."
+                      },
+                      {
+                          "template_type":  "world_news",
+                          "source":  "community",
+                          "text_template":  "Гонцы твердят на перекрёстках: {event}. Ворона проверила карманы взглядом и улетела довольной."
+                      },
+                      {
+                          "template_type":  "world_news",
+                          "source":  "community",
+                          "text_template":  "Новая весть обошла рынки и таверны: {event}. Бард уже ищет рифму, и это немного тревожит."
+                      },
+                      {
+                          "template_type":  "world_news",
+                          "source":  "community",
+                          "text_template":  "Скайрим слушает свежий слух: {event}. Стражник одобрил всё настолько, насколько позволяет шлем."
+                      },
+                      {
+                          "template_type":  "world_news",
+                          "source":  "community",
+                          "text_template":  "Гонцы твердят на перекрёстках: {event}. Кот из таверны сделал вид, что это его заслуга."
+                      },
+                      {
+                          "template_type":  "world_news",
+                          "source":  "community",
+                          "text_template":  "Новая весть обошла рынки и таверны: {event}. Снег скрипнул так торжественно, будто был свидетелем."
+                      },
+                      {
+                          "template_type":  "world_news",
+                          "source":  "community",
+                          "text_template":  "Скайрим слушает свежий слух: {event}. Один сыр в лавке созрел от важности момента."
+                      },
+                      {
+                          "template_type":  "world_news",
+                          "source":  "community",
+                          "text_template":  "Гонцы твердят на перекрёстках: {event}. Скелет в крипте не сказал ничего, как всегда по делу."
+                      },
+                      {
+                          "template_type":  "world_news",
+                          "source":  "community",
+                          "text_template":  "Новая весть обошла рынки и таверны: {event}. Грязекраб прислушался и решил не вмешиваться."
+                      },
+                      {
+                          "template_type":  "world_news",
+                          "source":  "community",
+                          "text_template":  "Скайрим слушает свежий слух: {event}. Кузнечный молот отозвался с лишним энтузиазмом."
+                      },
+                      {
+                          "template_type":  "world_news",
+                          "source":  "community",
+                          "text_template":  "Гонцы твердят на перекрёстках: {event}. Уличный петух объявил событие без спроса."
+                      },
+                      {
+                          "template_type":  "world_news",
+                          "source":  "community",
+                          "text_template":  "Новая весть обошла рынки и таверны: {event}. Мешок с репой выглядел удивительно вдохновлённым."
+                      },
+                      {
+                          "template_type":  "world_news",
+                          "source":  "community",
+                          "text_template":  "Скайрим слушает свежий слух: {event}. Три септима под лавкой решили остаться на месте."
+                      },
+                      {
+                          "template_type":  "world_news",
+                          "source":  "community",
+                          "text_template":  "Гонцы твердят на перекрёстках: {event}. Даже лошадь кивнула, хотя могла просто чесаться."
+                      }
+                  ]
+}

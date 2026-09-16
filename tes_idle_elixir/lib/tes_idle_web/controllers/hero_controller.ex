@@ -10,20 +10,27 @@ defmodule TesIdleWeb.HeroController do
     uid = user.id
 
     existing = Repo.one(from h in Hero, where: h.user_id == ^uid)
+
     if existing do
       conn |> put_status(:bad_request) |> json(%{detail: "Hero already exists"})
     else
       start_loc = Repo.one(from l in Location, where: l.location_type == "village", limit: 1)
+
       # Мозг героя: детерминированный геном из паспорта (ROADMAP Часть I)
       brain_hash = TesIdle.Game.Brain.Genome.brain_hash(uid)
       personality = TesIdle.Game.Personality.generate(race, hero_class, brain_hash: brain_hash)
+
       hero = %Hero{
-        user_id: uid, name: name, race: race, hero_class: hero_class,
+        user_id: uid,
+        name: name,
+        race: race,
+        hero_class: hero_class,
         location_id: if(start_loc, do: start_loc.id),
         personality: personality,
         brain_hash: brain_hash,
-        skills: %{},
+        skills: %{}
       }
+
       case Repo.insert(hero) do
         {:ok, hero} -> json(conn, hero_response(hero))
         {:error, _} -> conn |> put_status(:unprocessable_entity) |> json(%{detail: "Failed"})
@@ -34,7 +41,10 @@ defmodule TesIdleWeb.HeroController do
   def me(conn, _params) do
     uid = conn.assigns.current_user.id
     hero = Repo.one(from h in Hero, where: h.user_id == ^uid, preload: [:location, :equipment])
-    if hero, do: json(conn, hero_response(hero)), else: conn |> put_status(:not_found) |> json(%{detail: "No hero"})
+
+    if hero,
+      do: json(conn, hero_response(hero)),
+      else: conn |> put_status(:not_found) |> json(%{detail: "No hero"})
   end
 
   @doc "Репутация героя по фракциям (таблица reputations, LawSystem + P-3)."
@@ -91,18 +101,27 @@ defmodule TesIdleWeb.HeroController do
 
   defp pet_map(p) do
     %{
-      id: p.id, species: p.species, name: p.name,
-      mood: p.mood, hunger: p.hunger, loyalty: p.loyalty,
-      status: p.status, revive_at: p.revive_at,
-      created_at: p.created_at,
+      id: p.id,
+      species: p.species,
+      name: p.name,
+      mood: p.mood,
+      hunger: p.hunger,
+      loyalty: p.loyalty,
+      status: p.status,
+      revive_at: p.revive_at,
+      created_at: p.created_at
     }
   end
 
   def heartbeat(conn, _params) do
     uid = conn.assigns.current_user.id
     hero = Repo.one(from h in Hero, where: h.user_id == ^uid)
+
     if hero do
-      hero |> Hero.changeset(%{last_activity: DateTime.utc_now(), is_online: true}) |> Repo.update!()
+      hero
+      |> Hero.changeset(%{last_activity: DateTime.utc_now(), is_online: true})
+      |> Repo.update!()
+
       json(conn, %{status: "ok", is_online: true})
     else
       conn |> put_status(:not_found) |> json(%{detail: "Hero not found"})
@@ -112,6 +131,7 @@ defmodule TesIdleWeb.HeroController do
   def offline(conn, _params) do
     uid = conn.assigns.current_user.id
     hero = Repo.one(from h in Hero, where: h.user_id == ^uid)
+
     if hero do
       hero |> Hero.changeset(%{is_online: false}) |> Repo.update!()
       json(conn, %{status: "ok", is_online: false})
@@ -141,9 +161,15 @@ defmodule TesIdleWeb.HeroController do
           {key, %{"a" => a, "b" => b, "weight" => w, "base_weight" => base}}
         end)
 
-      traits = TesIdle.Game.Personality.normalize(hero.personality)
-        |> Enum.map(fn {t, v} -> %{"trait" => Atom.to_string(t), "value" => v,
-                                  "base" => if(legacy?, do: nil, else: Map.get(genome.traits, t))} end)
+      traits =
+        TesIdle.Game.Personality.normalize(hero.personality)
+        |> Enum.map(fn {t, v} ->
+          %{
+            "trait" => Atom.to_string(t),
+            "value" => v,
+            "base" => if(legacy?, do: nil, else: Map.get(genome.traits, t))
+          }
+        end)
 
       mood_history =
         case Jason.decode(hero.mood_history || "[]") do
@@ -168,8 +194,8 @@ defmodule TesIdleWeb.HeroController do
           total_play_time_seconds: hero.total_play_time_seconds,
           game_day: hero.game_day,
           level: hero.level,
-          name: hero.name,
-        },
+          name: hero.name
+        }
       })
     else
       conn |> put_status(:not_found) |> json(%{detail: "Hero not found"})
@@ -184,29 +210,90 @@ defmodule TesIdleWeb.HeroController do
     guild_block = guild_block(hero.user_id)
 
     %{
-      id: hero.id, name: hero.name, race: hero.race, hero_class: hero.hero_class,
-      level: hero.level, hp: hero.hp, max_hp: hero.max_hp,
-      mp: hero.mp, max_mp: hero.max_mp, sp: hero.sp, max_sp: hero.max_sp,
-      attack: hero.attack, defense: hero.defense,
-      xp: hero.xp, xp_to_next: hero.xp_to_next, gold: hero.gold,
-      state: hero.state, mood: hero.mood,
-      hunger: hero.hunger, fatigue: hero.fatigue, morale: hero.morale,
+      id: hero.id,
+      name: hero.name,
+      race: hero.race,
+      hero_class: hero.hero_class,
+      level: hero.level,
+      hp: hero.hp,
+      max_hp: hero.max_hp,
+      mp: hero.mp,
+      max_mp: hero.max_mp,
+      sp: hero.sp,
+      max_sp: hero.max_sp,
+      attack: hero.attack,
+      defense: hero.defense,
+      xp: hero.xp,
+      xp_to_next: hero.xp_to_next,
+      gold: hero.gold,
+      state: hero.state,
+      mood: hero.mood,
+      hunger: hero.hunger,
+      fatigue: hero.fatigue,
+      morale: hero.morale,
       soul_energy: hero.soul_energy,
-      game_hour: hero.game_hour, game_day: hero.game_day, game_era: hero.game_era,
+      game_hour: hero.game_hour,
+      game_day: hero.game_day,
+      game_era: hero.game_era,
       total_play_time_seconds: hero.total_play_time_seconds,
-      total_gold_earned: hero.total_gold_earned, total_kills: hero.total_kills,
-      is_online: hero.is_online, state_data: hero.state_data,
-      personality: hero.personality, mood_history: hero.mood_history,
+      total_gold_earned: hero.total_gold_earned,
+      total_kills: hero.total_kills,
+      is_online: hero.is_online,
+      state_data: hero.state_data,
+      personality: hero.personality,
+      mood_history: hero.mood_history,
+      skills: TesIdle.Game.Skills.all(hero),
+      activity: activity_block(hero),
       pets: pets,
       bounty: TesIdle.Game.Law.total_bounty(hero),
       guild: guild_block,
-      location: if(hero.location, do: %{
-        id: hero.location.id, name: hero.location.name, region: hero.location.region,
-        location_type: hero.location.location_type, has_shop: hero.location.has_shop,
-        has_inn: hero.location.has_inn, weather: hero.location.weather,
-        danger_level: hero.location.danger_level, min_level: hero.location.min_level,
-        max_level: hero.location.max_level,
-      }),
+      location:
+        if(hero.location,
+          do: %{
+            id: hero.location.id,
+            name: hero.location.name,
+            region: hero.location.region,
+            location_type: hero.location.location_type,
+            has_shop: hero.location.has_shop,
+            has_inn: hero.location.has_inn,
+            weather: hero.location.weather,
+            danger_level: hero.location.danger_level,
+            min_level: hero.location.min_level,
+            max_level: hero.location.max_level
+          }
+        )
+    }
+  end
+
+  # Единый публичный progress текущего многотикового занятия.
+  # Пока legacy-блоки живут в state_data, API нормализует их без дополнительной записи.
+  defp activity_block(hero) do
+    state_data =
+      case Jason.decode(hero.state_data || "{}") do
+        {:ok, data} when is_map(data) -> data
+        _ -> %{}
+      end
+
+    cond do
+      is_map(state_data["activity"]) -> state_data["activity"]
+      is_map(state_data["fishing"]) -> normalize_activity("fishing", state_data["fishing"])
+      is_map(state_data["travel"]) -> normalize_activity("traveling", state_data["travel"])
+      is_map(state_data["jail"]) -> normalize_activity("jailed", state_data["jail"])
+      true -> nil
+    end
+  end
+
+  defp normalize_activity(kind, block) do
+    total = block["total_ticks"] || block["total"] || block["ticks_left"] || 1
+    left = block["ticks_left"] || 0
+
+    %{
+      kind: kind,
+      phase: block["phase"] || "in_progress",
+      ticks_left: left,
+      total_ticks: total,
+      ticks_done: max(0, total - left),
+      target_name: block["destination_name"]
     }
   end
 
@@ -217,10 +304,18 @@ defmodule TesIdleWeb.HeroController do
         buff = TesIdle.Game.Guilds.buff_for(guild.level, TesIdle.Game.Guilds.cfg(%{}))
 
         %{
-          id: guild.id, name: guild.name, emblem: guild.emblem,
-          level: guild.level, role: member.role,
-          points: member.points, contributed: member.contributed,
-          buff: %{xp_mult: buff["xp_mult"], attack_flat: buff["attack_flat"], hp_flat: buff["hp_flat"]},
+          id: guild.id,
+          name: guild.name,
+          emblem: guild.emblem,
+          level: guild.level,
+          role: member.role,
+          points: member.points,
+          contributed: member.contributed,
+          buff: %{
+            xp_mult: buff["xp_mult"],
+            attack_flat: buff["attack_flat"],
+            hp_flat: buff["hp_flat"]
+          }
         }
 
       nil ->

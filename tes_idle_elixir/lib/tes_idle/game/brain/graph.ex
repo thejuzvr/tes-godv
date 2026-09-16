@@ -53,23 +53,44 @@ defmodule TesIdle.Game.Brain.Graph do
     end
   end
 
-  @doc "Лог решения в state_data[\"brain\"][\"decision_log\"] (ротация 50). S-2: с контекстом мира."
+  @doc "Лог решения и metadata intent в state_data[\"brain\"] (чисто, без Repo)."
   def log_decision(state_data, goal, ctx) do
+    state_data = if is_map(state_data), do: state_data, else: %{}
     brain = state_data["brain"] || %{}
     log = brain["decision_log"] || []
+    previous = brain["intent"] || %{}
+    goal_name = to_string(goal.name)
+    switched = is_binary(previous["goal"]) and previous["goal"] != goal_name
+    held = if previous["goal"] == goal_name, do: integer(previous["held_decisions"], 0) + 1, else: 1
 
     entry = %{
       "day" => ctx.hero.game_day,
       "hour" => round(ctx.hour * 10) / 10,
-      "goal" => to_string(goal.name),
+      "goal" => goal_name,
       "utility" => round(goal.utility * 1000) / 1000,
       "reasons" => goal.brain_reasons || [],
       "world" => world_snapshot(ctx),
     }
 
-    Map.put(brain, "decision_log", Enum.take(log ++ [entry], -50))
+    intent =
+      previous
+      |> Map.put("goal", goal_name)
+      |> Map.put("held_decisions", held)
+      |> Map.put("switched", switched)
+      |> Map.put("previous_goal", if(switched, do: previous["goal"], else: previous["previous_goal"]))
+      |> Map.put("selected_day", ctx.hero.game_day)
+      |> Map.put("selected_hour", round(ctx.hour * 10) / 10)
+      |> Map.put("utility", entry["utility"])
+      |> Map.put_new("frustration", 0.0)
+
+    brain
+    |> Map.put("intent", intent)
+    |> Map.put("decision_log", Enum.take(log ++ [entry], -50))
     |> then(&Map.put(state_data, "brain", &1))
   end
+
+  defp integer(value, _fallback) when is_integer(value), do: value
+  defp integer(_value, fallback), do: fallback
 
   defp world_snapshot(ctx) do
     world = if is_map(ctx.world), do: ctx.world, else: %{}
