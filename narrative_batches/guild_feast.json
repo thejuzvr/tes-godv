@@ -1,0 +1,368 @@
+{
+  "activation_policy": "pending",
+  "templates": [
+    {
+      "template_type": "guild_feast",
+      "text_template": "Пиршественный стол гильдии «{guild_name}» {emblem} ломился от запечённых хоркеров, пока {hero_name} не попытался сплясать на блюде с брусничной подливкой.",
+      "source": "community",
+      "variables": [
+        "guild_name",
+        "emblem",
+        "hero_name"
+      ],
+      "mood_min": 0,
+      "mood_max": 100
+    },
+    {
+      "template_type": "guild_feast",
+      "text_template": "Когда соратники из «{guild_name}» осушили десятый бочонок мёда, весь {location_name} узнал, насколько громко можно хором восхвалять величие {god_name} без слуха и голоса.",
+      "source": "community",
+      "variables": [
+        "guild_name",
+        "location_name",
+        "god_name"
+      ],
+      "mood_min": 0,
+      "mood_max": 100
+    },
+    {
+      "template_type": "guild_feast",
+      "text_template": "Под знаменем {emblem} братство «{guild_name}» делило исполинский сладкий рулет; {hero_name} с настроением {mood} отвоевал глазированную верхушку ценой обожжённых пальцев.",
+      "source": "community",
+      "variables": [
+        "emblem",
+        "guild_name",
+        "hero_name",
+        "mood"
+      ],
+      "mood_min": 0,
+      "mood_max": 100
+    },
+    {
+      "template_type": "guild_feast",
+      "text_template": "В самый разгар пира в «{guild_name}» бард затянул балладу о Рагнаре Рыжем, но {hero_name} заглушил припев победным хрустом жареной бараньей ноги.",
+      "source": "community",
+      "variables": [
+        "guild_name",
+        "hero_name"
+      ],
+      "mood_min": 0,
+      "mood_max": 100
+    },
+    {
+      "template_type": "guild_feast",
+      "text_template": "Гильдия «{guild_name}» закатила такой разгульный пир, что местная стража патрулировала {location_name} исключительно в надежде выпросить кружку нордского эля.",
+      "source": "community",
+      "variables": [
+        "guild_name",
+        "location_name"
+      ],
+      "mood_min": 0,
+      "mood_max": 100
+    },
+    {
+      "template_type": "guild_feast",
+      "text_template": "Увидев герб {emblem}, трактирщик сразу спрятал серебряные вилки, но «{guild_name}» пришла лишь пировать во славу {god_name}, пока {hero_name} не уснул носом в чаше со сметаной.",
+      "source": "community",
+      "variables": [
+        "emblem",
+        "guild_name",
+        "god_name",
+        "hero_name"
+      ],
+      "mood_min": 0,
+      "mood_max": 100
+    },
+    {
+      "template_type": "guild_feast",
+      "text_template": "Соратники из «{guild_name}» устроили состязание по армрестлингу на дубовом столе; {hero_name} с настроением {mood} выиграл три кувшина браги и подозрительно гнутую двемерскую ложку.",
+      "source": "community",
+      "variables": [
+        "guild_name",
+        "hero_name",
+        "mood"
+      ],
+      "mood_min": 0,
+      "mood_max": 100
+    },
+    {
+      "template_type": "guild_feast",
+      "text_template": "Весь {location_name} дрожал от хохота: орден «{guild_name}» поднял флаг {emblem} над таверной и объявил бесплатную раздачу пирогов всем, кто когда-либо ловил стрелу коленом.",
+      "source": "community",
+      "variables": [
+        "location_name",
+        "guild_name",
+        "emblem"
+      ],
+      "mood_min": 0,
+      "mood_max": 100
+    },
+    {
+      "template_type": "guild_feast",
+      "text_template": "Праздничное жаркое в «{guild_name}» слегка подгорело, однако {hero_name} авторитетно объявил, что черная корочка — это знак благословения, который ниспослал сам {god_name}.",
+      "source": "community",
+      "variables": [
+        "guild_name",
+        "hero_name",
+        "god_name"
+      ],
+      "mood_min": 0,
+      "mood_max": 100
+    },
+    {
+      "template_type": "guild_feast",
+      "text_template": "Гордый стяг {emblem} украсил хмельную залу, где «{guild_name}» пировала так усердно, что в чертогах ярла в {location_name} задребезжали парадные кубки.",
+      "source": "community",
+      "variables": [
+        "emblem",
+        "guild_name",
+        "location_name"
+      ],
+      "mood_min": 0,
+      "mood_max": 100
+    },
+    {
+      "template_type": "guild_feast",
+      "text_template": "{hero_name} поклялся на кружке эля, что его боевой дух {mood} позволит в одиночку опустошить погреб «{guild_name}», но споткнулся о спящую собаку трактирщика.",
+      "source": "community",
+      "variables": [
+        "hero_name",
+        "mood",
+        "guild_name"
+      ],
+      "mood_min": 0,
+      "mood_max": 100
+    },
+    {
+      "template_type": "guild_feast",
+      "text_template": "Торжественный тост за «{guild_name}» затянулся на два часа: пока ветераны поминали предков до Исграмора, {hero_name} успел помолиться {god_name} и стащить чужую головку козьего сыра.",
+      "source": "community",
+      "variables": [
+        "guild_name",
+        "hero_name",
+        "god_name"
+      ],
+      "mood_min": 0,
+      "mood_max": 100
+    },
+    {
+      "template_type": "guild_feast",
+      "text_template": "Привратник у ворот в {location_name} насторожился: отряд «{guild_name}» с гербом {emblem} торжественно внёс в ворота жареного порося, а {hero_name} дирижировал процессом поварёшкой.",
+      "source": "community",
+      "variables": [
+        "location_name",
+        "guild_name",
+        "emblem",
+        "hero_name"
+      ],
+      "mood_min": 0,
+      "mood_max": 100
+    },
+    {
+      "template_type": "guild_feast",
+      "text_template": "Посреди всеобщего веселья в «{guild_name}» кто-то пустил слух о двемерских механизмах внутри винной бочки, и {hero_name} потратил полночи на попытки вскрыть кран отмычкой.",
+      "source": "community",
+      "variables": [
+        "guild_name",
+        "hero_name"
+      ],
+      "mood_min": 0,
+      "mood_max": 100
+    },
+    {
+      "template_type": "guild_feast",
+      "text_template": "На пиру братства «{guild_name}» знамя {emblem} случайно послужило скатертью для жареных фазанов; {hero_name} с настроением {mood} невозмутимо заявил, что жирные пятна лишь закаляют шелк в бою.",
+      "source": "community",
+      "variables": [
+        "guild_name",
+        "emblem",
+        "hero_name",
+        "mood"
+      ],
+      "mood_min": 0,
+      "mood_max": 100
+    },
+    {
+      "template_type": "guild_feast",
+      "text_template": "Пока весь {location_name} мирно спал, {hero_name} со штандартом «{guild_name}» на плече увлечённо обучал рыжего кота строевому шагу под звон пустых кувшинов.",
+      "source": "community",
+      "variables": [
+        "location_name",
+        "hero_name",
+        "guild_name"
+      ],
+      "mood_min": 0,
+      "mood_max": 100
+    },
+    {
+      "template_type": "guild_feast",
+      "text_template": "Соратники из «{guild_name}» подняли кубки с мёдом под знаком {emblem}, хором благодаря {god_name} за то, что повар сегодня случайно не перепутал соль с толчёными морозными солями.",
+      "source": "community",
+      "variables": [
+        "guild_name",
+        "emblem",
+        "god_name"
+      ],
+      "mood_min": 0,
+      "mood_max": 100
+    },
+    {
+      "template_type": "guild_feast",
+      "text_template": "Таверна, где гуляла гильдия «{guild_name}», сотрясалась от криков: соратники праздновали щедрый пир, пока {hero_name} наглядно показывал на крупной тыкве приёмы рукопашного боя.",
+      "source": "community",
+      "variables": [
+        "guild_name",
+        "hero_name"
+      ],
+      "mood_min": 0,
+      "mood_max": 100
+    },
+    {
+      "template_type": "guild_feast",
+      "text_template": "Шумное застолье в «{guild_name}» подошло к апогею: под гербом {emblem} сытый {hero_name} с настроением {mood} задремал прямо на мешке с сушёной лавандой, обнимая деревянную кружку.",
+      "source": "community",
+      "variables": [
+        "guild_name",
+        "emblem",
+        "hero_name",
+        "mood"
+      ],
+      "mood_min": 0,
+      "mood_max": 100
+    },
+    {
+      "template_type": "guild_feast",
+      "text_template": "Придворные маги долго гадали бы о природе загадочной огненной вспышки в {location_name}, но это всего лишь «{guild_name}» пыталась эффектно поджечь праздничный пунш во славу {god_name}.",
+      "source": "community",
+      "variables": [
+        "location_name",
+        "guild_name",
+        "god_name"
+      ],
+      "mood_min": 0,
+      "mood_max": 100
+    },
+    {
+      "template_type": "guild_feast",
+      "text_template": "Герб {emblem} гордо реял над очагом, пока воины «{guild_name}» громко спорили о воинской чести, а {hero_name} виртуозно ловил ртом печёные каштаны, летящие через весь стол.",
+      "source": "community",
+      "variables": [
+        "emblem",
+        "guild_name",
+        "hero_name"
+      ],
+      "mood_min": 0,
+      "mood_max": 100
+    },
+    {
+      "template_type": "guild_feast",
+      "text_template": "Утренний туман уже окутал {location_name}, а в чертогах «{guild_name}» неутомимый {hero_name} с настроением {mood} всё ещё доказывал остывшему камину величие нордской кухни.",
+      "source": "community",
+      "variables": [
+        "location_name",
+        "guild_name",
+        "hero_name",
+        "mood"
+      ],
+      "mood_min": 0,
+      "mood_max": 100
+    },
+    {
+      "template_type": "guild_feast",
+      "text_template": "Когда в кладовой «{guild_name}» внезапно иссяк можжевеловый мёд, {hero_name} объявил поход до ближайшего погреба священным обетом и громко призвал {god_name} в свидетели.",
+      "source": "community",
+      "variables": [
+        "guild_name",
+        "hero_name",
+        "god_name"
+      ],
+      "mood_min": 0,
+      "mood_max": 100
+    },
+    {
+      "template_type": "guild_feast",
+      "text_template": "Застолье сотрясало стены до рассвета: гильдия «{guild_name}» под штандартом {emblem} устроила состязание на лучший победный рёв мамонта, напугав всех окрестных грязекрабов.",
+      "source": "community",
+      "variables": [
+        "guild_name",
+        "emblem"
+      ],
+      "mood_min": 0,
+      "mood_max": 100
+    },
+    {
+      "template_type": "guild_feast",
+      "text_template": "{hero_name} попытался произнести торжественную оду во славу гильдии «{guild_name}», но подавился чесночной лепёшкой и был единодушно провозглашён главным мыслителем вечера.",
+      "source": "community",
+      "variables": [
+        "hero_name",
+        "guild_name"
+      ],
+      "mood_min": 0,
+      "mood_max": 100
+    },
+    {
+      "template_type": "guild_feast",
+      "text_template": "Стяги с эмблемой {emblem} покачивались над столами «{guild_name}», где разомлевшие соратники с настроением {mood} благодарили {god_name} за то, что на празднике обошлось без драконов и судебных приставов.",
+      "source": "community",
+      "variables": [
+        "emblem",
+        "guild_name",
+        "mood",
+        "god_name"
+      ],
+      "mood_min": 0,
+      "mood_max": 100
+    },
+    {
+      "template_type": "guild_feast",
+      "text_template": "Пир в «{guild_name}» прошёл с размахом: наутро дежурные стражники в {location_name} вежливо поинтересовались, почему {hero_name} щеголяет по рынку с медным котлом на голове.",
+      "source": "community",
+      "variables": [
+        "guild_name",
+        "location_name",
+        "hero_name"
+      ],
+      "mood_min": 0,
+      "mood_max": 100
+    },
+    {
+      "template_type": "guild_feast",
+      "text_template": "В «{guild_name}» праздник начался чинно у знамени {emblem}, но к полуночи {hero_name} уже чертил горчицей по столешнице план дерзкого ночного рейда на хозяйский сырный погреб.",
+      "source": "community",
+      "variables": [
+        "guild_name",
+        "emblem",
+        "hero_name"
+      ],
+      "mood_min": 0,
+      "mood_max": 100
+    },
+    {
+      "template_type": "guild_feast",
+      "text_template": "Пока жители в {location_name} возносили робкие молитвы {god_name}, в зале «{guild_name}» гуляки с настроением {mood} грянули боевую застольную, отбивая такт деревянными табуретами.",
+      "source": "community",
+      "variables": [
+        "location_name",
+        "god_name",
+        "guild_name",
+        "mood"
+      ],
+      "mood_min": 0,
+      "mood_max": 100
+    },
+    {
+      "template_type": "guild_feast",
+      "text_template": "Великий пир под гербом {emblem} удался на славу: казна «{guild_name}» изрядно похудела, зато {hero_name} красноречиво убедил соратников, что пустые бочки — вернейший знак милости {god_name}.",
+      "source": "community",
+      "variables": [
+        "emblem",
+        "guild_name",
+        "hero_name",
+        "god_name"
+      ],
+      "mood_min": 0,
+      "mood_max": 100
+    }
+  ]
+}
