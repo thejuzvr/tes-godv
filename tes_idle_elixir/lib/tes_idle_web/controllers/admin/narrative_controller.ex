@@ -46,7 +46,13 @@ defmodule TesIdleWeb.Admin.NarrativeController do
     else
       query
     end
-    query = if q, do: from(t in query, where: ilike(t.text_template, ^"%#{escape_like(q)}%")), else: query
+    query =
+      if q do
+        needle = "%#{escape_like(q)}%"
+        from(t in query, where: ilike(t.text_template, ^needle) or ilike(t.template_type, ^needle))
+      else
+        query
+      end
 
     total = Repo.one(from t in query, select: count(t.id))
     offset = (page - 1) * per_page
