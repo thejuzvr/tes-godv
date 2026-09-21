@@ -161,6 +161,20 @@ defmodule TesIdleWeb.Router do
          SimulationController,
          :generate_narratives_moderated
 
+    # Ручное управление каталогом контента (предметы/монстры)
+    get "/content/options", ContentController, :options
+
+    get "/items", ContentController, :items_index
+    get "/items/:id", ContentController, :item_show
+    post "/items", ContentController, :item_create
+    patch "/items/:id", ContentController, :item_update
+    delete "/items/:id", ContentController, :item_delete
+
+    get "/monsters", ContentController, :monsters_index
+    post "/monsters", ContentController, :monster_create
+    patch "/monsters/:id", ContentController, :monster_update
+    delete "/monsters/:id", ContentController, :monster_delete
+
     get "/tests/last", TestController, :last
     post "/tests/run", TestController, :run
 

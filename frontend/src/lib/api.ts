@@ -487,8 +487,59 @@ class ApiClient {
     return this.request<DecisionAuditReport>(`/admin/brain/stats?days=${days}&limit=${limit}`)
   }
 
-  async adminApproveBatch(body: Record<string, string>) {
-    return this.request<any>("/admin/narrative-templates/approve-batch", {
+  // ─── Каталог контента: предметы и монстры ────────────
+
+  async adminContentOptions() {
+    return this.request<{
+      item_types: string[]
+      rarities: string[]
+      equip_slots: string[]
+      locations: Array<{ id: string; name: string }>
+    }>("/admin/content/options")
+  }
+
+  async adminItems(page = 1, type?: string, q?: string) {
+    const params = new URLSearchParams({ page: String(page) })
+    if (type) params.set("type", type)
+    if (q) params.set("q", q)
+    return this.request<{ items: any[]; total: number; page: number; per_page: number; counts: Record<string, number> }>(
+      `/admin/items?${params}`,
+    )
+  }
+
+  async adminCreateItem(payload: Record<string, unknown>) {
+    return this.request<any>("/admin/items", { method: "POST", body: JSON.stringify(payload) })
+  }
+
+  async adminUpdateItem(id: string, payload: Record<string, unknown>) {
+    return this.request<any>(`/admin/items/${id}`, { method: "PATCH", body: JSON.stringify(payload) })
+  }
+
+  async adminDeleteItem(id: string) {
+    return this.request<{ status: string; id: string }>(`/admin/items/${id}`, { method: "DELETE" })
+  }
+
+  async adminMonsters(page = 1, locationId?: string) {
+    const params = new URLSearchParams({ page: String(page) })
+    if (locationId) params.set("location_id", locationId)
+    return this.request<{ monsters: any[]; total: number; page: number; per_page: number }>(
+      `/admin/monsters?${params}`,
+    )
+  }
+
+  async adminCreateMonster(payload: Record<string, unknown>) {
+    return this.request<any>("/admin/monsters", { method: "POST", body: JSON.stringify(payload) })
+  }
+
+  async adminUpdateMonster(id: string, payload: Record<string, unknown>) {
+    return this.request<any>(`/admin/monsters/${id}`, { method: "PATCH", body: JSON.stringify(payload) })
+  }
+
+  async adminDeleteMonster(id: string) {
+    return this.request<{ status: string; id: string }>(`/admin/monsters/${id}`, { method: "DELETE" })
+  }
+
+  async adminApproveBatch(body: Record<string, string>) {    return this.request<any>("/admin/narrative-templates/approve-batch", {
       method: "POST",
       body: JSON.stringify(body),
     })

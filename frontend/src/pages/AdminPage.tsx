@@ -22,6 +22,8 @@ const tabs = [
   { key: "narrative-analytics", label: "Аналитика нарративов", section: "Летопись", mark: "⌁" },
   { key: "moderation", label: "Модерация", section: "Летопись", mark: "✓" },
   { key: "suggestions", label: "Предложения", section: "Летопись", mark: "✉" },
+  { key: "items", label: "Предметы", section: "Скарб", mark: "⚗" },
+  { key: "monsters", label: "Монстры", section: "Скарб", mark: "☠" },
   { key: "simulation", label: "Симуляция", section: "Операции", mark: "◇" },
   { key: "tests", label: "Тесты", section: "Операции", mark: "⌘" },
   { key: "config", label: "Конфиг", section: "Устав", mark: "≡" },
@@ -867,7 +869,6 @@ function NarrativesPanel() {
   }
 
   const thinCount = stats ? stats.types.filter((t: any) => t.total < 5).length : 0
-  const maxTotal = stats ? Math.max(...stats.types.map((t: any) => t.total), 1) : 1
 
   if (!data) return <div style={{ color: "var(--muted)", padding: 32 }}>Загрузка…</div>
 
@@ -944,33 +945,36 @@ function NarrativesPanel() {
       {stats && (
         <div className="panel" style={{ marginBottom: "var(--space-4)" }}>
           <div className="panel-header">
-            <span>Покрытие типов <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--muted)", fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>
-              {stats.types.length} типов · активных {stats.active} из {stats.total}
-            </span></span>
-            <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--muted)" }}>
+            <span>Покрытие типов
+              <span className="narrative-coverage-summary">
+                {stats.types.length} типов · активных {stats.active} из {stats.total} · цель 60 на тип ·{" "}
+                <b className={thinCount ? "is-pending" : ""}>{thinCount} не дотягивают</b>
+              </span>
+            </span>
+            <span className="narrative-coverage-sources">
               {stats.sources.map((s: any) => `${s.source}: ${s.count}`).join(" · ")}
             </span>
           </div>
-          <div className="panel-body" style={{ maxHeight: 150, overflowY: "auto", display: "flex", flexWrap: "wrap", gap: "var(--space-2)" }}>
+          <div className="panel-body narrative-coverage-grid">
             {stats.types.map((t: any) => {
               const active = typeFilter === t.template_type
-              const thin = t.total < 5
-              const pct = Math.max(6, Math.round((t.total / maxTotal) * 100))
+              const pct = Math.min(100, Math.round((t.total / 60) * 100))
+              const missing = Math.max(0, 60 - t.total)
+              const pending = t.total - t.active
               return (
                 <button key={t.template_type} type="button"
+                  className={`narrative-coverage-tile ${active ? "active" : ""} ${missing ? "is-thin" : "is-ready"}`}
                   onClick={() => { setTypeFilter(active ? "" : t.template_type); setPage(1) }}
-                  title={`${t.template_type}: ${t.active} активных из ${t.total}${thin ? " — мало шаблонов" : ""}`}
-                  style={{ display: "flex", flexDirection: "column", gap: 3, padding: "4px 8px", borderRadius: "var(--radius-md)", minWidth: 100,
-                    border: `1px solid ${active ? "var(--mp)" : thin ? "color-mix(in oklab, var(--warn), transparent 45%)" : "var(--border)"}`,
-                    background: active ? "color-mix(in oklab, var(--mp), transparent 85%)" : "var(--panel-bg)",
-                    cursor: "pointer", textAlign: "left" }}>
-                  <span style={{ display: "flex", justifyContent: "space-between", gap: 6, fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--fg)" }}>
-                    <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 120 }}>{t.template_type}</span>
-                    <span style={{ color: thin ? "var(--warn)" : "var(--muted)" }}>{t.total}</span>
+                  title={`${t.template_type}: всего ${t.total}, активных ${t.active}, ожидают ${pending}${missing ? `, не хватает ${missing} до 60` : " — цель достигнута"}`}
+                  aria-pressed={active}>
+                  <span className="narrative-coverage-name">{t.template_type}</span>
+                  <span className="narrative-coverage-count"><strong>{t.total}</strong><small>/60</small></span>
+                  <span className="narrative-coverage-meta">
+                    <span className="is-active">активно<b>{t.active}</b></span>
+                    <span className={pending ? "is-pending" : ""}>ожидает<b>{pending}</b></span>
                   </span>
-                  <span style={{ display: "block", height: 3, borderRadius: 2, background: "var(--border)", position: "relative", overflow: "hidden", width: "100%" }}>
-                    <span style={{ position: "absolute", inset: 0, width: `${pct}%`, background: thin ? "var(--warn)" : "var(--success)" }} />
-                  </span>
+                  <span className="narrative-coverage-track" aria-hidden="true"><i style={{ width: `${pct}%` }} /></span>
+                  <span className="narrative-coverage-missing">{missing ? `−${missing} до цели` : "цель достигнута"}</span>
                 </button>
               )
             })}
@@ -1074,6 +1078,470 @@ function NarrativesPanel() {
 }
 
 /* ─── Simulation Panel ──────────────────────────────── */
+/* ─── Каталог: предметы ─────────────────────────────── */
+const RARITY_RU: Record<string, string> = {
+  common: "Обычный", uncommon: "Необычный", rare: "Редкий", epic: "Эпический", legendary: "Легендарный",
+}
+const ITEM_TYPE_RU: Record<string, string> = {
+  consumable: "Расходник", equipment: "Экипировка", junk: "Хлам",
+}
+const SLOT_RU: Record<string, string> = {
+  weapon: "Оружие", head: "Голова", body: "Тело", legs: "Ноги", ring: "Кольцо", amulet: "Амулет",
+}
+
+const emptyItemForm = {
+  name: "", description: "", item_type: "consumable", rarity: "common", icon: "🍎",
+  weight: "0.5", sell_price: "5", is_active: true, tags: "",
+  heal_hp: "0", reduce_hunger: "0", reduce_fatigue: "0", boost_morale: "0",
+  buff_attack: "0", buff_duration_ticks: "0", soul_restore: "0",
+  equip_slot: "weapon", attack_bonus: "0", defense_bonus: "0", hp_bonus: "0", speed_bonus: "0",
+}
+
+const fieldStyle: React.CSSProperties = {
+  width: "100%", padding: "8px 10px", background: "var(--bg)", color: "var(--fg)",
+  border: "1px solid var(--border)", borderRadius: "var(--radius-sm)", fontSize: 13,
+}
+const labelStyle: React.CSSProperties = {
+  display: "block", marginBottom: 4, color: "var(--muted)",
+  font: "600 11px/1.3 'Fira Code', monospace", letterSpacing: ".05em", textTransform: "uppercase",
+}
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return <label style={{ display: "block" }}><span style={labelStyle}>{label}</span>{children}</label>
+}
+
+function ItemsPanel() {
+  const [rows, setRows] = useState<any[]>([])
+  const [counts, setCounts] = useState<Record<string, number>>({})
+  const [total, setTotal] = useState(0)
+  const [page, setPage] = useState(1)
+  const [typeFilter, setTypeFilter] = useState("")
+  const [search, setSearch] = useState("")
+  const [q, setQ] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [notice, setNotice] = useState<{ kind: "ok" | "err"; text: string } | null>(null)
+  const [form, setForm] = useState({ ...emptyItemForm })
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [showForm, setShowForm] = useState(false)
+  const perPage = 40
+
+  useEffect(() => {
+    const t = setTimeout(() => { setQ(search); setPage(1) }, 300)
+    return () => clearTimeout(t)
+  }, [search])
+
+  const load = useCallback(async () => {
+    setLoading(true)
+    try {
+      const res = await api.adminItems(page, typeFilter || undefined, q || undefined)
+      setRows(res.items)
+      setCounts(res.counts ?? {})
+      setTotal(res.total)
+    } catch (e: any) { setNotice({ kind: "err", text: e.message }) }
+    setLoading(false)
+  }, [page, typeFilter, q])
+
+  useEffect(() => { load() }, [load])
+
+  const reset = () => { setForm({ ...emptyItemForm }); setEditingId(null); setShowForm(false) }
+
+  const submit = async () => {
+    if (!form.name.trim()) { setNotice({ kind: "err", text: "Имя обязательно" }); return }
+    try {
+      const payload = { ...form, name: form.name.trim() }
+      if (editingId) await api.adminUpdateItem(editingId, payload)
+      else await api.adminCreateItem(payload)
+      setNotice({ kind: "ok", text: editingId ? "Предмет обновлён" : `Предмет «${form.name}» создан` })
+      reset(); load()
+    } catch (e: any) { setNotice({ kind: "err", text: e.message }) }
+  }
+
+  const startEdit = (row: any) => {
+    setEditingId(row.id); setShowForm(true)
+    setForm({
+      ...emptyItemForm,
+      ...Object.fromEntries(Object.entries(row).map(([k, v]) => [k, v === null || v === undefined ? "" : String(v)])),
+      tags: Array.isArray(row.tags) ? row.tags.join(", ") : "",
+      is_active: row.is_active,
+    } as any)
+  }
+
+  const remove = async (row: any) => {
+    if (!window.confirm(`Удалить «${row.name}»? Если предмет у кого-то в инвентаре — он будет выключен, а не удалён.`)) return
+    try {
+      const res = await api.adminDeleteItem(row.id)
+      setNotice({ kind: "ok", text: res.status === "deleted" ? "Предмет удалён" : "Предмет выключен (используется в игре)" })
+      load()
+    } catch (e: any) { setNotice({ kind: "err", text: e.message }) }
+  }
+
+  const isEquip = form.item_type === "equipment"
+  const isConsumable = form.item_type === "consumable"
+
+  return (
+    <div>
+      {notice && (
+        <div role="status" style={{
+          padding: "10px 14px", marginBottom: "var(--space-3)", borderRadius: "var(--radius-md)", fontSize: 13,
+          border: `1px solid ${notice.kind === "ok" ? "var(--success)" : "var(--danger)"}`,
+          color: notice.kind === "ok" ? "var(--success)" : "var(--danger)",
+        }}>{notice.text}</div>
+      )}
+
+      <div className="panel" style={{ marginBottom: "var(--space-4)" }}>
+        <div className="panel-header">
+          <span>Каталог предметов <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--muted)", textTransform: "none", letterSpacing: 0, fontWeight: 400 }}>
+            {total} всего · расходники {counts.consumable ?? 0} · экипировка {counts.equipment ?? 0} · хлам {counts.junk ?? 0}
+          </span></span>
+          <button onClick={() => { reset(); setShowForm(!showForm) }}
+            style={{ padding: "6px 14px", background: "var(--accent)", color: "var(--accent-on)", border: "none", borderRadius: "var(--radius-md)", fontSize: 13, fontWeight: 600 }}>
+            {showForm ? "Свернуть" : "+ Новый предмет"}
+          </button>
+        </div>
+
+        {showForm && (
+          <div className="panel-body" style={{ borderBottom: "1px solid var(--border)" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "var(--space-3)", marginBottom: "var(--space-3)" }}>
+              <Field label="Имя"><input style={fieldStyle} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Зелье лечения" /></Field>
+              <Field label="Тип">
+                <select style={fieldStyle} value={form.item_type} onChange={(e) => setForm({ ...form, item_type: e.target.value })}>
+                  <option value="consumable">Расходник</option>
+                  <option value="equipment">Экипировка</option>
+                  <option value="junk">Хлам</option>
+                </select>
+              </Field>
+              <Field label="Редкость">
+                <select style={fieldStyle} value={form.rarity} onChange={(e) => setForm({ ...form, rarity: e.target.value })}>
+                  {Object.entries(RARITY_RU).map(([k, l]) => <option key={k} value={k}>{l}</option>)}
+                </select>
+              </Field>
+              <Field label="Иконка"><input style={fieldStyle} value={form.icon} onChange={(e) => setForm({ ...form, icon: e.target.value })} maxLength={4} /></Field>
+              <Field label="Вес"><input style={fieldStyle} value={form.weight} onChange={(e) => setForm({ ...form, weight: e.target.value })} inputMode="decimal" /></Field>
+              <Field label="Цена продажи 🪙"><input style={fieldStyle} value={form.sell_price} onChange={(e) => setForm({ ...form, sell_price: e.target.value })} inputMode="numeric" /></Field>
+            </div>
+
+            <Field label="Описание">
+              <textarea style={{ ...fieldStyle, minHeight: 60, resize: "vertical" }} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+            </Field>
+
+            <div style={{ marginTop: "var(--space-3)" }}>
+              <Field label="Теги (через запятую: fish, herb, lockpick, stolen)">
+                <input style={fieldStyle} value={form.tags} onChange={(e) => setForm({ ...form, tags: e.target.value })} placeholder="herb, component" />
+              </Field>
+            </div>
+
+            {isConsumable && (
+              <>
+                <p style={{ margin: "var(--space-4) 0 var(--space-2)", color: "var(--accent)", font: "600 11px/1.3 'Fira Code', monospace", letterSpacing: ".08em", textTransform: "uppercase" }}>Эффекты расходника</p>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: "var(--space-3)" }}>
+                  <Field label="+HP"><input style={fieldStyle} value={form.heal_hp} onChange={(e) => setForm({ ...form, heal_hp: e.target.value })} inputMode="numeric" /></Field>
+                  <Field label="−Голод"><input style={fieldStyle} value={form.reduce_hunger} onChange={(e) => setForm({ ...form, reduce_hunger: e.target.value })} inputMode="decimal" /></Field>
+                  <Field label="−Усталость"><input style={fieldStyle} value={form.reduce_fatigue} onChange={(e) => setForm({ ...form, reduce_fatigue: e.target.value })} inputMode="decimal" /></Field>
+                  <Field label="+Боевой дух"><input style={fieldStyle} value={form.boost_morale} onChange={(e) => setForm({ ...form, boost_morale: e.target.value })} inputMode="decimal" /></Field>
+                  <Field label="+Атака (баф)"><input style={fieldStyle} value={form.buff_attack} onChange={(e) => setForm({ ...form, buff_attack: e.target.value })} inputMode="numeric" /></Field>
+                  <Field label="Тиков бафа"><input style={fieldStyle} value={form.buff_duration_ticks} onChange={(e) => setForm({ ...form, buff_duration_ticks: e.target.value })} inputMode="numeric" /></Field>
+                  <Field label="Восст. души"><input style={fieldStyle} value={form.soul_restore} onChange={(e) => setForm({ ...form, soul_restore: e.target.value })} inputMode="decimal" /></Field>
+                </div>
+              </>
+            )}
+
+            {isEquip && (
+              <>
+                <p style={{ margin: "var(--space-4) 0 var(--space-2)", color: "var(--accent)", font: "600 11px/1.3 'Fira Code', monospace", letterSpacing: ".08em", textTransform: "uppercase" }}>Статы экипировки</p>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: "var(--space-3)" }}>
+                  <Field label="Слот">
+                    <select style={fieldStyle} value={form.equip_slot} onChange={(e) => setForm({ ...form, equip_slot: e.target.value })}>
+                      {Object.entries(SLOT_RU).map(([k, l]) => <option key={k} value={k}>{l}</option>)}
+                    </select>
+                  </Field>
+                  <Field label="+Атака"><input style={fieldStyle} value={form.attack_bonus} onChange={(e) => setForm({ ...form, attack_bonus: e.target.value })} inputMode="numeric" /></Field>
+                  <Field label="+Защита"><input style={fieldStyle} value={form.defense_bonus} onChange={(e) => setForm({ ...form, defense_bonus: e.target.value })} inputMode="numeric" /></Field>
+                  <Field label="+HP"><input style={fieldStyle} value={form.hp_bonus} onChange={(e) => setForm({ ...form, hp_bonus: e.target.value })} inputMode="numeric" /></Field>
+                  <Field label="+Скорость"><input style={fieldStyle} value={form.speed_bonus} onChange={(e) => setForm({ ...form, speed_bonus: e.target.value })} inputMode="decimal" /></Field>
+                </div>
+              </>
+            )}
+
+            <div style={{ display: "flex", alignItems: "center", gap: "var(--space-3)", marginTop: "var(--space-4)" }}>
+              <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13 }}>
+                <input type="checkbox" checked={form.is_active} onChange={(e) => setForm({ ...form, is_active: e.target.checked })} />
+                Активен (доступен в игре)
+              </label>
+              <div style={{ marginLeft: "auto", display: "flex", gap: "var(--space-2)" }}>
+                <button onClick={reset} style={{ padding: "8px 16px", background: "var(--panel-bg)", color: "var(--fg)", border: "1px solid var(--border)", borderRadius: "var(--radius-md)", fontSize: 13 }}>Отмена</button>
+                <button onClick={submit} style={{ padding: "8px 20px", background: "var(--accent)", color: "var(--accent-on)", border: "none", borderRadius: "var(--radius-md)", fontSize: 13, fontWeight: 600 }}>
+                  {editingId ? "Сохранить" : "Создать"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div className="panel-body" style={{ display: "flex", gap: "var(--space-2)", flexWrap: "wrap", alignItems: "center" }}>
+          <input style={{ ...fieldStyle, maxWidth: 240 }} value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Поиск по имени…" />
+          <select style={{ ...fieldStyle, maxWidth: 190 }} value={typeFilter} onChange={(e) => { setTypeFilter(e.target.value); setPage(1) }}>
+            <option value="">Все типы</option>
+            {Object.entries(ITEM_TYPE_RU).map(([k, l]) => <option key={k} value={k}>{l} ({counts[k] ?? 0})</option>)}
+          </select>
+          <button onClick={load} disabled={loading} style={{ padding: "8px 14px", background: "var(--panel-bg)", color: "var(--fg)", border: "1px solid var(--border)", borderRadius: "var(--radius-md)", fontSize: 13 }}>
+            {loading ? "…" : "Обновить"}
+          </button>
+        </div>
+      </div>
+
+      <div className="panel">
+        <div className="panel-header">Список <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--muted)", fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>страница {page} из {Math.max(1, Math.ceil(total / perPage))}</span></div>
+        <div className="panel-body" style={{ padding: 0, overflowX: "auto" }}>
+          <table className="decision-audit-table">
+            <thead>
+              <tr>
+                <th style={{ textAlign: "left" }}>Предмет</th>
+                <th style={{ textAlign: "left" }}>Тип</th>
+                <th style={{ textAlign: "left" }}>Статы</th>
+                <th style={{ textAlign: "right" }}>Вес</th>
+                <th style={{ textAlign: "right" }}>Цена</th>
+                <th style={{ textAlign: "right" }}>Действия</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row) => (
+                <tr key={row.id}>
+                  <td>
+                    <strong>{row.icon} {row.name}</strong>
+                    <small style={{ color: "var(--muted)" }}>{RARITY_RU[row.rarity] ?? row.rarity}{row.tags?.length ? ` · ${row.tags.join(", ")}` : ""}{!row.is_active ? " · выключен" : ""}</small>
+                  </td>
+                  <td><span className="decision-event-type">{ITEM_TYPE_RU[row.item_type] ?? row.item_type}</span></td>
+                  <td style={{ fontFamily: "var(--font-mono)", fontSize: 12 }}>
+                    {row.item_type === "equipment"
+                      ? `${SLOT_RU[row.equip_slot] ?? row.equip_slot ?? "—"} · ⚔${row.attack_bonus} 🛡${row.defense_bonus} ❤${row.hp_bonus}`
+                      : row.item_type === "consumable"
+                        ? `❤+${row.heal_hp} 🍗−${row.reduce_hunger} 😊+${row.boost_morale}`
+                        : "—"}
+                  </td>
+                  <td style={{ textAlign: "right", fontFamily: "var(--font-mono)", fontSize: 12 }}>{row.weight}</td>
+                  <td style={{ textAlign: "right", fontFamily: "var(--font-mono)", fontSize: 12 }}>{row.sell_price}🪙</td>
+                  <td style={{ textAlign: "right", whiteSpace: "nowrap" }}>
+                    <button onClick={() => startEdit(row)} style={{ padding: "4px 10px", marginRight: 6, background: "var(--panel-bg)", color: "var(--fg)", border: "1px solid var(--border)", borderRadius: "var(--radius-sm)", fontSize: 12 }}>Правка</button>
+                    <button onClick={() => remove(row)} style={{ padding: "4px 10px", background: "transparent", color: "var(--danger)", border: "1px solid var(--danger)", borderRadius: "var(--radius-sm)", fontSize: 12 }}>Удалить</button>
+                  </td>
+                </tr>
+              ))}
+              {rows.length === 0 && (
+                <tr><td colSpan={6} style={{ textAlign: "center", color: "var(--muted)", padding: "var(--space-5)" }}>{loading ? "Загрузка…" : "Ничего не найдено"}</td></tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+        {total > perPage && (
+          <div style={{ display: "flex", gap: "var(--space-2)", justifyContent: "center", padding: "var(--space-3)", borderTop: "1px solid var(--border)" }}>
+            <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1} style={{ padding: "6px 14px", background: "var(--panel-bg)", color: "var(--fg)", border: "1px solid var(--border)", borderRadius: "var(--radius-md)", fontSize: 13 }}>← Назад</button>
+            <button onClick={() => setPage((p) => p + 1)} disabled={page >= Math.ceil(total / perPage)} style={{ padding: "6px 14px", background: "var(--panel-bg)", color: "var(--fg)", border: "1px solid var(--border)", borderRadius: "var(--radius-md)", fontSize: 13 }}>Вперёд →</button>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+/* ─── Каталог: монстры ──────────────────────────────── */
+const emptyMonsterForm = {
+  name: "", description: "", min_level: "1", max_level: "5", hp: "50",
+  attack_min: "5", attack_max: "10", defense: "0", xp_reward: "20",
+  gold_min: "5", gold_max: "15", is_active: true, location_id: "",
+}
+
+function MonstersPanel() {
+  const [rows, setRows] = useState<any[]>([])
+  const [locations, setLocations] = useState<Array<{ id: string; name: string }>>([])
+  const [total, setTotal] = useState(0)
+  const [page, setPage] = useState(1)
+  const [locFilter, setLocFilter] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [notice, setNotice] = useState<{ kind: "ok" | "err"; text: string } | null>(null)
+  const [form, setForm] = useState({ ...emptyMonsterForm })
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [showForm, setShowForm] = useState(false)
+  const perPage = 40
+
+  useEffect(() => { api.adminContentOptions().then((o) => setLocations(o.locations)).catch(() => {}) }, [])
+
+  const load = useCallback(async () => {
+    setLoading(true)
+    try {
+      const res = await api.adminMonsters(page, locFilter || undefined)
+      setRows(res.monsters); setTotal(res.total)
+    } catch (e: any) { setNotice({ kind: "err", text: e.message }) }
+    setLoading(false)
+  }, [page, locFilter])
+
+  useEffect(() => { load() }, [load])
+
+  const reset = () => { setForm({ ...emptyMonsterForm }); setEditingId(null); setShowForm(false) }
+
+  const submit = async () => {
+    if (!form.name.trim()) { setNotice({ kind: "err", text: "Имя обязательно" }); return }
+    try {
+      const payload = { ...form, name: form.name.trim() }
+      if (editingId) await api.adminUpdateMonster(editingId, payload)
+      else await api.adminCreateMonster(payload)
+      setNotice({ kind: "ok", text: editingId ? "Монстр обновлён" : `Монстр «${form.name}» создан` })
+      reset(); load()
+    } catch (e: any) { setNotice({ kind: "err", text: e.message }) }
+  }
+
+  const startEdit = (row: any) => {
+    setEditingId(row.id); setShowForm(true)
+    setForm({
+      name: row.name ?? "", description: row.description ?? "",
+      min_level: String(row.min_level), max_level: String(row.max_level), hp: String(row.hp),
+      attack_min: String(row.attack_min), attack_max: String(row.attack_max), defense: String(row.defense),
+      xp_reward: String(row.xp_reward), gold_min: String(row.gold_min), gold_max: String(row.gold_max),
+      is_active: row.is_active, location_id: row.location_id ?? "",
+    })
+  }
+
+  const remove = async (row: any) => {
+    if (!window.confirm(`Удалить монстра «${row.name}»?`)) return
+    try {
+      await api.adminDeleteMonster(row.id)
+      setNotice({ kind: "ok", text: "Монстр удалён" }); load()
+    } catch (e: any) { setNotice({ kind: "err", text: e.message }) }
+  }
+
+  return (
+    <div>
+      {notice && (
+        <div role="status" style={{
+          padding: "10px 14px", marginBottom: "var(--space-3)", borderRadius: "var(--radius-md)", fontSize: 13,
+          border: `1px solid ${notice.kind === "ok" ? "var(--success)" : "var(--danger)"}`,
+          color: notice.kind === "ok" ? "var(--success)" : "var(--danger)",
+        }}>{notice.text}</div>
+      )}
+
+      <div className="panel" style={{ marginBottom: "var(--space-4)" }}>
+        <div className="panel-header">
+          <span>Бестиарий <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--muted)", textTransform: "none", letterSpacing: 0, fontWeight: 400 }}>
+            {total} монстров в базе
+          </span></span>
+          <button onClick={() => { reset(); setShowForm(!showForm) }}
+            style={{ padding: "6px 14px", background: "var(--accent)", color: "var(--accent-on)", border: "none", borderRadius: "var(--radius-md)", fontSize: 13, fontWeight: 600 }}>
+            {showForm ? "Свернуть" : "+ Новый монстр"}
+          </button>
+        </div>
+
+        {showForm && (
+          <div className="panel-body" style={{ borderBottom: "1px solid var(--border)" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "var(--space-3)", marginBottom: "var(--space-3)" }}>
+              <Field label="Имя"><input style={fieldStyle} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Драугр-воин" /></Field>
+              <Field label="Локация">
+                <select style={fieldStyle} value={form.location_id} onChange={(e) => setForm({ ...form, location_id: e.target.value })}>
+                  <option value="">— без локации —</option>
+                  {locations.map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
+                </select>
+              </Field>
+              <Field label="Мин. уровень"><input style={fieldStyle} value={form.min_level} onChange={(e) => setForm({ ...form, min_level: e.target.value })} inputMode="numeric" /></Field>
+              <Field label="Макс. уровень"><input style={fieldStyle} value={form.max_level} onChange={(e) => setForm({ ...form, max_level: e.target.value })} inputMode="numeric" /></Field>
+            </div>
+
+            <Field label="Описание">
+              <textarea style={{ ...fieldStyle, minHeight: 60, resize: "vertical" }} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+            </Field>
+
+            <p style={{ margin: "var(--space-4) 0 var(--space-2)", color: "var(--accent)", font: "600 11px/1.3 'Fira Code', monospace", letterSpacing: ".08em", textTransform: "uppercase" }}>Боевые характеристики</p>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: "var(--space-3)" }}>
+              <Field label="HP"><input style={fieldStyle} value={form.hp} onChange={(e) => setForm({ ...form, hp: e.target.value })} inputMode="numeric" /></Field>
+              <Field label="Атака мин."><input style={fieldStyle} value={form.attack_min} onChange={(e) => setForm({ ...form, attack_min: e.target.value })} inputMode="numeric" /></Field>
+              <Field label="Атака макс."><input style={fieldStyle} value={form.attack_max} onChange={(e) => setForm({ ...form, attack_max: e.target.value })} inputMode="numeric" /></Field>
+              <Field label="Защита"><input style={fieldStyle} value={form.defense} onChange={(e) => setForm({ ...form, defense: e.target.value })} inputMode="numeric" /></Field>
+            </div>
+
+            <p style={{ margin: "var(--space-4) 0 var(--space-2)", color: "var(--accent)", font: "600 11px/1.3 'Fira Code', monospace", letterSpacing: ".08em", textTransform: "uppercase" }}>Награда</p>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: "var(--space-3)" }}>
+              <Field label="Опыт"><input style={fieldStyle} value={form.xp_reward} onChange={(e) => setForm({ ...form, xp_reward: e.target.value })} inputMode="numeric" /></Field>
+              <Field label="Золото мин."><input style={fieldStyle} value={form.gold_min} onChange={(e) => setForm({ ...form, gold_min: e.target.value })} inputMode="numeric" /></Field>
+              <Field label="Золото макс."><input style={fieldStyle} value={form.gold_max} onChange={(e) => setForm({ ...form, gold_max: e.target.value })} inputMode="numeric" /></Field>
+            </div>
+
+            <div style={{ display: "flex", alignItems: "center", gap: "var(--space-3)", marginTop: "var(--space-4)" }}>
+              <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13 }}>
+                <input type="checkbox" checked={form.is_active} onChange={(e) => setForm({ ...form, is_active: e.target.checked })} />
+                Активен (встречается в мире)
+              </label>
+              <div style={{ marginLeft: "auto", display: "flex", gap: "var(--space-2)" }}>
+                <button onClick={reset} style={{ padding: "8px 16px", background: "var(--panel-bg)", color: "var(--fg)", border: "1px solid var(--border)", borderRadius: "var(--radius-md)", fontSize: 13 }}>Отмена</button>
+                <button onClick={submit} style={{ padding: "8px 20px", background: "var(--accent)", color: "var(--accent-on)", border: "none", borderRadius: "var(--radius-md)", fontSize: 13, fontWeight: 600 }}>
+                  {editingId ? "Сохранить" : "Создать"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div className="panel-body" style={{ display: "flex", gap: "var(--space-2)", flexWrap: "wrap", alignItems: "center" }}>
+          <select style={{ ...fieldStyle, maxWidth: 260 }} value={locFilter} onChange={(e) => { setLocFilter(e.target.value); setPage(1) }}>
+            <option value="">Все локации</option>
+            {locations.map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
+          </select>
+          <button onClick={load} disabled={loading} style={{ padding: "8px 14px", background: "var(--panel-bg)", color: "var(--fg)", border: "1px solid var(--border)", borderRadius: "var(--radius-md)", fontSize: 13 }}>
+            {loading ? "…" : "Обновить"}
+          </button>
+        </div>
+      </div>
+
+      <div className="panel">
+        <div className="panel-header">Список <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--muted)", fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>страница {page} из {Math.max(1, Math.ceil(total / perPage))}</span></div>
+        <div className="panel-body" style={{ padding: 0, overflowX: "auto" }}>
+          <table className="decision-audit-table">
+            <thead>
+              <tr>
+                <th style={{ textAlign: "left" }}>Монстр</th>
+                <th style={{ textAlign: "left" }}>Локация</th>
+                <th style={{ textAlign: "left" }}>Уровни</th>
+                <th style={{ textAlign: "right" }}>HP</th>
+                <th style={{ textAlign: "right" }}>Атака</th>
+                <th style={{ textAlign: "right" }}>Защита</th>
+                <th style={{ textAlign: "right" }}>Опыт</th>
+                <th style={{ textAlign: "right" }}>Золото</th>
+                <th style={{ textAlign: "right" }}>Действия</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row) => (
+                <tr key={row.id}>
+                  <td>
+                    <strong>{row.name}</strong>
+                    {!row.is_active && <small style={{ color: "var(--danger)" }}>выключен</small>}
+                  </td>
+                  <td style={{ color: "var(--muted)", fontSize: 12 }}>{row.location_name ?? "—"}</td>
+                  <td style={{ fontFamily: "var(--font-mono)", fontSize: 12 }}>{row.min_level}–{row.max_level}</td>
+                  <td style={{ textAlign: "right", fontFamily: "var(--font-mono)", fontSize: 12 }}>{row.hp}</td>
+                  <td style={{ textAlign: "right", fontFamily: "var(--font-mono)", fontSize: 12 }}>{row.attack_min}–{row.attack_max}</td>
+                  <td style={{ textAlign: "right", fontFamily: "var(--font-mono)", fontSize: 12 }}>{row.defense}</td>
+                  <td style={{ textAlign: "right", fontFamily: "var(--font-mono)", fontSize: 12 }}>{row.xp_reward}</td>
+                  <td style={{ textAlign: "right", fontFamily: "var(--font-mono)", fontSize: 12 }}>{row.gold_min}–{row.gold_max}</td>
+                  <td style={{ textAlign: "right", whiteSpace: "nowrap" }}>
+                    <button onClick={() => startEdit(row)} style={{ padding: "4px 10px", marginRight: 6, background: "var(--panel-bg)", color: "var(--fg)", border: "1px solid var(--border)", borderRadius: "var(--radius-sm)", fontSize: 12 }}>Правка</button>
+                    <button onClick={() => remove(row)} style={{ padding: "4px 10px", background: "transparent", color: "var(--danger)", border: "1px solid var(--danger)", borderRadius: "var(--radius-sm)", fontSize: 12 }}>Удалить</button>
+                  </td>
+                </tr>
+              ))}
+              {rows.length === 0 && (
+                <tr><td colSpan={9} style={{ textAlign: "center", color: "var(--muted)", padding: "var(--space-5)" }}>{loading ? "Загрузка…" : "Ничего не найдено"}</td></tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+        {total > perPage && (
+          <div style={{ display: "flex", gap: "var(--space-2)", justifyContent: "center", padding: "var(--space-3)", borderTop: "1px solid var(--border)" }}>
+            <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1} style={{ padding: "6px 14px", background: "var(--panel-bg)", color: "var(--fg)", border: "1px solid var(--border)", borderRadius: "var(--radius-md)", fontSize: 13 }}>← Назад</button>
+            <button onClick={() => setPage((p) => p + 1)} disabled={page >= Math.ceil(total / perPage)} style={{ padding: "6px 14px", background: "var(--panel-bg)", color: "var(--fg)", border: "1px solid var(--border)", borderRadius: "var(--radius-md)", fontSize: 13 }}>Вперёд →</button>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
 function SimulationPanel() {
   const [result, setResult] = useState<any>(null)
   const [loading, setLoading] = useState(false)
@@ -1915,6 +2383,8 @@ export function AdminPage() {
             {activeTab === "narrative-analytics" && <NarrativeAnalyticsPanel />}
             {activeTab === "moderation" && <ModerationPanel />}
             {activeTab === "suggestions" && <SuggestionsPanel />}
+            {activeTab === "items" && <ItemsPanel />}
+            {activeTab === "monsters" && <MonstersPanel />}
             {activeTab === "simulation" && <SimulationPanel />}
             {activeTab === "tests" && <TestsPanel />}
             {activeTab === "config" && <ConfigPanel />}

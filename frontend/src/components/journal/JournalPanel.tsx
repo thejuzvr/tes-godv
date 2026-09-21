@@ -27,7 +27,6 @@ const CATEGORY_RULES: { key: string; label: string; types: string[]; hints: stri
   { key: "travel", label: "Путь", types: ["travel", "travel_road", "travel_shortcut", "leave_city", "enter_city", "cross_bridge"], hints: ["travel", "city", "bridge", "road", "gate", "path"] },
   { key: "rest", label: "Отдых", types: ["rest", "rest_by_fire", "sleep_in_inn", "watch_sunset", "smell_flowers", "hear_river", "hear_birds", "feel_confident"], hints: ["rest", "sleep", "sunset", "flowers", "fire", "inn"] },
   { key: "social", label: "Люди", types: ["meet_merchant", "find_abandoned_cart", "find_shrine", "socialize"], hints: ["merchant", "cart", "shrine", "talk", "meet"] },
-  { key: "god", label: "Бог", types: ["god"], hints: [] },
   { key: "world_news", label: "📡 Новости", types: ["world_news"], hints: [] },
 ]
 

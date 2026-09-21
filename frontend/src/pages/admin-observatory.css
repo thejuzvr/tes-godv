@@ -1,3 +1,8 @@
+/* Админка живёт внутри .admin-shell (realm-shell без кэпа 1520px).
+   Никаких 100vw/translate — они игнорируют сайдбар и уводят панель вправо. */
+.dashboard.realm-shell .admin-observatory { width: 100%; max-width: none; margin-left: 0; transform: none; min-width: 0; }
+.admin-observatory .panel-body[style*="maxHeight: 400"] { max-height: 720px !important; }
+
 /* Command Chamber — a quiet control room built from Observatory slate tokens. */
 .admin-observatory {
   --admin-line: color-mix(in srgb, var(--muted, #a3b4b9) 22%, transparent);
@@ -152,7 +157,36 @@
 .decision-event-type.intent_held { color: var(--accent); }
 .decision-audit-note { padding: 11px 14px; border-top: 1px solid var(--admin-line); color: var(--admin-muted); font-size: 12px; line-height: 1.45; }
 
+/* Покрытие типов нарративов — крупные плитки с целью 60 шаблонов на тип. */
+.narrative-coverage-summary { margin-left: 12px; color: var(--admin-muted); font: 400 13px/1.4 "Fira Code", monospace; letter-spacing: 0; text-transform: none; }
+.narrative-coverage-summary b { color: var(--admin-fg); font-weight: 600; }
+.narrative-coverage-summary b.is-pending { color: var(--warn, #d3a24a); }
+.narrative-coverage-sources { color: var(--admin-muted); font: 400 13px/1.4 "Fira Code", monospace; }
+.admin-observatory .narrative-coverage-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(196px, 1fr)); gap: 12px; max-height: 620px; overflow-y: auto; padding: 18px; }
+.narrative-coverage-tile { display: grid; grid-template-columns: 1fr auto; grid-template-areas: "name count" "meta meta" "track track" "missing missing"; align-items: center; gap: 7px 10px; min-height: 0; padding: 12px 14px; border: 1px solid var(--admin-line); border-radius: 10px; background: var(--admin-bg); color: var(--admin-fg); text-align: left; }
+.narrative-coverage-tile:hover { border-color: color-mix(in srgb, var(--accent) 55%, transparent); background: var(--admin-raised); }
+.narrative-coverage-tile.active { border-color: var(--accent); background: var(--admin-raised); box-shadow: inset 3px 0 0 var(--accent); }
+.narrative-coverage-name { grid-area: name; overflow: hidden; color: var(--admin-muted); font: 600 13px/1.3 "Fira Code", monospace; letter-spacing: .02em; text-overflow: ellipsis; white-space: nowrap; }
+.narrative-coverage-tile.is-ready .narrative-coverage-name { color: var(--accent); }
+.narrative-coverage-count { grid-area: count; display: flex; align-items: baseline; gap: 1px; }
+.narrative-coverage-count strong { font: 600 26px/1 "Cormorant Garamond", Georgia, serif; letter-spacing: -.02em; }
+.narrative-coverage-count small { color: var(--admin-muted); font: 12px/1 "Fira Code", monospace; }
+.narrative-coverage-tile.is-thin .narrative-coverage-count strong { color: var(--warn, #d3a24a); }
+.narrative-coverage-tile.is-ready .narrative-coverage-count strong { color: var(--success, #79b78f); }
+.narrative-coverage-meta { grid-area: meta; display: flex; gap: 12px; color: var(--admin-muted); font: 12px/1.35 "Fira Code", monospace; }
+.narrative-coverage-meta b { margin-left: 5px; color: var(--admin-fg); font-weight: 600; }
+.narrative-coverage-meta .is-pending b { color: var(--warn, #d3a24a); }
+.narrative-coverage-track { grid-area: track; overflow: hidden; height: 6px; border-radius: 99px; background: color-mix(in srgb, var(--admin-muted) 22%, transparent); }
+.narrative-coverage-track > i { display: block; height: 100%; border-radius: 99px; background: var(--warn, #d3a24a); transition: width 300ms ease; }
+.narrative-coverage-tile.is-ready .narrative-coverage-track > i { background: var(--success, #79b78f); }
+.narrative-coverage-tile.active .narrative-coverage-track > i { background: var(--accent); }
+.narrative-coverage-missing { grid-area: missing; color: var(--admin-muted); font: 12px/1.35 "Fira Code", monospace; }
+.narrative-coverage-tile.is-ready .narrative-coverage-missing { color: var(--success, #79b78f); }
+
 @media (max-width: 900px) {
+  .narrative-coverage-summary { display: block; margin-left: 0; margin-top: 4px; }
+  .narrative-coverage-sources { display: none; }
+  .admin-observatory .narrative-coverage-grid { grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); max-height: 480px; }
   .admin-command-layout { grid-template-columns: 1fr; }
   .admin-command-nav { position: static; padding: 10px; }
   .admin-nav-heading { display: none; }

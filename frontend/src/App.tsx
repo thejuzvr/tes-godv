@@ -155,7 +155,7 @@ function AppLayout() {
   if (!hero) return <CreateHeroPage />
 
   return (
-    <div className={`dashboard ${["/guild", "/analytics", "/pantheon", "/wiki", "/admin", "/narratives"].includes(path) ? "realm-shell" : ""} ${route.pathname === "/" ? "observatory" : ""} ${route.pathname === "/map" ? "map-shell" : ""} ${route.pathname === "/wiki" ? "wiki-shell" : ""}`}>
+    <div className={`dashboard ${["/guild", "/analytics", "/pantheon", "/wiki", "/admin", "/narratives"].includes(path) ? "realm-shell" : ""} ${route.pathname === "/" ? "observatory" : ""} ${route.pathname === "/map" ? "map-shell" : ""} ${route.pathname === "/wiki" ? "wiki-shell" : ""} ${route.pathname === "/admin" ? "admin-shell" : ""}`}>
       <TopBar />
       <Routes>
         <Route path="/" element={<DashboardPage onWs={onWs} />} />

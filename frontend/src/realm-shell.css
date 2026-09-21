@@ -20,6 +20,8 @@ body:has(.dashboard.realm-shell) { background: #101c22; }
   --danger: #a34239; --success: #477453; --warn: #876024;
 }
 .dashboard.realm-shell.wiki-shell { max-width: 100%; margin: 0; padding: 0; gap: 0; height: 100vh; min-height: 100vh; overflow: hidden; }
+/* Админка — широкий пульт: снимаем кэп 1520px, но паддинги и потоки оставляем обычными. */
+.dashboard.realm-shell.admin-shell { max-width: 100%; padding: 0 clamp(12px, 2vw, 28px) 24px; }
 .dashboard.realm-shell.wiki-shell .top-bar { padding: 16px clamp(16px, 3.5vw, 56px); background: var(--bg); border-bottom: 1px solid var(--border); }
 .dashboard.realm-shell.wiki-shell .status-bar { padding: 10px clamp(16px, 3.5vw, 56px); background: var(--bg); border-top: 1px solid var(--border); }
 .realm-shell .top-bar { padding: 23px 0; border-bottom: 1px solid var(--border); gap: 20px; }
