@@ -58,6 +58,7 @@ export function ObservatoryHeader({ hero }: { hero: Hero & { generation?: number
           <StatBar label="Опыт" value={hero.xp} max={hero.xp_to_next} color="xp"/>
         </div>
         <div className="observatory-purse"><Coins size={18} aria-hidden="true"/><strong>{formatNumber(hero.gold)}</strong><span>золота</span></div>
+        <div className="observatory-purse"><strong>{hero.soul_sparks ?? 0}</strong><span>искр</span></div>
       </div>
       {bounty > 0 && <div className="observatory-bounty"><Shield size={15} aria-hidden="true"/> В розыске · награда {formatNumber(bounty)} золотых</div>}
     </header>

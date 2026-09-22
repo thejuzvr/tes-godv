@@ -11,25 +11,27 @@ defmodule TesIdle.Game.Personality do
   """
 
   @race_modifiers %{
-    "Nord" => %{"bravery" => 20, "caution" => -10},
-    "Khajiit" => %{"greed" => 20, "curiosity" => 10, "dexterity" => 20},
-    "Imperial" => %{"sociability" => 20, "bravery" => -10},
-    "Breton" => %{"curiosity" => 15, "sociability" => 10},
-    "Redguard" => %{"bravery" => 15, "tenacity" => 10},
-    "Altmer" => %{"curiosity" => 20, "sociability" => -10},
-    "Dunmer" => %{"tenacity" => 15, "bravery" => 10},
-    "Argonian" => %{"caution" => 20, "curiosity" => 15, "patience" => 15},
-    "Orc" => %{"bravery" => 25, "caution" => -15, "greed" => 10},
-    "WoodElf" => %{"curiosity" => 15, "sociability" => 10, "tenacity" => 10, "patience" => 10},
+    "nord" => %{"bravery" => 20, "caution" => -10},
+    "khajiit" => %{"greed" => 20, "curiosity" => 10, "dexterity" => 20},
+    "imperial" => %{"sociability" => 20, "bravery" => -10},
+    "breton" => %{"curiosity" => 15, "sociability" => 10},
+    "redguard" => %{"bravery" => 15, "tenacity" => 10},
+    "altmer" => %{"curiosity" => 20, "sociability" => -10},
+    "dunmer" => %{"tenacity" => 15, "bravery" => 10},
+    "argonian" => %{"caution" => 20, "curiosity" => 15, "patience" => 15},
+    "orc" => %{"bravery" => 25, "caution" => -15, "greed" => 10},
+    "bosmer" => %{"curiosity" => 15, "sociability" => 10, "tenacity" => 10, "patience" => 10},
   }
 
   @class_modifiers %{
-    "Warrior" => %{"bravery" => 15, "tenacity" => 10},
-    "Mage" => %{"curiosity" => 20, "caution" => 5},
-    "Thief" => %{"greed" => 15, "caution" => 10, "curiosity" => 5, "dexterity" => 20},
-    "Priest" => %{"sociability" => 20, "bravery" => -5, "empathy" => 15},
-    "Bard" => %{"sociability" => 25, "curiosity" => 10, "empathy" => 10},
-    "Berserker" => %{"bravery" => 30, "caution" => -20},
+    "warrior" => %{"bravery" => 15, "tenacity" => 10},
+    "mage" => %{"curiosity" => 20, "caution" => 5},
+    "thief" => %{"greed" => 15, "caution" => 10, "curiosity" => 5, "dexterity" => 20},
+    "rogue" => %{"greed" => 10, "dexterity" => 15, "caution" => 5},
+    "hunter" => %{"curiosity" => 10, "patience" => 15, "dexterity" => 5},
+    "priest" => %{"sociability" => 20, "bravery" => -5, "empathy" => 15},
+    "paladin" => %{"bravery" => 10, "empathy" => 10, "tenacity" => 5},
+    "assassin" => %{"dexterity" => 15, "caution" => 15, "greed" => 5},
   }
 
   @traits [:bravery, :curiosity, :greed, :sociability, :tenacity, :caution,
@@ -85,9 +87,11 @@ defmodule TesIdle.Game.Personality do
   defp clamp_number(_), do: 50
 
   defp apply_all_modifiers(base, race, hero_class) do
+    alias TesIdle.Game.HeroCanon
+
     base
-    |> apply_modifiers(Map.get(@race_modifiers, race, %{}))
-    |> apply_modifiers(Map.get(@class_modifiers, hero_class, %{}))
+    |> apply_modifiers(Map.get(@race_modifiers, HeroCanon.race_key(race), %{}))
+    |> apply_modifiers(Map.get(@class_modifiers, HeroCanon.class_key(hero_class), %{}))
     |> Enum.into(%{}, fn {k, v} -> {k, max(0, min(100, v))} end)
   end
 

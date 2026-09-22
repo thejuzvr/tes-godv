@@ -34,7 +34,7 @@ defmodule TesIdle.Game.Actions.TravelAction do
          %{
            state_to: "exploring",
            location_change: dest_id,
-           fatigue_change: -tick_fatigue_cost,
+           fatigue_change: -(tick_fatigue_cost + trail_ease(ctx)),
            sp_change: -tick_sp_cost,
            events: ["arrived_#{dest && dest.name}"],
            context: %{"travel_arrived" => true, "destination_name" => dest && dest.name}
@@ -47,7 +47,7 @@ defmodule TesIdle.Game.Actions.TravelAction do
          %{
            state_to: "traveling",
            state_data_update: %{"travel" => new_travel},
-           fatigue_change: -tick_fatigue_cost,
+           fatigue_change: -(tick_fatigue_cost + trail_ease(ctx)),
            sp_change: -tick_sp_cost
          }}
       end
@@ -101,7 +101,7 @@ defmodule TesIdle.Game.Actions.TravelAction do
         {:ok,
          %{
            state_to: "traveling",
-           fatigue_change: -fatigue_cost,
+           fatigue_change: -(fatigue_cost + trail_ease(ctx)),
            gold_change: -gold_cost,
            sp_change: -sp_cost,
            state_data_update: %{"travel" => travel_data},
@@ -130,6 +130,8 @@ defmodule TesIdle.Game.Actions.TravelAction do
     do: Enum.random(round(lo)..round(hi))
 
   defp rand_in(value) when is_number(value), do: round(value)
+
+  defp trail_ease(ctx), do: TesIdle.Game.Passives.bonus(ctx.hero).fatigue
 
   defp location_weight("city", :traveling), do: 10
   defp location_weight("village", :traveling), do: 15

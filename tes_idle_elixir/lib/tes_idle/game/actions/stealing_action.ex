@@ -78,7 +78,7 @@ defmodule TesIdle.Game.Actions.StealingAction do
   end
 
   defp bump_stealth(ctx, cfg) do
-    {skills, _} = Skills.gain(ctx.hero, :stealth, cfg["skill_xp"] || 1, Skills.rate(ctx.configs))
+    {skills, _} = Skills.gain(ctx.hero, :stealth, cfg["skill_xp"] || 1, Skills.rate(ctx.configs, ctx.hero))
     ctx.hero |> Ecto.Changeset.change(%{skills: skills}) |> Repo.update!()
   end
 

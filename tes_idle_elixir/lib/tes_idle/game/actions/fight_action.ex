@@ -57,10 +57,12 @@ defmodule TesIdle.Game.Actions.FightAction do
       buff = Map.get(ctx, :guild_buff) || %{}
       guild_attack = (buff["attack_flat"] || 0) |> trunc()
       guild_hp = (buff["hp_flat"] || 0) |> trunc()
+      # Пассив «Сталь»: плоский запас, рядом с бафом гильдии, не вместо него.
+      passive = TesIdle.Game.Passives.bonus(ctx.hero)
 
       effective_attack = ctx.hero.attack + weapon_bonus + guild_attack
       effective_attack = if ctx.hero.sp <= 0, do: trunc(effective_attack * 0.8), else: effective_attack
-      effective_defense = ctx.hero.defense + armor_bonus
+      effective_defense = ctx.hero.defense + armor_bonus + passive.defense
 
       combat = %{
         "monster_id" => to_string(monster.id),
@@ -74,8 +76,8 @@ defmodule TesIdle.Game.Actions.FightAction do
         "monster_xp_reward" => trunc(monster.xp_reward * scale),
         "monster_gold_min" => trunc(monster.gold_min * scale),
         "monster_gold_max" => trunc(monster.gold_max * scale),
-        "hero_hp" => ctx.hero.hp + guild_hp,
-        "hero_max_hp" => ctx.hero.max_hp + guild_hp,
+        "hero_hp" => ctx.hero.hp + guild_hp + passive.hp,
+        "hero_max_hp" => ctx.hero.max_hp + guild_hp + passive.hp,
         "effective_attack" => effective_attack,
         "effective_defense" => effective_defense,
         "damage_variance" => damage_variance,

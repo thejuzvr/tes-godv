@@ -58,7 +58,7 @@ defmodule TesIdle.Game.Actions.GatheringAction do
         {nil, rand_in(cfg["xp"] || [2, 6])}
       end
 
-    {skills, _} = Skills.gain(ctx.hero, :gathering, cfg["skill_xp"] || 1, Skills.rate(ctx.configs))
+    {skills, _} = Skills.gain(ctx.hero, :gathering, cfg["skill_xp"] || 1, Skills.rate(ctx.configs, ctx.hero))
     ctx.hero |> Ecto.Changeset.change(%{skills: skills}) |> Repo.update!()
 
     {:ok, %{

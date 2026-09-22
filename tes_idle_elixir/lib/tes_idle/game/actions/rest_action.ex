@@ -15,9 +15,10 @@ defmodule TesIdle.Game.Actions.RestAction do
   @impl true
   def execute(%GameContext{} = ctx) do
     has_inn = ctx.location && ctx.location.has_inn
+    extra = TesIdle.Game.Passives.bonus(ctx.hero).rest
 
     if has_inn do
-      heal = Enum.random(15..45)
+      heal = Enum.random(15..45) + extra
       fatigue_reduction = Enum.random(15..35)
       {:ok, %{
         state_to: "resting",
@@ -28,7 +29,7 @@ defmodule TesIdle.Game.Actions.RestAction do
         fatigue_change: -fatigue_reduction,
       }}
     else
-      heal = Enum.random(10..30)
+      heal = Enum.random(10..30) + extra
       fatigue_reduction = Enum.random(10..25)
       {:ok, %{
         state_to: "resting",

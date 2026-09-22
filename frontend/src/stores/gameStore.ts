@@ -65,6 +65,10 @@ export interface Hero {
   name: string
   race: string
   hero_class: string
+  origin?: string | null
+  origin_label?: string | null
+  dossier?: string
+  soul_sparks?: number
   level: number
   xp: number
   xp_to_next: number

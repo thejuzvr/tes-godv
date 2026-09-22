@@ -44,6 +44,14 @@ defmodule TesIdle.Schemas.Hero do
     # Навыки активностей: %{"fishing" => 1, "stealth" => 3, ...}
     field :skills, :map, default: %{}
 
+    # Паспорт (docs/PLAN_CHARACTER.md). origin пуст у героев, созданных раньше
+    # плана: их не телепортирует и не переодевает. soul_sparks — целая валюта,
+    # не путать с soul_energy (шкала воли бога).
+    field :origin, :string
+    field :dossier, :string, default: ""
+    field :soul_sparks, :integer, default: 0
+    field :passives, :map, default: %{}
+
     belongs_to :user, TesIdle.Schemas.User, type: :binary_id
     belongs_to :location, TesIdle.Schemas.Location, type: :binary_id
     has_one :equipment, TesIdle.Schemas.Equipment
@@ -97,6 +105,10 @@ defmodule TesIdle.Schemas.Hero do
       :personality,
       :brain_hash,
       :skills,
+      :origin,
+      :dossier,
+      :soul_sparks,
+      :passives,
       :user_id,
       :location_id
     ])

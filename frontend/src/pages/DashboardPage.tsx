@@ -11,10 +11,8 @@ import { NeedsPanel } from "@/components/hero/NeedsPanel"
 import { ReputationPanel } from "@/components/hero/ReputationPanel"
 import { MoodPanel } from "@/components/hero/MoodPanel"
 import { PetCard } from "@/components/hero/PetCard"
-import { EquipmentPanel } from "@/components/hero/EquipmentPanel"
 import { WorldPanel } from "@/components/hero/WorldPanel"
 import { QuestPanel } from "@/components/game/QuestPanel"
-import { InventoryPanel } from "@/components/game/InventoryPanel"
 import { GodPanel } from "@/components/god/GodPanel"
 import { JournalPanel } from "@/components/journal/JournalPanel"
 import type { World } from "@/stores/gameStore"
@@ -77,12 +75,9 @@ function DeathOverlay({ stateData }: { stateData?: string }) {
 export function DashboardPage({ onWs }: { onWs?: (type: string, handler: (data: any) => void) => () => void }) {
   const { hero, journal, journalCount, setHero, setJournal, setJournalCount, addJournalEntry, setWorld, world } = useGameStore()
   const [loading, setLoading] = useState(true)
-  const [equipRefresh, setEquipRefresh] = useState(0)
-  const [invRefresh, setInvRefresh] = useState(0)
   const [questRefresh, setQuestRefresh] = useState(0)
   const [repRefresh, setRepRefresh] = useState(0)
   const [combatResult, setCombatResult] = useState<CombatResult | null>(null)
-  const [arsenalTab, setArsenalTab] = useState<"equipment" | "inventory">("equipment")
   const resultTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const fetchData = useCallback(async () => {
@@ -112,7 +107,7 @@ export function DashboardPage({ onWs }: { onWs?: (type: string, handler: (data: 
 
   // Ручные действия с предметами (надеть/снять) — событие от InventoryPanel
   useEffect(() => {
-    const handler = () => { fetchData(); setEquipRefresh((p) => p + 1) }
+    const handler = () => { fetchData() }
     window.addEventListener("tes:hero-refresh", handler)
     return () => window.removeEventListener("tes:hero-refresh", handler)
   }, [fetchData])
@@ -132,7 +127,6 @@ export function DashboardPage({ onWs }: { onWs?: (type: string, handler: (data: 
       onWs("hero_update", (msg) => {
         if (msg.data && heroRef.current) {
           setHero({ ...heroRef.current, ...msg.data })
-          setInvRefresh(prev => prev + 1)
           setQuestRefresh(prev => prev + 1)
           setRepRefresh(prev => prev + 1)
         }
@@ -161,11 +155,6 @@ export function DashboardPage({ onWs }: { onWs?: (type: string, handler: (data: 
         if (resultTimer.current) clearTimeout(resultTimer.current)
         resultTimer.current = setTimeout(() => setCombatResult(null), 12000)
       }),
-      onWs("equipment_update", () => {
-        setEquipRefresh(prev => prev + 1)
-        setInvRefresh(prev => prev + 1)
-      }),
-      // W-7: снапшот ядра мира (погода/цены/события/войны)
       onWs("world_update", (msg) => {
         if (msg.data?.snapshot) setWorld(msg.data.snapshot as World)
       }),
@@ -472,72 +461,8 @@ export function DashboardPage({ onWs }: { onWs?: (type: string, handler: (data: 
           <NeedsPanel hero={hero} />
           <MoodPanel mood={hero.mood} moodHistory={hero.mood_history || []} />
           <PetCard pets={hero.pets} />
-
-          {/* Объединённый Арсенал героя: Снаряжение / Сумка */}
-          <div className="panel fantasy-window arsenal-module">
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                padding: "8px 12px",
-                borderBottom: "1px solid var(--border)",
-                background: "color-mix(in srgb, var(--surface-raised) 85%, black)",
-              }}
-            >
-              <div style={{ display: "flex", gap: 6 }}>
-                <button
-                  type="button"
-                  onClick={() => setArsenalTab("equipment")}
-                  style={{
-                    padding: "4px 12px",
-                    borderRadius: "var(--radius-pill)",
-                    fontSize: "var(--text-xs)",
-                    fontFamily: "var(--font-mono)",
-                    fontWeight: 600,
-                    border: "1px solid",
-                    borderColor: arsenalTab === "equipment" ? "var(--accent)" : "transparent",
-                    background: arsenalTab === "equipment" ? "var(--accent)" : "transparent",
-                    color: arsenalTab === "equipment" ? "var(--accent-on)" : "var(--muted)",
-                    cursor: "pointer",
-                    transition: "all 150ms ease",
-                  }}
-                >
-                  ⚔️ Снаряжение
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setArsenalTab("inventory")}
-                  style={{
-                    padding: "4px 12px",
-                    borderRadius: "var(--radius-pill)",
-                    fontSize: "var(--text-xs)",
-                    fontFamily: "var(--font-mono)",
-                    fontWeight: 600,
-                    border: "1px solid",
-                    borderColor: arsenalTab === "inventory" ? "var(--accent)" : "transparent",
-                    background: arsenalTab === "inventory" ? "var(--accent)" : "transparent",
-                    color: arsenalTab === "inventory" ? "var(--accent-on)" : "var(--muted)",
-                    cursor: "pointer",
-                    transition: "all 150ms ease",
-                  }}
-                >
-                  🎒 Сумка
-                </button>
-              </div>
-              <span style={{ fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--muted)" }}>
-                {arsenalTab === "equipment" ? "6 слотов" : "16 ячеек"}
-              </span>
-            </div>
-
-            {arsenalTab === "equipment" ? (
-              <EquipmentPanel refreshTrigger={equipRefresh} headless />
-            ) : (
-              <InventoryPanel refreshTrigger={invRefresh} headless />
-            )}
-          </div>
-
           <ReputationPanel refreshTrigger={repRefresh} />
+          <Link to="/character/gear" className="dossier-gear-link">Снаряжение и сумка →</Link>
             </div>
           </details>
           <details className="observatory-dossier observatory-world">

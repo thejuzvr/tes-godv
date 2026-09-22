@@ -95,7 +95,7 @@ defmodule TesIdle.Game.Actions.FishingAction do
       end
 
     # Навык растёт
-    {skills, _} = Skills.gain(ctx.hero, :fishing, cfg["skill_xp"] || 1, Skills.rate(ctx.configs))
+    {skills, _} = Skills.gain(ctx.hero, :fishing, cfg["skill_xp"] || 1, Skills.rate(ctx.configs, ctx.hero))
     ctx.hero |> Ecto.Changeset.change(%{skills: skills}) |> Repo.update!()
 
     {:ok,

@@ -1,5 +1,5 @@
 import { useMemo } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 
 /**
  * TES-тематические страницы ошибок.
@@ -54,7 +54,7 @@ interface ErrorPageProps {
 
 function ErrorPage({ code, eyebrow, headline, sub, flavor, variant }: ErrorPageProps) {
   const joke = useMemo(() => pickOne(flavor), [flavor])
-  const navigate = useNavigate()
+  const goHome = () => { window.location.assign("/") }
 
   return (
     <div className={`err-shell err-${variant}`} role="alert">
@@ -71,7 +71,7 @@ function ErrorPage({ code, eyebrow, headline, sub, flavor, variant }: ErrorPageP
         <blockquote className="err-joke">{joke}</blockquote>
 
         <div className="err-actions">
-          <button type="button" className="err-btn err-btn-primary" onClick={() => navigate(-1)}>
+          <button type="button" className="err-btn err-btn-primary" onClick={() => window.history.back()}>
             ← Назад к безопасному пути
           </button>
           <Link to="/" className="err-btn">

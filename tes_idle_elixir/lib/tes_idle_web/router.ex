@@ -33,6 +33,9 @@ defmodule TesIdleWeb.Router do
     # Hero
     post "/hero/create", HeroController, :create
     get "/hero/me", HeroController, :me
+    get "/hero/card", HeroController, :card
+    post "/hero/passives/:node", HeroController, :buy_passive
+    patch "/hero/dossier", HeroController, :update_dossier
     get "/hero/reputations", HeroController, :reputations
     get "/hero/pets/history", HeroController, :pets_history
     get "/hero/brain", HeroController, :brain

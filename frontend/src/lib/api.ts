@@ -222,6 +222,23 @@ export interface AdminJournalStats {
   }>
 }
 
+export interface HeroCardNode {
+  id: string
+  branch: string
+  order: number
+  label: string
+}
+
+export interface HeroCard {
+  hero: any
+  tree: HeroCardNode[]
+  ranks: Record<string, number>
+  costs: Record<string, number | null>
+  bonus: Record<string, number>
+  skills: Record<string, number>
+  personality: Record<string, number>
+}
+
 class ApiClient {
   private token: string | null = null
 
@@ -428,10 +445,25 @@ class ApiClient {
     return this.request<{ treasury: number; boost_until: string }>(`/guilds/${id}/feast`, { method: "POST" })
   }
 
-  async createHero(name: string, race: string, hero_class: string) {
+  async createHero(name: string, race: string, hero_class: string, origin = "beggar", dossier = "") {
     return this.request<any>("/hero/create", {
       method: "POST",
-      body: JSON.stringify({ name, race, hero_class }),
+      body: JSON.stringify({ name, race, hero_class, origin, dossier }),
+    })
+  }
+
+  async getHeroCard() {
+    return this.request<HeroCard>("/hero/card")
+  }
+
+  async buyPassive(node: string) {
+    return this.request<{ soul_sparks: number; passives: Record<string, number> }>(`/hero/passives/${node}`, { method: "POST" })
+  }
+
+  async updateDossier(dossier: string) {
+    return this.request<{ dossier: string; soul_sparks: number; cost: number }>("/hero/dossier", {
+      method: "PATCH",
+      body: JSON.stringify({ dossier }),
     })
   }
 

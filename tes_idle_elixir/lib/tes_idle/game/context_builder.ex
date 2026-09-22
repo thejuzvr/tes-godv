@@ -196,6 +196,19 @@ defmodule TesIdle.Game.ContextBuilder do
         "ambient_type_cooldown_seconds" => 600,
         "ambient_per_hour" => 6
       },
+      # Искры — редкая валюта игрока. Числа гипотеза, правятся без выкладки кода.
+      "soul_sparks" => %{
+        "time_daily" => 1,
+        "victory_daily" => 2,
+        "quest_weekly" => 2,
+        "guild_weekly" => 1,
+        "victory_chance" => 0.12,
+        "time_chance" => 0.02,
+        "guild_min_level" => 2,
+        "guild_points" => 50,
+        "dossier_cost" => 1,
+        "rank_costs" => [1, 2, 4]
+      },
       # Встречи героев: единый runtime fallback для EncounterWorker/Resolver.
       "encounters" => %{
         "round_seconds" => 60,
@@ -418,6 +431,7 @@ defmodule TesIdle.Game.ContextBuilder do
           %{"name" => "Сталь основателя", "points" => 180},
           %{"name" => "Реликвия казначея", "points" => 100},
           %{"name" => "Броня смотрителя алтаря", "points" => 150},
+          %{"name" => "Искра", "points" => 50},
           %{"name" => "Медовуха сплочения", "points" => 25},
           %{"name" => "Похлёбка казармы", "points" => 15}
         ]

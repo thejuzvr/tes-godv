@@ -2,40 +2,144 @@ defmodule TesIdleWeb.HeroController do
   use TesIdleWeb, :controller
 
   alias TesIdle.Repo
-  alias TesIdle.Schemas.{Hero, Location}
+  alias TesIdle.Schemas.{Hero, InventoryItem, Item, Location}
+  alias TesIdle.Game.{HeroCanon, Origins}
   import Ecto.Query
 
-  def create(conn, %{"name" => name, "race" => race, "hero_class" => hero_class}) do
+  def create(conn, params) do
     user = conn.assigns.current_user
     uid = user.id
 
     existing = Repo.one(from h in Hero, where: h.user_id == ^uid)
 
-    if existing do
-      conn |> put_status(:bad_request) |> json(%{detail: "Hero already exists"})
-    else
-      start_loc = Repo.one(from l in Location, where: l.location_type == "village", limit: 1)
+    cond do
+      existing ->
+        conn |> put_status(:bad_request) |> json(%{detail: "Hero already exists"})
 
-      # Мозг героя: детерминированный геном из паспорта (ROADMAP Часть I)
-      brain_hash = TesIdle.Game.Brain.Genome.brain_hash(uid)
-      personality = TesIdle.Game.Personality.generate(race, hero_class, brain_hash: brain_hash)
+      not valid_choice?(params["race"], &HeroCanon.race_key/1) ->
+        conn |> put_status(:bad_request) |> json(%{detail: "Unknown race"})
 
-      hero = %Hero{
-        user_id: uid,
-        name: name,
-        race: race,
-        hero_class: hero_class,
-        location_id: if(start_loc, do: start_loc.id),
-        personality: personality,
-        brain_hash: brain_hash,
-        skills: %{}
-      }
+      not valid_choice?(params["hero_class"], &HeroCanon.class_key/1) ->
+        conn |> put_status(:bad_request) |> json(%{detail: "Unknown class"})
 
-      case Repo.insert(hero) do
-        {:ok, hero} -> json(conn, hero_response(hero))
-        {:error, _} -> conn |> put_status(:unprocessable_entity) |> json(%{detail: "Failed"})
-      end
+      true ->
+        origin = Origins.resolve(params["origin"])
+
+        if is_nil(origin) do
+          conn |> put_status(:bad_request) |> json(%{detail: "Unknown origin"})
+        else
+          insert_hero(conn, uid, params, origin)
+        end
     end
+  end
+
+  defp insert_hero(conn, uid, params, origin_key) do
+    origin = Origins.get(origin_key)
+
+    case location_by_name(origin.city) do
+      nil ->
+        conn |> put_status(:unprocessable_entity) |> json(%{detail: "Origin location missing"})
+
+      start_loc ->
+        create_at(conn, uid, params, origin_key, origin, start_loc)
+    end
+  end
+
+  defp create_at(conn, uid, params, origin_key, origin, start_loc) do
+    brain_hash = TesIdle.Game.Brain.Genome.brain_hash(uid)
+    personality = TesIdle.Game.Personality.generate(params["race"], params["hero_class"], brain_hash: brain_hash)
+
+    hero = %Hero{
+      user_id: uid,
+      name: params["name"],
+      race: params["race"],
+      hero_class: params["hero_class"],
+      location_id: start_loc.id,
+      personality: personality,
+      brain_hash: brain_hash,
+      skills: origin_skills(origin),
+      origin: origin_key,
+      dossier: clip_dossier(params["dossier"]),
+      gold: origin.gold,
+      hunger: origin.hunger,
+      mp: Map.get(origin, :mp, 50),
+      max_mp: Map.get(origin, :mp, 50)
+    }
+
+    case Repo.insert(hero) do
+      {:ok, hero} ->
+        grant_origin_items(hero, origin.items)
+        origin_reputation(hero, origin)
+        origin_journal(hero, origin_key)
+        json(conn, hero_response(hero))
+
+      {:error, _} ->
+        conn |> put_status(:unprocessable_entity) |> json(%{detail: "Failed"})
+    end
+  end
+
+  defp origin_skills(%{stealth: value}), do: %{"stealth" => value}
+  defp origin_skills(_), do: %{}
+
+  defp origin_reputation(hero, %{reputation: value}) do
+    TesIdle.Game.Law.adjust_reputation(hero.id, "храм", value, %{}, hero.name)
+  end
+
+  defp origin_reputation(_hero, _origin), do: :ok
+
+  defp valid_choice?(value, resolver) when is_binary(value), do: not is_nil(resolver.(value))
+  defp valid_choice?(_, _), do: false
+
+  defp location_by_name(name) do
+    Repo.one(from l in Location, where: l.name == ^name, limit: 1)
+  end
+
+  defp clip_dossier(nil), do: ""
+
+  defp clip_dossier(text) when is_binary(text) do
+    text |> String.trim() |> String.slice(0, 500)
+  end
+
+  defp clip_dossier(_), do: ""
+
+  # Нет шаблона — нет строки. Герой уже создан, хроника молчит честно.
+  defp origin_journal(hero, origin_key) do
+    alias TesIdle.Schemas.NarrativeTemplate
+
+    template =
+      Repo.one(
+        from t in NarrativeTemplate,
+          where: t.template_type == ^"origin_#{origin_key}" and t.is_active == true,
+          limit: 1
+      )
+
+    if template do
+      text =
+        template.text_template
+        |> String.replace("{hero_name}", hero.name || "")
+        |> String.replace("{origin}", TesIdle.Game.Origins.get(origin_key).label)
+
+      Repo.insert(%TesIdle.Schemas.JournalEntry{
+        hero_id: hero.id,
+        entry_type: "origin_#{origin_key}",
+        text: text,
+        xp_gained: 0,
+        gold_gained: 0
+      })
+    end
+  end
+
+  # Вещь по имени. Нет в каталоге — слот пуст, создание не падает.
+  defp grant_origin_items(hero, names) do
+    Enum.each(names, fn name ->
+      case Repo.one(from i in Item, where: i.name == ^name and i.is_active == true, limit: 1) do
+        nil ->
+          :ok
+
+        item ->
+          Repo.insert!(%InventoryItem{hero_id: hero.id, item_id: item.id, quantity: 1})
+      end
+    end)
   end
 
   def me(conn, _params) do
@@ -45,6 +149,94 @@ defmodule TesIdleWeb.HeroController do
     if hero,
       do: json(conn, hero_response(hero)),
       else: conn |> put_status(:not_found) |> json(%{detail: "No hero"})
+  end
+
+  def card(conn, _params) do
+    case hero_of(conn) do
+      nil ->
+        conn |> put_status(:not_found) |> json(%{detail: "No hero"})
+
+      hero ->
+        json(conn, card_payload(hero))
+    end
+  end
+
+  def buy_passive(conn, %{"node" => node}) do
+    case hero_of(conn) do
+      nil ->
+        conn |> put_status(:not_found) |> json(%{detail: "No hero"})
+
+      hero ->
+        case TesIdle.Game.Passives.buy(hero, node) do
+          {:ok, passives, cost} ->
+            hero =
+              hero
+              |> Ecto.Changeset.change(%{passives: passives, soul_sparks: hero.soul_sparks - cost})
+              |> Repo.update!()
+
+            json(conn, %{soul_sparks: hero.soul_sparks, passives: TesIdle.Game.Passives.ranks(hero)})
+
+          {:error, reason} ->
+            conn |> put_status(:conflict) |> json(%{detail: Atom.to_string(reason)})
+        end
+    end
+  end
+
+  def update_dossier(conn, params) do
+    text = params["dossier"] || ""
+
+    cond do
+      not is_binary(text) or String.length(String.trim(text)) > 500 ->
+        conn |> put_status(:bad_request) |> json(%{detail: "too_long"})
+
+      is_nil(hero_of(conn)) ->
+        conn |> put_status(:not_found) |> json(%{detail: "No hero"})
+
+      true ->
+        hero = hero_of(conn)
+        trimmed = String.trim(text)
+
+        cond do
+          trimmed == (hero.dossier || "") ->
+            json(conn, %{dossier: hero.dossier || "", soul_sparks: hero.soul_sparks, cost: 0})
+
+          hero.soul_sparks < 1 ->
+            conn |> put_status(:conflict) |> json(%{detail: "not_enough_sparks"})
+
+          true ->
+            hero =
+              hero
+              |> Ecto.Changeset.change(%{dossier: trimmed, soul_sparks: hero.soul_sparks - 1})
+              |> Repo.update!()
+
+            json(conn, %{dossier: hero.dossier, soul_sparks: hero.soul_sparks, cost: 1})
+        end
+    end
+  end
+
+  defp hero_of(conn) do
+    uid = conn.assigns.current_user.id
+    Repo.one(from h in Hero, where: h.user_id == ^uid, preload: [:location])
+  end
+
+  defp card_payload(hero) do
+    bonus = TesIdle.Game.Passives.bonus(hero)
+
+    %{
+      hero: hero_response(hero),
+      tree: TesIdle.Game.Passives.tree(hero.hero_class),
+      ranks: TesIdle.Game.Passives.ranks(hero),
+      costs: costs_for(hero),
+      bonus: bonus,
+      skills: TesIdle.Game.Skills.all(hero),
+      personality: hero.personality || %{}
+    }
+  end
+
+  defp costs_for(hero) do
+    hero.hero_class
+    |> TesIdle.Game.Passives.tree()
+    |> Map.new(fn node -> {node.id, TesIdle.Game.Passives.next_cost(hero, node.id)} end)
   end
 
   @doc "Репутация героя по фракциям (таблица reputations, LawSystem + P-3)."
@@ -214,6 +406,10 @@ defmodule TesIdleWeb.HeroController do
       name: hero.name,
       race: hero.race,
       hero_class: hero.hero_class,
+      origin: hero.origin,
+      origin_label: origin_label(hero.origin),
+      dossier: hero.dossier || "",
+      soul_sparks: hero.soul_sparks || 0,
       level: hero.level,
       hp: hero.hp,
       max_hp: hero.max_hp,
@@ -241,7 +437,7 @@ defmodule TesIdleWeb.HeroController do
       is_online: hero.is_online,
       state_data: hero.state_data,
       personality: hero.personality,
-      mood_history: hero.mood_history,
+      mood_history: mood_list(hero.mood_history),
       skills: TesIdle.Game.Skills.all(hero),
       activity: activity_block(hero),
       pets: pets,
@@ -297,7 +493,21 @@ defmodule TesIdleWeb.HeroController do
     }
   end
 
-  # G-1: гильдия героя в hero_response — дашборд показывает строку бафа
+  defp mood_list(nil), do: []
+
+  defp mood_list(value) when is_binary(value) do
+    case Jason.decode(value) do
+      {:ok, list} when is_list(list) -> list
+      _ -> []
+    end
+  end
+
+  defp mood_list(value) when is_list(value), do: value
+  defp mood_list(_), do: []
+
+  defp origin_label(nil), do: nil
+  defp origin_label(key), do: get_in(TesIdle.Game.Origins.get(key), [:label])
+
   defp guild_block(user_id) do
     case TesIdle.Game.Guilds.membership(user_id) do
       {guild, member} ->

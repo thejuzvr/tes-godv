@@ -41,7 +41,7 @@ defmodule TesIdle.Game.Actions.BreakInAction do
       open_power = skill + if(has_lockpick, do: 25, else: 0)
       success? = :rand.uniform() * 100 < open_power + 35
 
-      {skills, _} = Skills.gain(ctx.hero, :lockpicking, cfg["skill_xp"] || 1, Skills.rate(ctx.configs))
+      {skills, _} = Skills.gain(ctx.hero, :lockpicking, cfg["skill_xp"] || 1, Skills.rate(ctx.configs, ctx.hero))
       ctx.hero |> Ecto.Changeset.change(%{skills: skills}) |> Repo.update!()
 
       if success? do

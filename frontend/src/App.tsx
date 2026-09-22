@@ -2,6 +2,7 @@ import { useEffect, useState, Component, type ReactNode } from "react"
 import { BrowserRouter, Routes, Route, Link, useLocation } from "react-router-dom"
 import { Moon, Sun } from "lucide-react"
 import "./realm-shell.css"
+import "./pages/dashboard-skin.css"
 import { useGameStore } from "@/stores/gameStore"
 import { api } from "@/lib/api"
 import { useWebSocket } from "@/hooks/useWebSocket"
@@ -14,6 +15,8 @@ import { GuildPage } from "@/pages/GuildPage"
 import { AdminPage } from "@/pages/AdminPage"
 import { PantheonPage } from "@/components/pantheon/PantheonPage"
 import { AnalyticsPage } from "@/pages/AnalyticsPage"
+import { CharacterLayout, PassportPage, SkillsPage } from "@/pages/CharacterPages"
+import { GearPage } from "@/pages/GearPage"
 import { WikiPage } from "@/pages/WikiPage"
 import { NarrativesPage } from "@/pages/NarrativesPage"
 import { NotFoundPage, ServerErrorPage } from "@/pages/ErrorPages"
@@ -63,9 +66,17 @@ function TopBar() {
       <nav className="nav-pills">
         <Link to="/" className={`nav-pill ${location.pathname === "/" ? "active" : ""}`}>Панель</Link>
         <Link to="/map" className={`nav-pill ${location.pathname === "/map" ? "active" : ""}`}>Карта</Link>
+        <div className={`nav-menu ${location.pathname.startsWith("/character") || location.pathname === "/analytics" ? "active" : ""}`}>
+          <Link to="/character" className="nav-pill">Персонаж</Link>
+          <div className="nav-submenu" role="menu">
+            <Link to="/character" role="menuitem">Паспорт</Link>
+            <Link to="/character/skills" role="menuitem">Навыки</Link>
+            <Link to="/character/gear" role="menuitem">Снаряжение</Link>
+            <Link to="/analytics" role="menuitem">Аналитика</Link>
+          </div>
+        </div>
         <Link to="/guild" className={`nav-pill ${location.pathname === "/guild" ? "active" : ""}`}>Гильдия</Link>
         <Link to="/pantheon" className={`nav-pill ${location.pathname === "/pantheon" ? "active" : ""}`}>Пантеон</Link>
-        <Link to="/analytics" className={`nav-pill ${location.pathname === "/analytics" ? "active" : ""}`}>Аналитика</Link>
         <Link to="/wiki" className={`nav-pill ${location.pathname === "/wiki" ? "active" : ""}`}>Wiki</Link>
         {isAdmin && <Link to="/admin" className={`nav-pill ${location.pathname === "/admin" ? "active" : ""}`}>Админ</Link>}
       </nav>
@@ -106,7 +117,7 @@ function StatusBar() {
 // Известные маршруты — на них действуют правила авторизации (AuthPage/CreateHero/
 // AppLayout). Всё остальное — 404 «Разыскивается страница» показывается ВСЕМ,
 // включая гостей: путь не станет существовать после входа.
-const KNOWN_PATHS = ["/", "/map", "/guild", "/pantheon", "/analytics", "/narratives", "/wiki", "/admin"]
+const KNOWN_PATHS = ["/", "/map", "/guild", "/pantheon", "/analytics", "/character", "/character/skills", "/character/gear", "/narratives", "/wiki", "/admin"]
 
 function AppLayout() {
   const { isAuthenticated, hero, setHero, setLoading, setAdmin, setWsConnected } = useGameStore()
@@ -155,13 +166,18 @@ function AppLayout() {
   if (!hero) return <CreateHeroPage />
 
   return (
-    <div className={`dashboard ${["/guild", "/analytics", "/pantheon", "/wiki", "/admin", "/narratives"].includes(path) ? "realm-shell" : ""} ${route.pathname === "/" ? "observatory" : ""} ${route.pathname === "/map" ? "map-shell" : ""} ${route.pathname === "/wiki" ? "wiki-shell" : ""} ${route.pathname === "/admin" ? "admin-shell" : ""}`}>
+    <div className={`dashboard ${path.startsWith("/character") || ["/guild", "/analytics", "/pantheon", "/wiki", "/admin", "/narratives"].includes(path) ? "realm-shell" : ""} ${route.pathname === "/" ? "observatory" : ""} ${route.pathname === "/map" ? "map-shell" : ""} ${route.pathname === "/wiki" ? "wiki-shell" : ""} ${route.pathname === "/admin" ? "admin-shell" : ""}`}>
       <TopBar />
       <Routes>
         <Route path="/" element={<DashboardPage onWs={onWs} />} />
         <Route path="/map" element={<MapPage onWs={onWs} />} />
         <Route path="/guild" element={<GuildPage />} />
         <Route path="/pantheon" element={<PantheonPage />} />
+        <Route path="/character" element={<CharacterLayout />}>
+          <Route index element={<PassportPage />} />
+          <Route path="skills" element={<SkillsPage />} />
+          <Route path="gear" element={<GearPage />} />
+        </Route>
         <Route path="/analytics" element={<AnalyticsPage />} />
         <Route path="/narratives" element={<NarrativesPage />} />
         <Route path="/wiki" element={<WikiPage />} />

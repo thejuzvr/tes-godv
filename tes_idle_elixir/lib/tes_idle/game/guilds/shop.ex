@@ -35,6 +35,9 @@ defmodule TesIdle.Game.Guilds.Shop do
           price == nil ->
             {:error, :unknown_item}
 
+          name == "Искра" ->
+            buy_spark(user, hero, price, configs)
+
           member.points < price ->
             {:error, :not_enough_points}
 
@@ -44,6 +47,49 @@ defmodule TesIdle.Game.Guilds.Shop do
 
       nil ->
         {:error, :not_in_guild}
+    end
+  end
+
+  defp buy_spark(user, hero, price, configs) do
+    alias TesIdle.Game.Sparks
+
+    spark_cfg = Sparks.cfg(configs)
+    {guild, member} = TesIdle.Game.Guilds.membership(user.id)
+
+    cond do
+      guild.level < spark_cfg["guild_min_level"] ->
+        {:error, :guild_level}
+
+      not Sparks.allow?(hero, "guild", configs) ->
+        {:error, :weekly_cap}
+
+      member.points < price ->
+        {:error, :not_enough_points}
+
+      true ->
+        member = Repo.one!(from m in GuildMember, where: m.user_id == ^user.id, limit: 1)
+
+        Repo.transaction(fn ->
+          updated = member |> Ecto.Changeset.change(points: member.points - price) |> Repo.update!()
+
+          hero
+          |> Ecto.Changeset.change(soul_sparks: hero.soul_sparks + 1)
+          |> Repo.update!()
+
+          Repo.insert!(%TesIdle.Schemas.JournalEntry{
+            hero_id: hero.id,
+            entry_type: "spark_guild",
+            text: "Искра: guild",
+            xp_gained: 0,
+            gold_gained: 0
+          })
+
+          updated
+        end)
+        |> case do
+          {:ok, updated} -> {:ok, %{item: %{name: "Искра"}, member: updated, points_left: updated.points}}
+          {:error, reason} -> {:error, reason}
+        end
     end
   end
 

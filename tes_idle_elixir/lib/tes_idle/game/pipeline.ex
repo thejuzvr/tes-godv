@@ -46,6 +46,8 @@ defmodule TesIdle.Game.Pipeline do
           # 5b-2. Quest progress tracking — возвращает true, если квест завершён
           # (Фаза 2: маркер «окна активностей» ставим в merged_sd ниже, правило 2.1)
           quest_done? = check_quest_progress(updated_hero, action_module, result)
+          spark_result = if quest_done?, do: Map.put(result, :quest_completed, true), else: result
+          updated_hero = grant_spark(updated_hero, spark_result, ctx.configs)
 
           # 5b-1. P-3: репутация — позитивные источники (убийство монстра в регионе)
           reputation_tick(ctx, action_module, result)
@@ -284,7 +286,7 @@ defmodule TesIdle.Game.Pipeline do
     mood = mood + new_morale * (mood_cfg["morale_weight"] || 0.15)
     mood = max(0, min(100, mood + (:rand.uniform() * 10 - 5)))
 
-    # Soul energy regen
+    # Soul energy regen — шкала воли бога, к искрам отношения не имеет.
     new_soul_energy = min(hero.max_soul_energy || 100, hero.soul_energy + 1.67)
 
     # Apply all changes
@@ -1212,6 +1214,36 @@ defmodule TesIdle.Game.Pipeline do
   # Фаза 2: «окно активностей» — 3–5 тиков без auto_accept после квеста.
   defp activity_break_ticks, do: 3 + :rand.uniform(3) - 1
 
+  # Искра после квеста: завершение считается ниже apply_result, поэтому
+  # прибавка отдельным сохранением. Потолок режет повтор.
+  defp grant_spark(hero, result, configs) do
+    alias TesIdle.Game.Sparks
+
+    source =
+      cond do
+        Sparks.victory_spark?(hero, result, configs) -> "victory"
+        result[:quest_completed] == true and Sparks.quest_spark?(hero, configs) -> "quest"
+        Sparks.time_spark?(hero, configs) -> "time"
+        true -> nil
+      end
+
+    if source do
+      Repo.insert(%JournalEntry{
+        hero_id: hero.id,
+        entry_type: "spark_#{source}",
+        text: "Искра: #{source}",
+        xp_gained: 0,
+        gold_gained: 0
+      })
+
+      hero
+      |> Ecto.Changeset.change(%{soul_sparks: hero.soul_sparks + 1})
+      |> Repo.update!()
+    else
+      hero
+    end
+  end
+
   # --- P-3: репутация — позитивные источники ---------------------------------
 
   # Победа в бою: маленький плюс фракции региона (герой чистит землю)
@@ -1228,6 +1260,8 @@ defmodule TesIdle.Game.Pipeline do
   defp reputation_reward(hero, ctx_like, kind) do
     rep_cfg = TesIdle.Game.Law.rep_cfg(ctx_like.configs)
     delta = rep_cfg[kind] || 0
+    share = TesIdle.Game.Passives.bonus(hero).reputation
+    delta = if is_number(delta), do: round(delta * (1 + share)), else: delta
 
     if is_number(delta) and delta > 0 and hero.location_id do
       faction = TesIdle.Game.Law.faction_for(ctx_like)

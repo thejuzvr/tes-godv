@@ -44,7 +44,10 @@ defmodule TesIdle.Game.Actions.ExploreAction do
     cfg = ((ctx.configs || %{})["activities"] || %{})["exploration"] || %{}
     base = Map.get(cfg["encounter_chance"] || %{}, ctx.location_type || "wilderness", 0.08)
     density = density_of(ctx)
-    :rand.uniform() < base * TesIdle.World.Migration.encounter_factor(density)
+    # «Тень»: каждый ранг чуть снижает шанс засады, но не обнуляет его.
+    shade = TesIdle.Game.Passives.bonus(ctx.hero).stealth
+    factor = max(0.6, 1 - shade / 200)
+    :rand.uniform() < base * TesIdle.World.Migration.encounter_factor(density) * factor
   end
 
   defp density_of(ctx) do

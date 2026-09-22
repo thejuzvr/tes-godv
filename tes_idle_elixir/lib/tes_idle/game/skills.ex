@@ -40,6 +40,11 @@ defmodule TesIdle.Game.Skills do
     ((configs || %{})["progression"] || %{})["skill_rate"] || 1.0
   end
 
+  @doc "Темп ремесла с пассивом «Тропа». Доля маленькая и не заменяет rate."
+  def rate(configs, hero) do
+    rate(configs) * (1 + TesIdle.Game.Passives.bonus(hero).skill)
+  end
+
   @doc "Прямое изменение навыка (может уменьшать)."
   def bump(hero, skill, delta) when skill in @known do
     new = clamp100(get(hero, skill) + delta) |> round2()
