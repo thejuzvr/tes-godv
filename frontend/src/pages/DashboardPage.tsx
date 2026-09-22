@@ -86,15 +86,24 @@ export function DashboardPage({ onWs }: { onWs?: (type: string, handler: (data: 
   const resultTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const fetchData = useCallback(async () => {
+    // Счётчик и лента независимы: падение /journal/count не должно стирать
+    // уже загруженную хронику (раньше Promise.all ронял всё разом).
+    const [heroRes, journalRes, countRes] = await Promise.allSettled([
+      api.getHero(),
+      api.getJournal(50),
+      api.getJournalCount(),
+    ])
+
+    if (heroRes.status === "fulfilled") setHero(heroRes.value)
+    if (journalRes.status === "fulfilled") setJournal(journalRes.value)
+    if (countRes.status === "fulfilled") setJournalCount(countRes.value.count)
+    if (heroRes.status === "rejected") console.error(heroRes.reason)
+    if (journalRes.status === "rejected") console.error(journalRes.reason)
+
     try {
-      const [h, j, c] = await Promise.all([api.getHero(), api.getJournal(50), api.getJournalCount()])
-      setHero(h); setJournal(j); setJournalCount(c.count)
-      // W-7: снапшот мира (WS-толчок + резервный поллинг)
-      try {
-        const w = await api.getWorld()
-        if (w?.snapshot) setWorld(w.snapshot as World)
-      } catch {}
-    } catch (e) { console.error(e) }
+      const w = await api.getWorld()
+      if (w?.snapshot) setWorld(w.snapshot as World)
+    } catch {}
     finally { setLoading(false) }
   }, [setHero, setJournal, setJournalCount, setWorld])
 
@@ -167,10 +176,14 @@ export function DashboardPage({ onWs }: { onWs?: (type: string, handler: (data: 
   const handleGod = async (type: string) => {
     try {
       const res = await api.godAction(type)
-      const [heroData, j, c] = await Promise.all([api.getHero(), api.getJournal(50), api.getJournalCount()])
-      setHero(heroData)
-      setJournal(j)
-      setJournalCount(c.count)
+      const [heroRes, journalRes, countRes] = await Promise.allSettled([
+        api.getHero(),
+        api.getJournal(50),
+        api.getJournalCount(),
+      ])
+      if (heroRes.status === "fulfilled") setHero(heroRes.value)
+      if (journalRes.status === "fulfilled") setJournal(journalRes.value)
+      if (countRes.status === "fulfilled") setJournalCount(countRes.value.count)
       return res?.narrative || null
     } catch (e) { console.error(e); throw e }
   }
@@ -452,14 +465,8 @@ export function DashboardPage({ onWs }: { onWs?: (type: string, handler: (data: 
       })()}
 
       <div className="observatory-workspace">
-        <section className="observatory-story" aria-label="Приключение героя">
-          <div className="observatory-section-heading"><span><BookOpen size={17} aria-hidden="true"/> История продолжается</span><Link to="/narratives">Мастерская <ArrowUpRight size={14} aria-hidden="true"/></Link></div>
-          <QuestPanel refreshTrigger={questRefresh} />
-          <JournalPanel entries={journal} count={journalCount} />
-        </section>
-        <aside className="observatory-sidebar" aria-label="Вмешательство и состояние">
-          <GodPanel onAction={handleGod} hero={hero} />
-          <details className="observatory-dossier">
+        <aside className="observatory-sidebar" aria-label="Досье героя">
+          <details className="observatory-dossier" open>
             <summary><span><Backpack size={18} aria-hidden="true"/> Досье героя<small>Снаряжение, потребности и спутник</small></span><ChevronDown size={18} aria-hidden="true"/></summary>
             <div className="observatory-dossier-content">
           <NeedsPanel hero={hero} />
@@ -533,11 +540,17 @@ export function DashboardPage({ onWs }: { onWs?: (type: string, handler: (data: 
           <ReputationPanel refreshTrigger={repRefresh} />
             </div>
           </details>
-          <details className="observatory-dossier observatory-world" open>
+          <details className="observatory-dossier observatory-world">
             <summary><span><Globe size={18} aria-hidden="true"/> За пределами хроники<small>События и общие дела Скайрима</small></span><ChevronDown size={18} aria-hidden="true"/></summary>
             <div className="observatory-dossier-content"><WorldPanel world={world} heroRegion={hero.location?.region} heroGold={hero.gold} onDonated={fetchData} /></div>
           </details>
         </aside>
+        <section className="observatory-story" aria-label="Приключение героя">
+          <div className="observatory-section-heading"><span><BookOpen size={17} aria-hidden="true"/> История продолжается</span><Link to="/narratives">Мастерская <ArrowUpRight size={14} aria-hidden="true"/></Link></div>
+          <GodPanel onAction={handleGod} hero={hero} />
+          <QuestPanel refreshTrigger={questRefresh} />
+          <JournalPanel entries={journal} count={journalCount} />
+        </section>
       </div>
     </>
   )

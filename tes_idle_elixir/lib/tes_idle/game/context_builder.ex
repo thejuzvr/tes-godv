@@ -180,6 +180,22 @@ defmodule TesIdle.Game.ContextBuilder do
       "death" => %{"gold_loss_percent" => 10, "respawn_hp_ratio" => 0.2, "respawn_ticks" => 3},
       "memory" => %{"max_entries" => 20},
       "sleep" => %{"dream_chance" => 0.35, "min_streak" => 3},
+      # S-7: политика хроники. По умолчанию очистка ВЫКЛЮЧЕНА и в dry-run,
+      # троттлинг — в shadow (считает, но ничего не подавляет): включение
+      # сокращения истории требует осознанного решения администратора.
+      "journal_retention" => %{
+        "enabled" => false,
+        "dry_run" => true,
+        "routine_days" => 7,
+        "keep_last_routine" => 500,
+        "warning_rows_per_hero" => 10_000,
+        "batch_size" => 1000
+      },
+      "journal_throttle" => %{
+        "mode" => "shadow",
+        "ambient_type_cooldown_seconds" => 600,
+        "ambient_per_hour" => 6
+      },
       # Встречи героев: единый runtime fallback для EncounterWorker/Resolver.
       "encounters" => %{
         "round_seconds" => 60,

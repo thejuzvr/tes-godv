@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback, useRef } from "react"
-import { api, type DecisionAuditReport, type DecisionAuditRecentEvent } from "@/lib/api"
+import { useState, useEffect, useCallback, useMemo, useRef } from "react"
+import { api, type AdminJournalRetention, type AdminJournalStats, type AdminLoops, type AdminWorldPulse, type DecisionAuditReport, type DecisionAuditQuery } from "@/lib/api"
 import { formatNumber, formatDate } from "@/lib/utils"
 import { VAR_GROUPS, TEMPLATE_TYPES, TEMPLATE_TYPE_GROUPS } from "@/components/narrativeData"
 import "./admin-observatory.css"
@@ -19,13 +19,11 @@ const tabs = [
   { key: "heroes", label: "Герои", section: "Население", mark: "⚔" },
   { key: "decision-audit", label: "Аудит решений", section: "Население", mark: "◉" },
   { key: "narratives", label: "Нарративы", section: "Летопись", mark: "✦" },
-  { key: "narrative-analytics", label: "Аналитика нарративов", section: "Летопись", mark: "⌁" },
   { key: "moderation", label: "Модерация", section: "Летопись", mark: "✓" },
   { key: "suggestions", label: "Предложения", section: "Летопись", mark: "✉" },
   { key: "items", label: "Предметы", section: "Скарб", mark: "⚗" },
   { key: "monsters", label: "Монстры", section: "Скарб", mark: "☠" },
-  { key: "simulation", label: "Симуляция", section: "Операции", mark: "◇" },
-  { key: "tests", label: "Тесты", section: "Операции", mark: "⌘" },
+  { key: "journal", label: "Хроника", section: "Летопись", mark: "⌸" },
   { key: "config", label: "Конфиг", section: "Устав", mark: "≡" },
   { key: "backup", label: "Бэкап", section: "Устав", mark: "↧", destructive: true },
 ]
@@ -103,63 +101,359 @@ const FORM_TYPES = [
   ...FILTER_OPTIONS.filter((f) => f.k && !TEMPLATE_TYPE_SET.has(f.k)).map((f) => ({ id: f.k, label: f.l })),
 ]
 
-/* ─── Overview Panel ────────────────────────────────── */
+/* ─── World Pulse Panel (Пульс мира) ─────────────────── */
+const STATE_RU: Record<string, string> = {
+  exploring: "Странствует",
+  traveling: "В пути",
+  fighting: "В бою",
+  resting: "Отдыхает",
+  fishing: "Рыбачит",
+  mining: "Добывает",
+  jailed: "В тюрьме",
+  dead: "Мёртв",
+  trading: "Торгует",
+  socializing: "Общается",
+  idle: "Празднует",
+}
+
+const LOCATION_TYPE_RU: Record<string, string> = {
+  city: "Города",
+  village: "Деревни",
+  dungeon: "Подземелья",
+  wilderness: "Дикие земли",
+  camp: "Лагеря",
+  ruin: "Руины",
+}
+
+function pulseStateLabel(state: string | null): string {
+  if (!state) return "Без состояния"
+  return STATE_RU[state] ?? state
+}
+
+/** Краткий формат больших чисел: 12.4K, 1.2M — тоталы не разъезжаются по ширине. */
+function compactNumber(value: number): string {
+  const n = value ?? 0
+  if (Math.abs(n) >= 1_000_000) return `${(n / 1_000_000).toFixed(1).replace(/\.0$/, "")}M`
+  if (Math.abs(n) >= 10_000) return `${(n / 1_000).toFixed(1).replace(/\.0$/, "")}K`
+  return formatNumber(n)
+}
+
 function OverviewPanel() {
-  const [stats, setStats] = useState<any>(null)
-  const [loops, setLoops] = useState<any>(null)
+  const [stats, setStats] = useState<AdminWorldPulse | null>(null)
+  const [loops, setLoops] = useState<AdminLoops | null>(null)
+  const [days, setDays] = useState(14)
+  const [metric, setMetric] = useState<"entries" | "heroes" | "xp" | "gold">("entries")
+  const [error, setError] = useState("")
+  const [busy, setBusy] = useState(false)
+  const [notice, setNotice] = useState("")
 
-  useEffect(() => {
-    api.adminStats().then(setStats).catch(() => {})
+  const load = useCallback(() => {
+    api.adminStats(days).then(setStats).catch(() => setError("Не удалось загрузить пульс мира"))
     api.adminLoops().then(setLoops).catch(() => {})
-  }, [])
+  }, [days])
 
-  if (!stats) return <div style={{ color: "var(--muted)", padding: 32 }}>Загрузка…</div>
+  useEffect(() => { load() }, [load])
 
-  const cards = [
-    { label: "Пользователи", value: stats.users, icon: "👤" },
-    { label: "Герои", value: stats.heroes, icon: "⚔️" },
-    { label: "Записи дневника", value: stats.journal_entries, icon: "📖" },
-    { label: "Шаблоны нарративов", value: stats.narrative_templates, icon: "📝" },
-    { label: "Монстры", value: stats.monsters, icon: "👹" },
-    { label: "Предметы", value: stats.items, icon: "📦" },
-    { label: "Активные циклы", value: stats.active_loops, icon: "🔄" },
-  ]
+  // Автообновление: пульс должен быть живым, а не снимком на момент открытия.
+  useEffect(() => {
+    const t = setInterval(load, 30_000)
+    return () => clearInterval(t)
+  }, [load])
+
+  const tickAll = async () => {
+    setBusy(true); setNotice("")
+    try {
+      const res = await api.adminTickAll()
+      setNotice(`Волна тиков запущена по ${formatNumber(res.heroes)} героям`)
+      setTimeout(load, 1500)
+    } catch (e: any) {
+      setNotice(`Не удалось запустить тики: ${e.message}`)
+    }
+    setBusy(false)
+  }
+
+  const restartLoops = async () => {
+    setBusy(true); setNotice("")
+    try {
+      const res = await api.adminRestartLoops()
+      setNotice(res.message)
+      setTimeout(load, 800)
+    } catch (e: any) {
+      setNotice(`Ошибка перезапуска: ${e.message}`)
+    }
+    setBusy(false)
+  }
+
+  if (error && !stats) return <div style={{ color: "var(--danger)", padding: 32 }}>{error}</div>
+  if (!stats) return <div style={{ color: "var(--muted)", padding: 32 }}>Загрузка пульса…</div>
+
+  const { totals, heroes, levels, economy, activity, content, online } = stats
+
+  // ─── График активности ───
+  const metricMeta = {
+    entries: { label: "Записи", color: "var(--accent)", pick: (d: typeof activity[number]) => d.entries },
+    heroes: { label: "Герои", color: "#7eb9d1", pick: (d: typeof activity[number]) => d.heroes },
+    xp: { label: "Опыт", color: "var(--xp, #b2a3cb)", pick: (d: typeof activity[number]) => d.xp },
+    gold: { label: "Золото", color: "var(--gold, #d6b87c)", pick: (d: typeof activity[number]) => d.gold },
+  } as const
+
+  const activeMetric = metricMeta[metric]
+  const values = activity.map(activeMetric.pick)
+  const peak = Math.max(1, ...values)
+  const totalOfMetric = values.reduce((a, b) => a + b, 0)
+  const half = Math.floor(values.length / 2)
+  const firstHalf = values.slice(0, half).reduce((a, b) => a + b, 0)
+  const secondHalf = values.slice(half).reduce((a, b) => a + b, 0)
+  const trend = firstHalf === 0 ? (secondHalf > 0 ? 100 : 0) : Math.round(((secondHalf - firstHalf) / firstHalf) * 100)
+
+  // SVG-полилиния: одна ширина на все точки, масштаб по пику метрики.
+  const W = 720
+  const H = 150
+  const step = values.length > 1 ? W / (values.length - 1) : W
+  const points = values.map((v, i) => `${(i * step).toFixed(1)},${(H - (v / peak) * (H - 12)).toFixed(1)}`)
+  const areaPath = `M0,${H} L${points.join(" L")} L${W},${H} Z`
+
+  const stateTotal = heroes.by_state.reduce((t, s) => t + s.count, 0)
+  const maxLevelBucket = Math.max(1, ...levels.map((l) => l.count))
+  const maxTemplateType = Math.max(1, ...content.journal_types.map((t) => t.count))
+  const templatesActiveShare = totals.narrative_templates ? (totals.active_templates / totals.narrative_templates) * 100 : 0
+  // «Города 4 · Деревни 6» — типы локаций читаемее, чем просто их количество
+  const locationTypeLine = content.locations_by_type.length
+    ? content.locations_by_type.slice(0, 3).map((t) => `${LOCATION_TYPE_RU[t.location_type ?? ""] ?? t.location_type ?? "Прочее"} ${t.count}`).join(" · ")
+    : "локаций нет"
 
   return (
-    <div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "var(--space-3)", marginBottom: "var(--space-4)" }}>
-        {cards.map((c) => (
-          <div key={c.label} className="panel">
-            <div className="panel-body" style={{ textAlign: "center" }}>
-              <div style={{ fontSize: 24, marginBottom: "var(--space-1)" }}>{c.icon}</div>
-              <div style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: "var(--text-xl)" }}>{formatNumber(c.value)}</div>
-              <div style={{ fontSize: "var(--text-xs)", color: "var(--muted)" }}>{c.label}</div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* SQLAdmin Link */}
-      <a href="/admin/" target="_blank" rel="noopener noreferrer"
-        style={{ display: "inline-flex", alignItems: "center", gap: "var(--space-2)", padding: "8px 16px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--radius-lg)", fontSize: "var(--text-sm)", color: "var(--fg)", textDecoration: "none", transition: "all 150ms", marginBottom: "var(--space-4)" }}>
-        <span style={{ fontSize: 18 }}>🗄️</span>
-        Открыть CRUD-панель (SQLAdmin)
-      </a>
-
-      {loops && (
-        <div className="panel">
-          <div className="panel-header">Игровые циклы</div>
-          <div className="panel-body">
-            <div style={{ marginBottom: "var(--space-2)" }}>
-              <span style={{ fontFamily: "var(--font-mono)", fontWeight: 600 }}>{loops.count}</span> активных циклов
-            </div>
-            <button onClick={() => api.adminRestartLoops().then(() => api.adminLoops().then(setLoops))}
-              style={{ padding: "6px 14px", background: "var(--accent)", color: "var(--accent-on)", borderRadius: "var(--radius-md)", fontSize: "var(--text-sm)", border: "none", cursor: "pointer" }}>
-              Перезапустить все циклы
-            </button>
+    <div className="world-pulse">
+      {/* ─── Шапка: живой пульс + управление ─── */}
+      <div className="pulse-bar">
+        <div className="pulse-bar-status">
+          <span className={`pulse-dot ${loops?.running ? "is-live" : "is-down"}`} aria-hidden="true" />
+          <div>
+            <b>{loops?.running ? "Мир тикает" : "Цикл тиков остановлен"}</b>
+            <small>
+              {loops?.running
+                ? `волна каждые ${loops.interval_seconds} с · ${loops.online_heroes} онлайн из ${loops.heroes}`
+                : "GameTickWorker не запущен — герои не двигаются"}
+            </small>
           </div>
         </div>
-      )}
+        <div className="pulse-bar-actions">
+          <label className="pulse-period">Период
+            <select value={days} onChange={(e) => setDays(Number(e.target.value))}>
+              {[7, 14, 30, 90].map((d) => <option key={d} value={d}>{d} дн.</option>)}
+            </select>
+          </label>
+          <button type="button" onClick={tickAll} disabled={busy || !loops?.running}>⟳ Тик всем</button>
+          <button type="button" onClick={restartLoops} disabled={busy}>Перезапустить цикл</button>
+        </div>
+      </div>
+
+      {notice && <div className="pulse-notice" role="status">{notice}</div>}
+
+      {/* ─── График активности ─── */}
+      <section className="pulse-chart panel" aria-labelledby="pulse-chart-title">
+        <header className="pulse-chart-head">
+          <div>
+            <p className="pulse-chart-kicker">Хроника за {days} дн.</p>
+            <h3 id="pulse-chart-title">{activeMetric.label}</h3>
+            <p className="pulse-chart-total">
+              {compactNumber(totalOfMetric)}
+              <span className={trend >= 0 ? "is-up" : "is-down"}>
+                {trend >= 0 ? "▲" : "▼"} {Math.abs(trend)}% ко второй половине периода
+              </span>
+            </p>
+          </div>
+          <div className="pulse-chart-tabs" role="tablist" aria-label="Метрика графика">
+            {(Object.keys(metricMeta) as Array<keyof typeof metricMeta>).map((key) => (
+              <button key={key} type="button" role="tab" aria-selected={metric === key}
+                className={metric === key ? "active" : ""}
+                onClick={() => setMetric(key)}>
+                {metricMeta[key].label}
+              </button>
+            ))}
+          </div>
+        </header>
+
+        <div className="pulse-chart-canvas">
+          <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" role="img"
+            aria-label={`Динамика: ${activeMetric.label} за ${days} дней`}>
+            <defs>
+              <linearGradient id="pulseArea" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor={activeMetric.color} stopOpacity="0.34" />
+                <stop offset="100%" stopColor={activeMetric.color} stopOpacity="0" />
+              </linearGradient>
+            </defs>
+            {[0.25, 0.5, 0.75].map((g) => (
+              <line key={g} x1="0" x2={W} y1={H * g} y2={H * g} className="pulse-grid" />
+            ))}
+            <path d={areaPath} fill="url(#pulseArea)" />
+            <polyline points={points.join(" ")} fill="none" stroke={activeMetric.color} strokeWidth="2" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+            {values.map((v, i) => (
+              <g key={i} className="pulse-point">
+                <circle cx={(i * step).toFixed(1)} cy={(H - (v / peak) * (H - 12)).toFixed(1)} r="3" fill={activeMetric.color} vectorEffect="non-scaling-stroke" />
+                <title>{`${activity[i].date}: ${activeMetric.label} ${formatNumber(v)}`}</title>
+              </g>
+            ))}
+          </svg>
+          <div className="pulse-chart-axis">
+            {activity.map((d, i) => (
+              <span key={d.date} className={i % Math.ceil(activity.length / 7) === 0 ? "" : "is-dim"}>
+                {d.date.slice(5).replace("-", ".")}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <footer className="pulse-chart-foot">
+          <span>Пик: <b>{compactNumber(peak)}</b></span>
+          <span>Экономика: <b>{compactNumber(economy.gold)}</b> 🪙 · <b>{compactNumber(economy.xp)}</b> ✦ за период</span>
+          <span>Писали героев: <b>{economy.heroes}</b></span>
+        </footer>
+      </section>
+
+      {/* ─── Население ─── */}
+      <section className="pulse-section">
+        <h3 className="pulse-section-title">Население <span>кто живёт в мире прямо сейчас</span></h3>
+        <div className="pulse-population">
+          <div className="pulse-pop-total">
+            <span>Героев</span>
+            <strong>{compactNumber(totals.heroes)}</strong>
+            <small>{totals.users} пользователей · {online.users_online} онлайн · {online.seen_last_hour} за час</small>
+          </div>
+
+          <div className="pulse-pop-states">
+            <div className="pulse-pop-states-head">
+              <span>Чем заняты</span>
+              <span>{heroes.online} в сети</span>
+            </div>
+            <ul>
+              {heroes.by_state.length === 0 && <li className="pulse-empty">Героев ещё нет</li>}
+              {heroes.by_state.map((s) => (
+                <li key={s.state ?? "none"} className={`pulse-state is-${s.state ?? "none"}`}>
+                  <span className="pulse-state-name">{pulseStateLabel(s.state)}</span>
+                  <span className="pulse-state-track">
+                    <i style={{ width: `${stateTotal ? (s.count / stateTotal) * 100 : 0}%` }} />
+                  </span>
+                  <span className="pulse-state-count">{s.count}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="pulse-pop-levels">
+            <div className="pulse-pop-states-head">
+              <span>Уровни</span>
+              <span>средний {heroes.avg_level.toFixed(1)} · макс {heroes.max_level}</span>
+            </div>
+            <div className="pulse-level-bars">
+              {levels.map((l) => (
+                <div className="pulse-level" key={l.label} title={`${l.label}: ${l.count} героев`}>
+                  <span className="pulse-level-count">{l.count}</span>
+                  <span className="pulse-level-track">
+                    <i style={{ height: `${Math.max(3, (l.count / maxLevelBucket) * 100)}%` }} />
+                  </span>
+                  <span className="pulse-level-label">{l.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Самочувствие мира ─── */}
+      <section className="pulse-section">
+        <h3 className="pulse-section-title">Самочувствие мира <span>средние по героям и обороты мира</span></h3>
+        <div className="pulse-vitals">
+          {[
+            { key: "mood", label: "Настроение", value: heroes.avg_mood, max: 100, tone: "good" },
+            { key: "hunger", label: "Голод", value: heroes.avg_hunger, max: 100, tone: "bad" },
+            { key: "fatigue", label: "Усталость", value: heroes.avg_fatigue, max: 100, tone: "bad" },
+          ].map((v) => (
+            <div className={`pulse-vital is-${v.tone}`} key={v.key}>
+              <span>{v.label}</span>
+              <strong>{v.value.toFixed(1)}</strong>
+              <span className="pulse-vital-track"><i style={{ width: `${Math.min(100, v.value)}%` }} /></span>
+              <small>из {v.max}</small>
+            </div>
+          ))}
+          <div className="pulse-vital is-neutral">
+            <span>Убийств всего</span>
+            <strong>{compactNumber(heroes.total_kills)}</strong>
+            <small>казны героев: {compactNumber(heroes.total_gold)} 🪙</small>
+          </div>
+          <div className={`pulse-vital is-${heroes.dead > 0 ? "bad" : "neutral"}`}>
+            <span>Мёртвых / в тюрьме</span>
+            <strong>{heroes.dead} / {heroes.jailed}</strong>
+            <small>{heroes.dead > 0 ? "есть ждущие возрождения" : "все живы"}</small>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Владение ─── */}
+      <section className="pulse-section">
+        <h3 className="pulse-section-title">Владение <span>что лежит в подвалах мира</span></h3>
+        <div className="pulse-holdings">
+          {[
+            { label: "Записей хроники", value: totals.journal_entries, note: `${compactNumber(economy.entries)} за период` },
+            { label: "Шаблонов", value: totals.narrative_templates, note: `${totals.active_templates} активных · ${templatesActiveShare.toFixed(0)}%` },
+            { label: "Монстров", value: totals.monsters, note: `${totals.active_monsters} активных` },
+            { label: "Предметов", value: totals.items, note: `${compactNumber(totals.inventory_rows)} в инвентарях` },
+            { label: "Локаций", value: totals.locations, note: locationTypeLine },
+            { label: "Квестов", value: totals.quests, note: "в обороте" },
+            { label: "Гильдий", value: totals.guilds, note: "знамён поднято" },
+          ].map((h) => (
+            <div className="pulse-holding" key={h.label}>
+              <span>{h.label}</span>
+              <strong>{compactNumber(h.value)}</strong>
+              <small>{h.note}</small>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ─── Контент и цикл ─── */}
+      <div className="pulse-split">
+        <section className="panel pulse-content">
+          <div className="panel-header">Хроника по типам <span>топ записей за всё время</span></div>
+          <div className="panel-body">
+            {content.journal_types.length === 0 ? <p className="pulse-empty">Хроника пуста</p> : (
+              <ul className="pulse-bars">
+                {content.journal_types.map((t) => (
+                  <li key={t.entry_type}>
+                    <span className="pulse-bar-name">{t.entry_type}</span>
+                    <span className="pulse-bar-track"><i style={{ width: `${(t.count / maxTemplateType) * 100}%` }} /></span>
+                    <span className="pulse-bar-count">{compactNumber(t.count)}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </section>
+
+        <section className="panel pulse-content">
+          <div className="panel-header">География бестиария <span>где живут монстры</span></div>
+          <div className="panel-body">
+            {content.monsters_by_location.length === 0 ? <p className="pulse-empty">Монстров с локациями нет</p> : (
+              <ul className="pulse-bars is-alt">
+                {content.monsters_by_location.map((m) => (
+                  <li key={m.location}>
+                    <span className="pulse-bar-name">{m.location}</span>
+                    <span className="pulse-bar-track">
+                      <i style={{ width: `${(m.count / Math.max(...content.monsters_by_location.map((x) => x.count))) * 100}%` }} />
+                    </span>
+                    <span className="pulse-bar-count">{m.count}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </section>
+      </div>
+
+      <div className="pulse-links">
+        <a href="/admin/" target="_blank" rel="noopener noreferrer">🗄️ CRUD-панель (SQLAdmin)</a>
+        <span>Обновлено {formatDate(stats.server_time)} · автообновление каждые 30 с</span>
+      </div>
     </div>
   )
 }
@@ -344,105 +638,6 @@ function HeroesPanel() {
   )
 }
 
-/* ─── Narrative Analytics Panel (A-2) ───────────────── */
-function NarrativeAnalyticsPanel() {
-  const [data, setData] = useState<any>(null)
-  const [error, setError] = useState("")
-  const [loading, setLoading] = useState(true)
-
-  const loadUsage = useCallback(() => {
-    api.adminNarrativeUsage(30)
-      .then(setData)
-      .catch(() => setError("Не удалось загрузить аналитику"))
-      .finally(() => setLoading(false))
-  }, [])
-
-  useEffect(() => { loadUsage() }, [loadUsage])
-
-  if (loading) return <div style={{ color: "var(--muted)", padding: 32 }}>Загрузка…</div>
-  if (error) return <div style={{ color: "var(--danger)", padding: 32 }}>{error}</div>
-  if (!data) return null
-
-  const maxDay = Math.max(1, ...data.daily_volume.map((d: any) => d.count))
-
-  return (
-    <div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "var(--space-3)", marginBottom: "var(--space-4)" }}>
-        {[
-          { label: "Записей журнала", value: data.totals.total },
-          { label: "Героев писали", value: data.totals.heroes },
-          { label: "Типов в журнале", value: data.totals.types },
-          { label: "Мёртвых шаблонов", value: data.unused_template_types.length },
-        ].map((c) => (
-          <div key={c.label} className="panel">
-            <div className="panel-body" style={{ textAlign: "center" }}>
-              <div style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: "var(--text-xl)" }}>{formatNumber(c.value)}</div>
-              <div style={{ fontSize: "var(--text-xs)", color: "var(--muted)" }}>{c.label}</div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div className="panel" style={{ marginBottom: "var(--space-4)" }}>
-        <div className="panel-header">Объём по дням (14 дней)</div>
-        <div className="panel-body" style={{ display: "flex", alignItems: "flex-end", gap: 4, height: 90 }}>
-          {data.daily_volume.length === 0 && <span style={{ color: "var(--muted)", fontSize: "var(--text-sm)" }}>Записей нет</span>}
-          {data.daily_volume.map((d: any) => (
-            <div key={d.day} title={`${d.day.slice(0, 10)}: ${d.count}`}
-              style={{ flex: 1, height: `${Math.max(6, (d.count / maxDay) * 100)}%`, background: "var(--accent)", borderRadius: "var(--radius-sm)", minWidth: 8 }} />
-          ))}
-        </div>
-      </div>
-
-      <div className="panel" style={{ marginBottom: "var(--space-4)" }}>
-        <div className="panel-header">Использование типов <span style={{ color: "var(--muted)", fontSize: "var(--text-xs)" }}>· тонкие первыми · ⚠ меньше 5 записей</span></div>
-        <div className="panel-body" style={{ padding: 0 }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "var(--text-sm)" }}>
-            <thead>
-              <tr style={{ textAlign: "left", color: "var(--muted)", borderBottom: "1px solid var(--border)" }}>
-                <th style={{ padding: "8px 12px" }}>Тип</th>
-                <th style={{ padding: "8px 12px" }}>Записей</th>
-                <th style={{ padding: "8px 12px" }}>Ср. длина</th>
-                <th style={{ padding: "8px 12px" }}>Последний раз</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.type_usage.map((t: any) => {
-                const thin = t.count < 5
-                return (
-                  <tr key={t.entry_type} style={{ borderBottom: "1px solid var(--border)" }}>
-                    <td style={{ padding: "8px 12px", fontFamily: "var(--font-mono)", color: thin ? "var(--warn)" : undefined }}>
-                      {thin ? "⚠ " : ""}{t.entry_type}
-                    </td>
-                    <td style={{ padding: "8px 12px", fontFamily: "var(--font-mono)" }}>{t.count}</td>
-                    <td style={{ padding: "8px 12px", fontFamily: "var(--font-mono)" }}>{t.avg_length ?? "—"}</td>
-                    <td style={{ padding: "8px 12px", color: "var(--muted)" }}>{formatDate(t.last_seen)}</td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div className="panel">
-        <div className="panel-header">Мёртвые шаблоны <span style={{ color: "var(--muted)", fontSize: "var(--text-xs)" }}>· активные типы без записей журнала за 30 дней</span></div>
-        <div className="panel-body">
-          {data.unused_template_types.length === 0 ? (
-            <span style={{ color: "var(--muted)", fontSize: "var(--text-sm)" }}>Все активные типы используются</span>
-          ) : (
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-2)" }}>
-              {data.unused_template_types.map((t: string) => (
-                <span key={t} style={{ padding: "4px 10px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--radius-md)", fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", color: "var(--muted)" }}>{t}</span>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  )
-}
-
 /* ─── Narrative batch import ─────────────────────────── */
 type NarrativeBatchPolicy = "pending" | "active_system"
 
@@ -623,8 +818,8 @@ function NarrativeBatchPanel({ onImported }: { onImported: () => void }) {
   )
 }
 
-/* ─── Decision Audit Panel ───────────────────────────── */
-const AUDIT_EVENT_LABELS: Record<DecisionAuditRecentEvent["event_type"], string> = {
+/* ─── Decision Audit Panel (S-6: аналитика и аномалии) ── */
+const AUDIT_EVENT_LABELS: Record<string, string> = {
   intent_selected: "намерение выбрано",
   intent_held: "намерение удержано",
   intent_switched: "намерение сменено",
@@ -633,35 +828,87 @@ const AUDIT_EVENT_LABELS: Record<DecisionAuditRecentEvent["event_type"], string>
   action_failed: "действие не удалось",
 }
 
+const AUDIT_SEVERITY_RU: Record<string, string> = {
+  critical: "критично",
+  warning: "внимание",
+  info: "наблюдение",
+}
+
+/** Периоды аудита — от суток до года. */
+const AUDIT_PERIODS = [
+  { value: 1, label: "24 часа" },
+  { value: 7, label: "7 дней" },
+  { value: 30, label: "30 дней" },
+  { value: 90, label: "90 дней" },
+  { value: 365, label: "365 дней" },
+]
+
 function DecisionAuditPanel() {
   const [data, setData] = useState<DecisionAuditReport | null>(null)
   const [days, setDays] = useState(30)
   const [limit, setLimit] = useState(50)
+  const [eventType, setEventType] = useState("")
+  const [goal, setGoal] = useState("")
+  const [heroId, setHeroId] = useState("")
+  const [search, setSearch] = useState("")
+  const [q, setQ] = useState("")
+  const [offset, setOffset] = useState(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
+  const [onlyAnomalies, setOnlyAnomalies] = useState(false)
+
+  // Поиск с задержкой — не дёргаем API на каждый символ
+  useEffect(() => {
+    const t = setTimeout(() => { setQ(search.trim()); setOffset(0) }, 300)
+    return () => clearTimeout(t)
+  }, [search])
+
+  // Стабильный объект фильтров: и для запроса, и для ссылок выгрузки
+  const filters: DecisionAuditQuery = useMemo(() => ({
+    days, limit,
+    eventType: eventType || undefined,
+    goal: goal || undefined,
+    heroId: heroId || undefined,
+    q: q || undefined,
+  }), [days, limit, eventType, goal, heroId, q])
 
   const load = useCallback(() => {
     setLoading(true)
     setError("")
-    api.adminBrainStats(days, limit)
+    api.adminBrainStats({ ...filters, offset })
       .then(setData)
       .catch(() => setError("Не удалось загрузить аудит решений"))
       .finally(() => setLoading(false))
-  }, [days, limit])
+  }, [filters, offset])
 
   useEffect(() => { load() }, [load])
+
+  const resetFilters = () => {
+    setEventType(""); setGoal(""); setHeroId(""); setSearch(""); setQ(""); setOffset(0)
+  }
+
+  const activeFilters = [eventType, goal, heroId, q].filter(Boolean).length
 
   if (loading && !data) return <div style={{ color: "var(--muted)", padding: 32 }}>Загрузка аудита…</div>
   if (error && !data) return <div style={{ color: "var(--danger)", padding: 32 }}>{error}</div>
   if (!data) return null
 
-  const intentTotal = data.intent_by_goal.reduce((total, goal) => total + goal.selected + goal.held + goal.switched, 0)
-  const actionTotal = data.action_outcomes.reduce((total, action) => total + action.completed + action.failed, 0)
-  const failedActions = data.action_outcomes.reduce((total, action) => total + action.failed, 0)
+  const totals = data.totals
+  const summary = data.anomaly_summary ?? { critical: 0, warning: 0, info: 0, total: 0 }
+  const allAnomalies = data.anomalies ?? []
+  const anomalies = onlyAnomalies ? allAnomalies.filter((a) => a.severity === "critical" || a.severity === "warning") : allAnomalies
+  const intentTotal = totals?.intents ?? data.intent_by_goal.reduce((t, g) => t + g.selected + g.held + g.switched, 0)
+  const actionTotal = totals?.actions ?? data.action_outcomes.reduce((t, a) => t + a.completed + a.failed, 0)
+  const failedActions = totals?.failed_actions ?? data.action_outcomes.reduce((t, a) => t + a.failed, 0)
   const topGoal = data.intent_by_goal[0]
   const concentration = topGoal && intentTotal > 0 ? ((topGoal.selected + topGoal.held + topGoal.switched) / intentTotal) * 100 : 0
-  const topHeroEvents = data.heroes[0]?.events ?? 0
-  const heroEvents = data.heroes.reduce((total, hero) => total + hero.events, 0)
+  const timeline = data.timeline ?? []
+  const maxBucket = Math.max(1, ...timeline.map((p) => Math.max(p.intent, p.action, p.failed)))
+  const eventCounts = data.event_counts ?? []
+  const maxEventCount = Math.max(1, ...eventCounts.map((c) => c.count))
+
+  const eventTypeOptions = data.event_types ?? Object.keys(AUDIT_EVENT_LABELS)
+  const goalOptions = data.goals ?? []
 
   return (
     <section className="decision-audit" aria-labelledby="decision-audit-title">
@@ -669,29 +916,100 @@ function DecisionAuditPanel() {
         <div>
           <p className="decision-audit-kicker">Brain telemetry · append-only</p>
           <h3 id="decision-audit-title">Аудит решений</h3>
-          <p>Проверка перекоса мозга: какая цель забирает решения, как часто намерение меняется и чем заканчиваются действия.</p>
+          <p>Балансировка Utility AI: что выбирает мозг, где залипает, какие действия падают и что с этим делать.</p>
         </div>
         <div className="decision-audit-controls">
           <label>Период
-            <select value={days} onChange={(event) => setDays(Number(event.target.value))}>
-              <option value={7}>7 дней</option>
-              <option value={30}>30 дней</option>
-              <option value={90}>90 дней</option>
-              <option value={365}>365 дней</option>
+            <select value={days} onChange={(e) => { setDays(Number(e.target.value)); setOffset(0) }}>
+              {AUDIT_PERIODS.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
             </select>
           </label>
           <label>Событий
-            <select value={limit} onChange={(event) => setLimit(Number(event.target.value))}>
-              <option value={25}>25</option>
-              <option value={50}>50</option>
-              <option value={100}>100</option>
-              <option value={200}>200</option>
+            <select value={limit} onChange={(e) => { setLimit(Number(e.target.value)); setOffset(0) }}>
+              {[25, 50, 100, 200, 500].map((n) => <option key={n} value={n}>{n}</option>)}
             </select>
           </label>
           <button type="button" onClick={load} disabled={loading}>{loading ? "Обновление…" : "Обновить"}</button>
         </div>
       </div>
 
+      {/* ─── Фильтры ─── */}
+      <div className="decision-audit-filters">
+        <label>Тип события
+          <select value={eventType} onChange={(e) => { setEventType(e.target.value); setOffset(0) }}>
+            <option value="">все типы</option>
+            {eventTypeOptions.map((t) => <option key={t} value={t}>{AUDIT_EVENT_LABELS[t] ?? t}</option>)}
+          </select>
+        </label>
+        <label>Цель
+          <select value={goal} onChange={(e) => { setGoal(e.target.value); setOffset(0) }}>
+            <option value="">все цели</option>
+            {goalOptions.map((g) => <option key={g} value={g}>{g}</option>)}
+          </select>
+        </label>
+        <label>Герой
+          <select value={heroId} onChange={(e) => { setHeroId(e.target.value); setOffset(0) }}>
+            <option value="">все герои</option>
+            {data.heroes.map((h) => <option key={h.hero_id ?? h.hero} value={h.hero_id ?? ""}>{h.hero}</option>)}
+          </select>
+        </label>
+        <label>Поиск
+          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="цель или действие…" />
+        </label>
+        <div className="decision-audit-filter-actions">
+          <button type="button" onClick={resetFilters} disabled={activeFilters === 0}>Сбросить{activeFilters ? ` (${activeFilters})` : ""}</button>
+          <a className="decision-audit-export" href={api.adminBrainExportUrl(filters, "md")} download>⭳ Отчёт .md</a>
+          <a className="decision-audit-export" href={api.adminBrainExportUrl(filters, "json")} download>⭳ .json</a>
+          <a className="decision-audit-export" href={api.adminBrainExportUrl(filters, "csv")} download>⭳ .csv</a>
+        </div>
+      </div>
+
+      {error && <div role="status" style={{ color: "var(--danger)", marginBottom: 12, fontSize: 13 }}>{error}</div>}
+
+      {/* ─── Аномалии ─── */}
+      <div className={`decision-anomalies is-${summary.critical > 0 ? "critical" : summary.warning > 0 ? "warning" : "clean"}`}>
+        <div className="decision-anomalies-head">
+          <div>
+            <h4>Аномалии решений</h4>
+            <p>
+              {summary.total === 0
+                ? "Решения выглядят сбалансированными — пороговые правила не сработали."
+                : `${summary.critical} критичных · ${summary.warning} предупреждений · ${summary.info} наблюдений`}
+            </p>
+          </div>
+          {summary.info > 0 && (
+            <label className="decision-anomalies-toggle">
+              <input type="checkbox" checked={onlyAnomalies} onChange={(e) => setOnlyAnomalies(e.target.checked)} />
+              только важные
+            </label>
+          )}
+        </div>
+
+        {anomalies.length === 0 ? (
+          <p className="decision-audit-empty">
+            {allAnomalies.length === 0 ? "Аномалий нет." : "Только наблюдения — снимите «только важные»."}
+          </p>
+        ) : (
+          <ul className="decision-anomaly-list">
+            {anomalies.map((a, i) => (
+              <li key={`${a.kind}-${i}`} className={`decision-anomaly is-${a.severity}`}>
+                <div className="decision-anomaly-top">
+                  <span className={`decision-anomaly-severity is-${a.severity}`}>{AUDIT_SEVERITY_RU[a.severity] ?? a.severity}</span>
+                  <b>{a.title}</b>
+                  <code>{a.kind}</code>
+                  <span className="decision-anomaly-value" title={`порог ${(a.threshold * 100).toFixed(1)}%`}>
+                    {(a.value * 100).toFixed(1)}%
+                  </span>
+                </div>
+                <p>{a.detail}</p>
+                <p className="decision-anomaly-hint"><strong>Что делать:</strong> {a.hint}</p>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      {/* ─── Сводка ─── */}
       <div className="decision-audit-summary">
         <div className="decision-audit-signal">
           <span>Концентрация цели</span>
@@ -699,22 +1017,70 @@ function DecisionAuditPanel() {
           <small>{topGoal ? `${topGoal.goal ?? "без цели"} · ${topGoal.selected + topGoal.held + topGoal.switched} из ${intentTotal}` : "Пока нет намерений"}</small>
           {concentration >= 60 && <em>Проверьте перекос</em>}
         </div>
-        <div className="decision-audit-stat"><span>Решений</span><strong>{formatNumber(intentTotal)}</strong><small>выбрано / удержано / сменено</small></div>
-        <div className="decision-audit-stat"><span>Действий</span><strong>{formatNumber(actionTotal)}</strong><small>{failedActions ? `${failedActions} не завершились` : "без сбоев"}</small></div>
-        <div className="decision-audit-stat"><span>Героев в аудите</span><strong>{formatNumber(data.heroes.length)}</strong><small>{heroEvents ? `лидер: ${topHeroEvents}/${heroEvents} событий` : "событий пока нет"}</small></div>
+        <div className="decision-audit-stat"><span>Решений</span><strong>{formatNumber(intentTotal)}</strong><small>смена {((totals?.switch_rate ?? 0) * 100).toFixed(1)}% · удержание {((totals?.hold_rate ?? 0) * 100).toFixed(1)}%</small></div>
+        <div className="decision-audit-stat"><span>Действий</span><strong>{formatNumber(actionTotal)}</strong><small>{failedActions ? `${failedActions} сбоев (${((totals?.failure_rate ?? 0) * 100).toFixed(1)}%)` : "без сбоев"}</small></div>
+        <div className="decision-audit-stat"><span>Героев в аудите</span><strong>{formatNumber(totals?.heroes ?? data.heroes.length)}</strong><small>{totals ? `событий ${formatNumber(totals.events)}` : "событий пока нет"}</small></div>
+      </div>
+
+      {/* ─── События по типам ─── */}
+      <div className="panel decision-audit-panel">
+        <div className="panel-header">События по типам <span>сколько каждого события за период · фильтры учтены</span></div>
+        <div className="panel-body">
+          <div className="decision-event-bars">
+            {eventCounts.map((row) => (
+              <button key={row.event_type} type="button"
+                className={`decision-event-bar ${eventType === row.event_type ? "active" : ""} is-${row.event_type}`}
+                onClick={() => { setEventType(eventType === row.event_type ? "" : row.event_type); setOffset(0) }}
+                aria-pressed={eventType === row.event_type}
+                title={`${AUDIT_EVENT_LABELS[row.event_type] ?? row.event_type}: ${row.count}`}>
+                <span className="decision-event-bar-count">{formatNumber(row.count)}</span>
+                <span className="decision-event-bar-track"><i style={{ height: `${Math.max(3, (row.count / maxEventCount) * 100)}%` }} /></span>
+                <span className="decision-event-bar-label">{AUDIT_EVENT_LABELS[row.event_type] ?? row.event_type}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ─── Таймлайн ─── */}
+      <div className="panel decision-audit-panel">
+        <div className="panel-header">Динамика по дням <span>намерения · завершённые · сбои</span></div>
+        <div className="panel-body">
+          {timeline.length === 0 ? <p className="decision-audit-empty">За выбранный период данных нет.</p> : (
+            <>
+              <div className="decision-timeline">
+                {timeline.map((p) => (
+                  <div className="decision-timeline-col" key={String(p.bucket)} title={`${String(p.bucket).slice(0, 10)}: намерений ${p.intent}, завершено ${p.action}, сбоев ${p.failed}`}>
+                    <div className="decision-timeline-stack">
+                      <i className="is-intent" style={{ height: `${(p.intent / maxBucket) * 100}%` }} />
+                      <i className="is-action" style={{ height: `${(p.action / maxBucket) * 100}%` }} />
+                      <i className="is-failed" style={{ height: `${(p.failed / maxBucket) * 100}%` }} />
+                    </div>
+                    <span>{String(p.bucket).slice(5, 10)}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="decision-timeline-legend">
+                <span><i className="is-intent" /> намерения</span>
+                <span><i className="is-action" /> завершено</span>
+                <span><i className="is-failed" /> сбои</span>
+              </div>
+            </>
+          )}
+        </div>
       </div>
 
       <div className="decision-audit-grid">
         <div className="panel decision-audit-panel">
           <div className="panel-header">Распределение целей <span>выбрано · удержано · сменено</span></div>
           <div className="panel-body">
-            {data.intent_by_goal.length === 0 ? <p className="decision-audit-empty">За выбранный период намерений нет.</p> : data.intent_by_goal.map((goal) => {
-              const count = goal.selected + goal.held + goal.switched
+            {data.intent_by_goal.length === 0 ? <p className="decision-audit-empty">За выбранный период намерений нет.</p> : data.intent_by_goal.map((g) => {
+              const count = g.selected + g.held + g.switched
               const percentage = intentTotal ? (count / intentTotal) * 100 : 0
-              return <div className="decision-goal-row" key={goal.goal ?? "none"}>
-                <div className="decision-goal-label"><b>{goal.goal ?? "без цели"}</b><span>{percentage.toFixed(1)}% · {count}</span></div>
-                <div className="decision-goal-track" aria-label={`${goal.goal ?? "без цели"}: ${percentage.toFixed(1)}%`}><i style={{ width: `${percentage}%` }} /></div>
-                <div className="decision-event-counts"><span>В {goal.selected}</span><span>У {goal.held}</span><span>С {goal.switched}</span><span>U {goal.avg_utility.toFixed(2)}</span></div>
+              return <div className="decision-goal-row" key={g.goal ?? "none"}>
+                <div className="decision-goal-label"><b>{g.goal ?? "без цели"}</b><span>{percentage.toFixed(1)}% · {count}</span></div>
+                <div className="decision-goal-track" aria-label={`${g.goal ?? "без цели"}: ${percentage.toFixed(1)}%`}><i style={{ width: `${percentage}%` }} /></div>
+                <div className="decision-event-counts"><span>В {g.selected}</span><span>У {g.held}</span><span>С {g.switched}</span><span>U {g.avg_utility.toFixed(2)}</span></div>
               </div>
             })}
           </div>
@@ -723,13 +1089,13 @@ function DecisionAuditPanel() {
         <div className="panel decision-audit-panel">
           <div className="panel-header">Исходы действий <span>завершено · не удалось</span></div>
           <div className="panel-body">
-            {data.action_outcomes.length === 0 ? <p className="decision-audit-empty">Исходов действий пока нет.</p> : data.action_outcomes.map((action) => {
-              const count = action.completed + action.failed
-              const failureRate = count ? (action.failed / count) * 100 : 0
-              return <div className="decision-action-row" key={`${action.goal}-${action.action}`}>
-                <div><b>{action.action ?? "без действия"}</b><span>{action.goal ?? "без цели"}</span></div>
+            {data.action_outcomes.length === 0 ? <p className="decision-audit-empty">Исходов действий пока нет.</p> : data.action_outcomes.map((a) => {
+              const count = a.completed + a.failed
+              const failureRate = count ? (a.failed / count) * 100 : 0
+              return <div className="decision-action-row" key={`${a.goal}-${a.action}`}>
+                <div><b>{a.action ?? "без действия"}</b><span>{a.goal ?? "без цели"}</span></div>
                 <div className="decision-outcome-bar"><i style={{ width: `${100 - failureRate}%` }} /><i style={{ width: `${failureRate}%` }} /></div>
-                <small><strong>{action.completed}</strong> готово · <strong>{action.failed}</strong> сбой</small>
+                <small><strong>{a.completed}</strong> готово · <strong>{a.failed}</strong> сбой ({failureRate.toFixed(0)}%)</small>
               </div>
             })}
           </div>
@@ -739,19 +1105,26 @@ function DecisionAuditPanel() {
       <div className="panel decision-audit-panel">
         <div className="panel-header">Концентрация по героям <span>все телеметрические события периода</span></div>
         <div className="panel-body" style={{ padding: 0 }}>
-          {data.heroes.length === 0 ? <p className="decision-audit-empty">Герои ещё не оставили след в аудите.</p> : <table className="decision-audit-table"><thead><tr><th>Герой</th><th>События</th><th>Намерения</th><th>Действия</th><th>Доля</th></tr></thead><tbody>{data.heroes.map((hero) => {
-            const share = heroEvents ? (hero.events / heroEvents) * 100 : 0
-            return <tr key={hero.hero}><td><b>{hero.hero}</b><small>ур. {hero.level}</small></td><td>{hero.events}</td><td>В {hero.selected} · У {hero.held} · С {hero.switched}</td><td>✓ {hero.completed} · ! {hero.failed}</td><td>{share.toFixed(1)}%</td></tr>
+          {data.heroes.length === 0 ? <p className="decision-audit-empty">Герои ещё не оставили след в аудите.</p> : <table className="decision-audit-table"><thead><tr><th>Герой</th><th>События</th><th>Намерения</th><th>Действия</th><th>U</th><th>Доля</th></tr></thead><tbody>{data.heroes.map((h) => {
+            const heroEvents = data.heroes.reduce((t, x) => t + x.events, 0)
+            const share = heroEvents ? (h.events / heroEvents) * 100 : 0
+            return <tr key={h.hero}><td><b>{h.hero}</b><small>ур. {h.level}</small></td><td>{h.events}</td><td>В {h.selected} · У {h.held} · С {h.switched}</td><td>✓ {h.completed} · ! {h.failed}</td><td>{h.avg_utility != null ? h.avg_utility.toFixed(2) : "—"}</td><td>{share.toFixed(1)}%</td></tr>
           })}</tbody></table>}
         </div>
       </div>
 
       <div className="panel decision-audit-panel">
-        <div className="panel-header">Последние события <span>за {data.range.days} дн. · последние {data.limit}</span></div>
-        <div className="panel-body" style={{ padding: 0 }}>
-          {data.recent_events.length === 0 ? <p className="decision-audit-empty">За выбранный период событий нет.</p> : <table className="decision-audit-table"><thead><tr><th>Когда</th><th>Герой</th><th>Событие</th><th>Цель / действие</th><th>Контекст</th></tr></thead><tbody>{data.recent_events.map((event, index) => <tr key={`${event.created_at}-${event.hero}-${index}`}><td>{formatDate(event.created_at)}</td><td>{event.hero}</td><td><span className={`decision-event-type ${event.event_type}`}>{AUDIT_EVENT_LABELS[event.event_type]}</span></td><td><b>{event.goal ?? "—"}</b>{event.action && <small>{event.action}</small>}</td><td>день {event.game_day ?? "—"} · час {event.game_hour ?? "—"}{event.utility != null && ` · U ${event.utility.toFixed(2)}`}</td></tr>)}</tbody></table>}
+        <div className="panel-header">
+          Последние события <span>за {data.range.days} дн. · записи {offset + 1}–{offset + data.recent_events.length}</span>
         </div>
-        <div className="decision-audit-note">API сейчас отдаёт период и лимит последних событий. Причины и metadata сохраняются аудитом, но в ответ маршрута ещё не включены; фильтрация по ним и постраничный offset появятся после расширения API.</div>
+        <div className="panel-body" style={{ padding: 0 }}>
+          {data.recent_events.length === 0 ? <p className="decision-audit-empty">За выбранный период событий нет.</p> : <table className="decision-audit-table"><thead><tr><th>Когда</th><th>Герой</th><th>Событие</th><th>Цель / действие</th><th>Причины</th><th>Контекст</th></tr></thead><tbody>{data.recent_events.map((event, index) => <tr key={`${event.created_at}-${event.hero}-${index}`}><td>{formatDate(event.created_at)}</td><td>{event.hero}</td><td><span className={`decision-event-type ${event.event_type}`}>{AUDIT_EVENT_LABELS[event.event_type] ?? event.event_type}</span></td><td><b>{event.goal ?? "—"}</b>{event.action && <small>{event.action}</small>}</td><td>{event.reasons?.length ? <span className="decision-reasons">{event.reasons.map((r: string) => <em key={r}>{r}</em>)}</span> : <span style={{ color: "var(--muted)" }}>—</span>}</td><td>день {event.game_day ?? "—"} · час {event.game_hour ?? "—"}{event.utility != null && ` · U ${event.utility.toFixed(2)}`}</td></tr>)}</tbody></table>}
+        </div>
+        <div className="decision-audit-pager">
+          <button type="button" onClick={() => setOffset(Math.max(0, offset - limit))} disabled={offset === 0 || loading}>← Новее</button>
+          <span>смещение {offset}</span>
+          <button type="button" onClick={() => setOffset(offset + limit)} disabled={data.recent_events.length < limit || loading}>Старее →</button>
+        </div>
       </div>
     </section>
   )
@@ -1077,7 +1450,6 @@ function NarrativesPanel() {
   )
 }
 
-/* ─── Simulation Panel ──────────────────────────────── */
 /* ─── Каталог: предметы ─────────────────────────────── */
 const RARITY_RU: Record<string, string> = {
   common: "Обычный", uncommon: "Необычный", rare: "Редкий", epic: "Эпический", legendary: "Легендарный",
@@ -1542,240 +1914,6 @@ function MonstersPanel() {
   )
 }
 
-function SimulationPanel() {
-  const [result, setResult] = useState<any>(null)
-  const [loading, setLoading] = useState(false)
-  const [narrType, setNarrType] = useState("explore")
-  const [narrLoc, setNarrLoc] = useState("")
-  const [narrCount, setNarrCount] = useState(5)
-  const [narrSentences, setNarrSentences] = useState(2)
-  const [narrTone, setNarrTone] = useState("atmospheric")
-  const [simTicks, setSimTicks] = useState(300)
-  const [simResult, setSimResult] = useState<any>(null)
-  const [simLoading, setSimLoading] = useState(false)
-  const [locations, setLocations] = useState<{ id: string; name: string }[]>([])
-
-  // Локации из БД — вместо захардкоженного списка
-  useEffect(() => { api.getLocations().then(setLocations).catch(() => {}) }, [])
-
-  // Full simulation (test user + hero + ticks → file)
-  const runFullSimulation = async () => {
-    setSimLoading(true)
-    try {
-      const res = await api.adminSimulationRun(simTicks)
-      setSimResult(res)
-    } catch (e: any) { setSimResult({ error: e.message }) }
-    setSimLoading(false)
-  }
-
-  const genMonsters = async () => {
-    setLoading(true)
-    try { setResult(await api.adminGenerateMonsters(5)) } catch (e: any) { setResult({ error: e.message }) }
-    setLoading(false)
-  }
-
-  const genItems = async () => {
-    setLoading(true)
-    try { setResult(await api.adminGenerateItems(10)) } catch (e: any) { setResult({ error: e.message }) }
-    setLoading(false)
-  }
-
-  const genNarrativesModerated = async () => {
-    setLoading(true)
-    try {
-      setResult(await api.adminGenerateNarrativesModerated(narrType, narrLoc, narrCount, narrSentences, narrTone))
-    } catch (e: any) { setResult({ error: e.message }) }
-    setLoading(false)
-  }
-
-  const genAll = async () => {
-    setLoading(true)
-    try { setResult(await api.adminGenerateAll()) } catch (e: any) { setResult({ error: e.message }) }
-    setLoading(false)
-  }
-
-  const toneLabels: Record<string, string> = {
-    atmospheric: "Атмосферный",
-    comedy: "Комичный",
-    epic: "Героический",
-    grim: "Мрачный",
-    calm: "Спокойный",
-    mood: "По настроению",
-    mysterious: "Загадочный",
-    dramatic: "Драматичный",
-  }
-
-  return (
-    <div>
-      {/* Bulk generation */}
-      <div className="panel" style={{ marginBottom: "var(--space-4)" }}>
-        <div className="panel-header">Генерация всего сразу</div>
-        <div className="panel-body">
-          <p style={{ fontSize: "var(--text-sm)", color: "var(--muted)", marginBottom: "var(--space-3)" }}>
-            Генерирует монстров, предметы и нарративы для всех локаций. Данные проходят автоматическую валидацию.
-          </p>
-          <button onClick={genAll} disabled={loading}
-            style={{ padding: "8px 20px", background: "var(--epic)", color: "#fff", borderRadius: "var(--radius-md)", fontSize: "var(--text-sm)", fontWeight: 600, border: "none", cursor: loading ? "wait" : "pointer", opacity: loading ? 0.5 : 1 }}>
-            {loading ? "Генерация…" : "Сгенерировать всё"}
-          </button>
-        </div>
-      </div>
-
-      {/* Individual generation */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-4)", marginBottom: "var(--space-4)" }}>
-        <div className="panel">
-          <div className="panel-header">Генерация монстров</div>
-          <div className="panel-body">
-            <p style={{ fontSize: "var(--text-sm)", color: "var(--muted)", marginBottom: "var(--space-3)" }}>5 монстров для случайных локаций.</p>
-            <button onClick={genMonsters} disabled={loading}
-              style={{ padding: "6px 14px", background: "var(--accent)", color: "var(--accent-on)", borderRadius: "var(--radius-md)", fontSize: "var(--text-sm)", border: "none", cursor: loading ? "wait" : "pointer", opacity: loading ? 0.5 : 1 }}>
-              {loading ? "..." : "Монстры"}
-            </button>
-          </div>
-        </div>
-        <div className="panel">
-          <div className="panel-header">Генерация предметов</div>
-          <div className="panel-body">
-            <p style={{ fontSize: "var(--text-sm)", color: "var(--muted)", marginBottom: "var(--space-3)" }}>10 предметов через LLM.</p>
-            <button onClick={genItems} disabled={loading}
-              style={{ padding: "6px 14px", background: "var(--accent)", color: "var(--accent-on)", borderRadius: "var(--radius-md)", fontSize: "var(--text-sm)", border: "none", cursor: loading ? "wait" : "pointer", opacity: loading ? 0.5 : 1 }}>
-              {loading ? "..." : "Предметы"}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Narratives with moderation */}
-      <div className="panel" style={{ marginBottom: "var(--space-4)" }}>
-        <div className="panel-header">Генерация нарративов</div>
-        <div className="panel-body">
-          <div style={{ display: "flex", gap: "var(--space-3)", marginBottom: "var(--space-3)", flexWrap: "wrap" }}>
-            <div>
-              <label style={{ fontSize: "var(--text-xs)", fontFamily: "var(--font-mono)", color: "var(--muted)", textTransform: "uppercase", display: "block", marginBottom: 4 }}>Тип</label>
-              <select value={narrType} onChange={(e) => setNarrType(e.target.value)}
-                style={{ padding: "6px 10px", border: "1px solid var(--border)", borderRadius: "var(--radius-md)", fontSize: "var(--text-sm)", background: "var(--bg)" }}>
-                {["hero_victory","hero_defeat","enemy_ambush","spot_bandits","hear_wolves","leave_city","travel_road","travel_shortcut","cross_bridge","enter_city","bad_weather","discover_ruin","discover_cave","find_shrine","find_abandoned_cart","notice_tracks","hear_river","find_tracks","hear_birds","smell_flowers","sleep_in_inn","rest_by_fire","watch_sunset","meet_merchant","learn_rumors","hear_song","shelter_from_storm","find_loot","discover_treasure","remember_defeat","feel_confident","avoid_danger","search_danger","collect_herbs","generic_action","combat_start","combat_result","combat_defeat","explore","rest","loot","shop","social","travel","equip","death","thought","god_encourage","god_punish","god_heal","god_direct","god_quest","god_weather"].map((t) => <option key={t} value={t}>{t}</option>)}
-              </select>
-            </div>
-            <div>
-              <label style={{ fontSize: "var(--text-xs)", fontFamily: "var(--font-mono)", color: "var(--muted)", textTransform: "uppercase", display: "block", marginBottom: 4 }}>Локация</label>
-              <select value={narrLoc} onChange={(e) => setNarrLoc(e.target.value)}
-                style={{ padding: "6px 10px", border: "1px solid var(--border)", borderRadius: "var(--radius-md)", fontSize: "var(--text-sm)", background: "var(--bg)" }}>
-                <option value="">Универсальная</option>
-                {locations.map((l) => <option key={l.id} value={l.name}>{l.name}</option>)}
-              </select>
-            </div>
-            <div>
-              <label style={{ fontSize: "var(--text-xs)", fontFamily: "var(--font-mono)", color: "var(--muted)", textTransform: "uppercase", display: "block", marginBottom: 4 }}>Предложений</label>
-              <select value={narrSentences} onChange={(e) => setNarrSentences(Number(e.target.value))}
-                style={{ padding: "6px 10px", border: "1px solid var(--border)", borderRadius: "var(--radius-md)", fontSize: "var(--text-sm)", background: "var(--bg)" }}>
-                {[1, 2, 3, 4, 5].map((n) => <option key={n} value={n}>{n}</option>)}
-              </select>
-            </div>
-            <div>
-              <label style={{ fontSize: "var(--text-xs)", fontFamily: "var(--font-mono)", color: "var(--muted)", textTransform: "uppercase", display: "block", marginBottom: 4 }}>Тон</label>
-              <select value={narrTone} onChange={(e) => setNarrTone(e.target.value)}
-                style={{ padding: "6px 10px", border: "1px solid var(--border)", borderRadius: "var(--radius-md)", fontSize: "var(--text-sm)", background: "var(--bg)" }}>
-                {Object.entries(toneLabels).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
-              </select>
-            </div>
-            <div>
-              <label style={{ fontSize: "var(--text-xs)", fontFamily: "var(--font-mono)", color: "var(--muted)", textTransform: "uppercase", display: "block", marginBottom: 4 }}>Кол-во</label>
-              <input type="number" value={narrCount} onChange={(e) => setNarrCount(Number(e.target.value))} min={1} max={20}
-                style={{ padding: "6px 10px", border: "1px solid var(--border)", borderRadius: "var(--radius-md)", fontSize: "var(--text-sm)", width: 60, background: "var(--bg)" }} />
-            </div>
-          </div>
-          <div style={{ display: "flex", gap: "var(--space-2)" }}>
-            <button onClick={genNarrativesModerated} disabled={loading}
-              style={{ padding: "6px 14px", background: "var(--accent)", color: "var(--accent-on)", borderRadius: "var(--radius-md)", fontSize: "var(--text-sm)", border: "none", cursor: loading ? "wait" : "pointer", opacity: loading ? 0.5 : 1 }}>
-              {loading ? "Генерация…" : "Сгенерировать с валидацией"}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Hero Simulation */}
-      <div className="panel" style={{ marginBottom: "var(--space-4)" }}>
-        <div className="panel-header">Симуляция героя (тест)</div>
-        <div className="panel-body">
-          <p style={{ fontSize: "var(--text-sm)", color: "var(--muted)", marginBottom: "var(--space-3)" }}>
-            Создаёт тестового пользователя и героя, запускает N тиков, сохраняет отчёт в файл.
-          </p>
-          <div style={{ display: "flex", gap: "var(--space-3)", alignItems: "end" }}>
-            <div>
-              <label style={{ fontSize: "var(--text-xs)", fontFamily: "var(--font-mono)", color: "var(--muted)", textTransform: "uppercase", display: "block", marginBottom: 4 }}>Тиков</label>
-              <input type="number" value={simTicks} onChange={(e) => setSimTicks(Number(e.target.value))} min={10} max={500}
-                style={{ padding: "6px 10px", border: "1px solid var(--border)", borderRadius: "var(--radius-md)", fontSize: "var(--text-sm)", width: 80, background: "var(--bg)" }} />
-            </div>
-            <button onClick={runFullSimulation} disabled={simLoading}
-              style={{ padding: "8px 20px", background: "var(--epic)", color: "#fff", borderRadius: "var(--radius-md)", fontSize: "var(--text-sm)", border: "none", cursor: simLoading ? "wait" : "pointer", opacity: simLoading ? 0.5 : 1, fontWeight: 600 }}>
-              {simLoading ? "Симуляция…" : "Запустить симуляцию"}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {simResult && (
-        <div className="panel" style={{ marginBottom: "var(--space-4)" }}>
-          <div className="panel-header">
-            Результат симуляции ({simResult.ticks || 0} тиков)
-            {simResult.report_file && (
-              <span style={{ fontSize: "var(--text-xs)", fontFamily: "var(--font-mono)", color: "var(--muted)", marginLeft: 8 }}>
-                Файл: {simResult.report_file}
-              </span>
-            )}
-          </div>
-          <div className="panel-body">
-            {simResult.error ? (
-              <div style={{ color: "var(--danger)" }}>{simResult.error}</div>
-            ) : (
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-4)" }}>
-                {/* State Distribution */}
-                <div>
-                  <h4 style={{ fontFamily: "var(--font-heading)", fontSize: "var(--text-sm)", fontWeight: 600, marginBottom: "var(--space-2)" }}>Распределение состояний</h4>
-                  {simResult.state_distribution && Object.entries(simResult.state_distribution).map(([state, pct]) => (
-                    <div key={state} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", color: "var(--muted)", minWidth: 100 }}>{state}</span>
-                      <div style={{ flex: 1, height: 16, background: "var(--bg-elevated)", borderRadius: 4, overflow: "hidden" }}>
-                        <div style={{ height: "100%", width: `${pct}%`, background: "var(--accent)", borderRadius: 4, transition: "width 0.3s" }} />
-                      </div>
-                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", color: "var(--muted)", minWidth: 40 }}>{String(pct)}%</span>
-                    </div>
-                  ))}
-                </div>
-                {/* Stats */}
-                <div>
-                  <h4 style={{ fontFamily: "var(--font-heading)", fontSize: "var(--text-sm)", fontWeight: 600, marginBottom: "var(--space-2)" }}>Статистика</h4>
-                  <div style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-sm)", lineHeight: 2 }}>
-                    <div>Боёв: <span style={{ color: "var(--accent)" }}>{simResult.combat_stats?.total || 0}</span></div>
-                    <div>Среднее HP: <span style={{ color: "var(--accent)" }}>{simResult.avg_hp || 0}</span></div>
-                    <div>Среднее настроение: <span style={{ color: "var(--accent)" }}>{simResult.avg_mood || 0}</span></div>
-                    <div>Золото заработано: <span style={{ color: "var(--success)" }}>{simResult.gold_earned || 0}</span></div>
-                    <div>Квестов взято: <span style={{ color: "var(--accent)" }}>{simResult.quests_taken || 0}</span></div>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {result && (
-        <div className="panel">
-          <div className="panel-header">Результат</div>
-          <div className="panel-body" style={{ maxHeight: 300, overflowY: "auto" }}>
-            {result.error ? (
-              <div style={{ color: "var(--danger)" }}>{result.error}</div>
-            ) : (
-              <pre style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-xs)", whiteSpace: "pre-wrap", wordBreak: "break-all" }}>{JSON.stringify(result, null, 2)}</pre>
-            )}
-          </div>
-        </div>
-      )}
-    </div>
-  )
-}
-
 /* ─── P-0: Предложения игроков ─────────────────────── */
 function SuggestionsPanel() {
   const [items, setItems] = useState<any[]>([])
@@ -2043,60 +2181,228 @@ function ModerationPanel() {
   )
 }
 
-/* ─── Tests Panel ───────────────────────────────────── */
-function TestsPanel() {
-  const [results, setResults] = useState<any>(null)
-  const [running, setRunning] = useState(false)
+/* ─── Хроника: политика хранения и агрегаты (S-7) ───── */
+function JournalRetentionPanel() {
+  const [data, setData] = useState<AdminJournalRetention | null>(null)
+  const [stats, setStats] = useState<AdminJournalStats | null>(null)
+  const [days, setDays] = useState(30)
+  const [busy, setBusy] = useState(false)
+  const [notice, setNotice] = useState<{ kind: "ok" | "err"; text: string } | null>(null)
 
-  const runTests = async () => {
-    setRunning(true)
-    try { setResults(await api.adminRunTests()) } catch (e: any) { setResults({ error: e.message }) }
-    setRunning(false)
+  const load = useCallback(() => {
+    api.adminJournalRetention().then(setData).catch(() => {})
+  }, [])
+
+  const loadStats = useCallback(() => {
+    api.adminJournalStats(days).then(setStats).catch(() => {})
+  }, [days])
+
+  useEffect(() => { load(); loadStats() }, [load, loadStats])
+
+  const runCleanup = async () => {
+    setBusy(true); setNotice(null)
+    try {
+      const res = await api.adminJournalRetentionRun()
+      if (res.skipped) {
+        setNotice({ kind: "err", text: `Прогон пропущен: ${res.reason === "disabled" ? "очистка выключена в конфиге" : res.reason === "locked" ? "другой узел уже чистит" : res.reason}` })
+      } else if (res.dry_run) {
+        setNotice({ kind: "ok", text: `Dry-run: было бы удалено ${formatNumber(res.candidates)} записей у ${res.heroes ?? 0} героев. Ничего не удалено.` })
+      } else {
+        setNotice({ kind: "ok", text: `Удалено ${formatNumber(res.deleted)} записей (кандидатов ${formatNumber(res.candidates)}, пачек ${res.batches ?? 0}).` })
+      }
+      load(); loadStats()
+    } catch (e: any) {
+      setNotice({ kind: "err", text: e.message })
+    }
+    setBusy(false)
   }
 
-  useEffect(() => { api.adminLastTests().then(setResults).catch(() => {}) }, [])
+  if (!data) return <div style={{ color: "var(--muted)", padding: 32 }}>Загрузка политики хроники…</div>
+
+  const { config, throttle, preview, oversized_heroes } = data
+  const maxType = Math.max(1, ...preview.by_type.map((t) => t.count))
+  const s = stats?.summary
+  const suppressedShare = s && s.game_events ? (s.suppressed / s.game_events) * 100 : 0
 
   return (
-    <div>
-      <div className="panel" style={{ marginBottom: "var(--space-4)" }}>
-        <div className="panel-header">Тесты проекта</div>
+    <div className="journal-retention">
+      {notice && (
+        <div role="status" className={`journal-notice is-${notice.kind}`}>{notice.text}</div>
+      )}
+
+      {/* ─── Политика ─── */}
+      <div className="panel">
+        <div className="panel-header">
+          Политика хранения
+          <span className={`journal-mode is-${config.enabled ? (config.dry_run ? "shadow" : "live") : "off"}`}>
+            {!config.enabled ? "выключена" : config.dry_run ? "dry-run" : "включена"}
+          </span>
+        </div>
         <div className="panel-body">
-          <button onClick={runTests} disabled={running}
-            style={{ padding: "8px 20px", background: "var(--accent)", color: "var(--accent-on)", borderRadius: "var(--radius-md)", fontSize: "var(--text-sm)", fontWeight: 600, border: "none", cursor: running ? "wait" : "pointer", opacity: running ? 0.5 : 1 }}>
-            {running ? "Запуск тестов…" : "Запустить тесты"}
-          </button>
+          <div className="journal-policy">
+            <div><span>Окно подробной хроники</span><strong>{config.routine_days} дн.</strong><small>обычные тексты старше уходят</small></div>
+            <div><span>Хвост на героя</span><strong>{formatNumber(config.keep_last_routine)}</strong><small>последних записей хранятся всегда</small></div>
+            <div><span>Порог предупреждения</span><strong>{formatNumber(config.warning_rows_per_hero)}</strong><small>записей на героя</small></div>
+            <div><span>Размер пачки</span><strong>{formatNumber(config.batch_size)}</strong><small>за один проход очистки</small></div>
+          </div>
+
+          <div className="journal-throttle">
+            <div>
+              <span>Троттлинг атмосферы</span>
+              <b className={`journal-mode is-${throttle.mode}`}>
+                {throttle.mode === "enforce" ? "подавляет" : throttle.mode === "shadow" ? "только считает" : "выключен"}
+              </b>
+            </div>
+            <p>
+              Один атмосферный тип — не чаще раза в {Math.round(throttle.cooldown_seconds / 60)} мин,
+              не более {throttle.per_hour} атмосферных записей в час на героя.
+              Важные события (победы, поражения, засады, вехи) не ограничиваются никогда.
+            </p>
+          </div>
+
+          <div style={{ display: "flex", gap: "var(--space-2)", marginTop: "var(--space-4)", flexWrap: "wrap" }}>
+            <button type="button" onClick={runCleanup} disabled={busy || !config.enabled}
+              style={{ padding: "8px 18px", background: "var(--accent)", color: "var(--accent-on)", border: "none", borderRadius: "var(--radius-md)", fontSize: 13, fontWeight: 600 }}>
+              {busy ? "Прогон…" : config.dry_run ? "Прогнать (dry-run)" : "Прогнать очистку"}
+            </button>
+            <button type="button" onClick={() => { load(); loadStats() }} disabled={busy}
+              style={{ padding: "8px 16px", background: "var(--panel-bg)", color: "var(--fg)", border: "1px solid var(--border)", borderRadius: "var(--radius-md)", fontSize: 13 }}>
+              Обновить
+            </button>
+            {!config.enabled && (
+              <span style={{ alignSelf: "center", color: "var(--muted)", fontSize: 13 }}>
+                Очистка выключена в <code>game_configs["journal_retention"]</code> — прогон недоступен
+              </span>
+            )}
+          </div>
         </div>
       </div>
-      {results && (
+
+      {/* ─── Предпросмотр ─── */}
+      <div className="panel">
+        <div className="panel-header">
+          Что уйдёт при текущей политике
+          <span style={{ color: "var(--muted)", font: "11px/1.2 'Fira Code', monospace", fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>
+            срез {preview.cutoff?.slice(0, 16).replace("T", " ")}
+          </span>
+        </div>
+        <div className="panel-body">
+          <div className="journal-preview-total">
+            <strong>{formatNumber(preview.candidates)}</strong>
+            <span>записей-кандидатов на удаление</span>
+          </div>
+
+          {preview.by_type.length === 0 ? (
+            <p className="decision-audit-empty">Удалять нечего — вся хроника внутри окна или защищена.</p>
+          ) : (
+            <ul className="pulse-bars">
+              {preview.by_type.map((t) => (
+                <li key={t.entry_type}>
+                  <span className="pulse-bar-name">{t.entry_type}</span>
+                  <span className="pulse-bar-track"><i style={{ width: `${(t.count / maxType) * 100}%` }} /></span>
+                  <span className="pulse-bar-count">{formatNumber(t.count)}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+        <div className="decision-audit-note">
+          Важные события (победы, поражения, засады, находки, вехи) и записи про сны/новости мира не удаляются никогда.
+          Памятные вехи хранятся отдельно и переживают очистку.
+        </div>
+      </div>
+
+      {/* ─── Агрегаты ─── */}
+      <div className="panel">
+        <div className="panel-header">
+          Агрегаты событий
+          <span style={{ color: "var(--muted)", font: "11px/1.2 'Fira Code', monospace", fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>
+            переживают очистку текстов
+          </span>
+        </div>
+        <div className="panel-body">
+          <div style={{ display: "flex", gap: "var(--space-2)", marginBottom: "var(--space-4)", flexWrap: "wrap" }}>
+            {[7, 30, 90, 365].map((d) => (
+              <button key={d} type="button" onClick={() => setDays(d)}
+                style={{
+                  padding: "5px 12px", borderRadius: "var(--radius-md)", fontSize: 13,
+                  border: `1px solid ${days === d ? "var(--accent)" : "var(--border)"}`,
+                  background: days === d ? "var(--accent)" : "var(--panel-bg)",
+                  color: days === d ? "var(--accent-on)" : "var(--fg)",
+                }}>
+                {d} дн.
+              </button>
+            ))}
+          </div>
+
+          {!s || s.game_events === 0 ? (
+            <p className="decision-audit-empty">
+              Агрегатов за период нет. Они наполняются с момента включения учёта;
+              старую историю можно восстановить backfill'ом.
+            </p>
+          ) : (
+            <>
+              <div className="journal-aggregate-grid">
+                {[
+                  { label: "Игровых событий", value: s.game_events, note: `${s.heroes} героев · ${s.hero_days} дней-героя` },
+                  { label: "Опубликовано текстом", value: s.published, note: `${(100 - suppressedShare).toFixed(1)}% от событий` },
+                  { label: "Подавлено троттлингом", value: s.suppressed, note: `${suppressedShare.toFixed(1)}% от событий` },
+                  { label: "Побед / поражений", value: `${s.victories} / ${s.defeats}`, note: `${s.deaths} смертей` },
+                  { label: "Квестов завершено", value: s.quests, note: `${s.level_ups} повышений уровня` },
+                  { label: "Опыт за период", value: s.xp, note: `${formatNumber(s.gold)} 🪙 золота` },
+                ].map((c) => (
+                  <div className="journal-aggregate" key={c.label}>
+                    <span>{c.label}</span>
+                    <strong>{typeof c.value === "number" ? formatNumber(c.value) : c.value}</strong>
+                    <small>{c.note}</small>
+                  </div>
+                ))}
+              </div>
+
+              <div className="journal-daily">
+                {stats!.daily.slice(-30).map((d) => {
+                  const max = Math.max(1, ...stats!.daily.map((x) => x.game_events))
+                  return (
+                    <div key={d.day} className="journal-daily-col" title={`${d.day}: событий ${d.game_events}, опубликовано ${d.published}, подавлено ${d.suppressed}`}>
+                      <div className="journal-daily-stack">
+                        <i className="is-published" style={{ height: `${(d.published / max) * 100}%` }} />
+                        <i className="is-suppressed" style={{ height: `${(d.suppressed / max) * 100}%` }} />
+                      </div>
+                      <span>{d.day.slice(5)}</span>
+                    </div>
+                  )
+                })}
+              </div>
+              <div className="decision-timeline-legend">
+                <span><i className="is-action" /> опубликовано</span>
+                <span><i className="is-failed" /> подавлено</span>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* ─── Разросшиеся герои ─── */}
+      {oversized_heroes.length > 0 && (
         <div className="panel">
           <div className="panel-header">
-            Результаты
-            {results.run_at && <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--muted)", fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>{formatDate(results.run_at)}</span>}
+            Разросшиеся хроники
+            <span style={{ color: "var(--warn)", font: "11px/1.2 'Fira Code', monospace", fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>
+              выше порога {formatNumber(config.warning_rows_per_hero)}
+            </span>
           </div>
-          <div className="panel-body">
-            {results.error ? (
-              <div style={{ color: "var(--danger)" }}>{results.error}</div>
-            ) : (
-              <>
-                <div style={{ display: "flex", gap: "var(--space-4)", marginBottom: "var(--space-3)" }}>
-                  <div style={{ textAlign: "center" }}>
-                    <div style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: "var(--text-2xl)", color: "var(--success)" }}>{results.passed}</div>
-                    <div style={{ fontSize: "var(--text-xs)", color: "var(--muted)" }}>Пройдено</div>
-                  </div>
-                  <div style={{ textAlign: "center" }}>
-                    <div style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: "var(--text-2xl)", color: results.failed > 0 ? "var(--danger)" : "var(--muted)" }}>{results.failed}</div>
-                    <div style={{ fontSize: "var(--text-xs)", color: "var(--muted)" }}>Провалено</div>
-                  </div>
-                  <div style={{ textAlign: "center" }}>
-                    <div style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: "var(--text-2xl)", color: results.errors > 0 ? "var(--warn)" : "var(--muted)" }}>{results.errors}</div>
-                    <div style={{ fontSize: "var(--text-xs)", color: "var(--muted)" }}>Ошибки</div>
-                  </div>
-                </div>
-                {results.output && (
-                  <pre style={{ fontFamily: "var(--font-mono)", fontSize: 11, background: "var(--panel-bg)", padding: "var(--space-3)", borderRadius: "var(--radius-md)", maxHeight: 300, overflowY: "auto", whiteSpace: "pre-wrap" }}>{results.output}</pre>
-                )}
-              </>
-            )}
+          <div className="panel-body" style={{ padding: 0 }}>
+            <table className="decision-audit-table">
+              <thead><tr><th>Герой (ID)</th><th>Записей</th></tr></thead>
+              <tbody>
+                {oversized_heroes.map((h) => (
+                  <tr key={h.hero_id}>
+                    <td style={{ fontFamily: "var(--font-mono)", fontSize: 12 }}>{h.hero_id}</td>
+                    <td>{formatNumber(h.rows)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       )}
@@ -2380,13 +2686,11 @@ export function AdminPage() {
             {activeTab === "heroes" && <HeroesPanel />}
             {activeTab === "decision-audit" && <DecisionAuditPanel />}
             {activeTab === "narratives" && <NarrativesPanel />}
-            {activeTab === "narrative-analytics" && <NarrativeAnalyticsPanel />}
             {activeTab === "moderation" && <ModerationPanel />}
             {activeTab === "suggestions" && <SuggestionsPanel />}
             {activeTab === "items" && <ItemsPanel />}
             {activeTab === "monsters" && <MonstersPanel />}
-            {activeTab === "simulation" && <SimulationPanel />}
-            {activeTab === "tests" && <TestsPanel />}
+            {activeTab === "journal" && <JournalRetentionPanel />}
             {activeTab === "config" && <ConfigPanel />}
             {activeTab === "backup" && <BackupPanel />}
           </div>

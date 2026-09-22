@@ -4,7 +4,7 @@ defmodule TesIdleWeb.Controllers.AdminNarrativeTest do
   import Plug.Conn
 
   alias TesIdle.Repo
-  alias TesIdle.Schemas.{User, Hero, NarrativeTemplate, JournalEntry}
+  alias TesIdle.Schemas.{User, NarrativeTemplate}
   import Ecto.Query
 
   @endpoint TesIdleWeb.Endpoint
@@ -180,55 +180,6 @@ defmodule TesIdleWeb.Controllers.AdminNarrativeTest do
       |> patch("/api/v1/admin/narrative-templates/#{t.id}", %{"mood_min" => "45"})
     assert conn.status == 200
     assert Repo.reload!(t).mood_min == 45.0
-  end
-
-  # ─── GET /admin/narrative-stats (A-2: аналитика журнала) ─────────────
-
-  defp hero!(user) do
-    Repo.insert!(%Hero{name: "QA-герой", race: "Nord", hero_class: "Воин",
-      user_id: user.id, brain_hash: String.duplicate("ab", 32)})
-  end
-
-  defp journal!(hero, entry_type, text) do
-    Repo.insert!(%JournalEntry{hero_id: hero.id, entry_type: entry_type, text: text})
-  end
-
-  test "usage: 403 для не-админа", %{plain: plain} do
-    conn = authed_conn(plain) |> get("/api/v1/admin/narrative-stats")
-    assert conn.status == 403
-  end
-
-  test "usage: totals, тонкие типы первыми, мёртвые шаблоны, дневной объём", %{admin: admin} do
-    h = hero!(admin)
-    journal!(h, "explore", String.duplicate("д", 40))
-    journal!(h, "explore", String.duplicate("д", 60))
-    journal!(h, "world_news", "короткая")
-    template(%{template_type: "never_used_type_xyz"})
-
-    conn = authed_conn(admin) |> get("/api/v1/admin/narrative-stats")
-    assert conn.status == 200
-    body = json_response(conn, 200)
-
-    assert body["totals"]["total"] == 3
-    assert body["totals"]["heroes"] == 1
-    assert body["totals"]["types"] == 2
-
-    usage = body["type_usage"]
-    assert length(usage) == 2
-    # Тонкие первыми: world_news (1 запись) перед explore (2 записи)
-    assert hd(usage)["entry_type"] == "world_news"
-    explore = Enum.find(usage, &(&1["entry_type"] == "explore"))
-    assert explore["count"] == 2
-    assert explore["avg_length"] == 50
-
-    assert "never_used_type_xyz" in body["unused_template_types"]
-    assert Enum.any?(body["daily_volume"], &(&1["count"] == 3))
-  end
-
-  test "usage: невалидный days → дефолт 30 (не 500)", %{admin: admin} do
-    conn = authed_conn(admin) |> get("/api/v1/admin/narrative-stats?days=abc")
-    assert conn.status == 200
-    assert json_response(conn, 200)["totals"]["days"] == 30
   end
 
   # ─── A-1b: массовое одобрение ─────────────────────────────

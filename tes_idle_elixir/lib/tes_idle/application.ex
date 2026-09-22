@@ -13,6 +13,12 @@ defmodule TesIdle.Application do
       ] ++ background_children()
 
     opts = [strategy: :one_for_one, name: TesIdle.Supervisor]
+
+    # ETS-таблица ограничителя атмосферных записей: advisory-лимит одного узла.
+    # Создаём ДО супервизора. Если init() стоит после start_link, первый тик
+    # успевает вызвать Throttle.check до появления таблицы и падает.
+    TesIdle.Game.Journal.Throttle.init()
+
     Supervisor.start_link(children, opts)
   end
 

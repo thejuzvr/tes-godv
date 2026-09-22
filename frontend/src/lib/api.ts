@@ -20,6 +20,7 @@ export interface DecisionAuditActionOutcome {
 }
 
 export interface DecisionAuditHero {
+  hero_id?: string
   hero: string
   level: number
   events: number
@@ -28,6 +29,7 @@ export interface DecisionAuditHero {
   switched: number
   completed: number
   failed: number
+  avg_utility?: number
 }
 
 export interface DecisionAuditRecentEvent {
@@ -39,16 +41,185 @@ export interface DecisionAuditRecentEvent {
   action: string | null
   utility: number | null
   created_at: string
+  reasons: string[]
+  metadata: Record<string, unknown>
+}
+
+/** Фильтры аудита решений — те же ключи принимает и выгрузка аналитики. */
+export interface DecisionAuditQuery {
+  days?: number
+  limit?: number
+  offset?: number
+  eventType?: string
+  goal?: string
+  heroId?: string
+  q?: string
+}
+
+export type DecisionAuditSeverity = "critical" | "warning" | "info"
+
+/** Найденная аномалия в решениях ИИ с человекочитаемой рекомендацией. */
+export interface DecisionAuditAnomaly {
+  kind: string
+  severity: DecisionAuditSeverity
+  title: string
+  detail: string
+  hint: string
+  goal: string | null
+  action: string | null
+  hero: string | null
+  value: number
+  threshold: number
+}
+
+export interface DecisionAuditTimelinePoint {
+  bucket: string
+  intent: number
+  action: number
+  failed: number
+}
+
+export interface DecisionAuditEventCounts {
+  event_type: string
+  count: number
 }
 
 export interface DecisionAuditReport {
-  range: { from: string; days: number }
+  range: { from: string; days: number; to?: string }
   limit: number
+  offset?: number
+  filters?: { event_type: string | null; goal: string | null; hero_id: string | null; q: string | null }
   intent_by_goal: DecisionAuditGoal[]
   action_outcomes: DecisionAuditActionOutcome[]
   heroes: DecisionAuditHero[]
   recent_events: DecisionAuditRecentEvent[]
   total_decisions: number
+  /** Расширенная аналитика (S-6): объёмы, таймлайн, аномалии. */
+  event_counts?: DecisionAuditEventCounts[]
+  totals?: {
+    events: number
+    intents: number
+    actions: number
+    failed_actions: number
+    distinct_goals: number
+    distinct_actions: number
+    heroes: number
+    failure_rate: number
+    switch_rate: number
+    hold_rate: number
+    avg_utility?: number
+  }
+  timeline?: DecisionAuditTimelinePoint[]
+  anomalies?: DecisionAuditAnomaly[]
+  anomaly_summary?: { critical: number; warning: number; info: number; total: number }
+  goals?: string[]
+  event_types?: string[]
+}
+
+export interface AdminWorldPulse {
+  totals: {
+    users: number
+    heroes: number
+    journal_entries: number
+    narrative_templates: number
+    active_templates: number
+    monsters: number
+    active_monsters: number
+    items: number
+    locations: number
+    quests: number
+    guilds: number
+    inventory_rows: number
+  }
+  heroes: {
+    by_state: Array<{ state: string; count: number }>
+    online: number
+    dead: number
+    jailed: number
+    avg_level: number
+    max_level: number
+    total_gold: number
+    total_kills: number
+    avg_mood: number
+    avg_hunger: number
+    avg_fatigue: number
+  }
+  levels: Array<{ label: string; count: number }>
+  economy: { xp: number; gold: number; entries: number; heroes: number }
+  activity: Array<{ date: string; entries: number; heroes: number; xp: number; gold: number }>
+  content: {
+    journal_types: Array<{ entry_type: string; count: number }>
+    locations_by_type: Array<{ location_type: string | null; count: number }>
+    monsters_by_location: Array<{ location: string; count: number }>
+  }
+  online: { users_online: number; seen_last_hour: number }
+  server_time: string
+}
+
+export interface AdminLoops {
+  count: number
+  running: boolean
+  interval_seconds: number
+  heroes: number
+  online_heroes: number
+  tick_concurrency: number
+  offline_tick_minutes: number
+  loops: Array<{ name: string; running: boolean; interval_seconds: number; description: string }>
+}
+
+export interface AdminJournalPreview {
+  dry_run: boolean
+  cutoff: string
+  routine_days: number
+  keep_last_routine: number
+  candidates: number
+  by_type: Array<{ entry_type: string; count: number }>
+}
+
+export interface AdminJournalRetention {
+  config: {
+    enabled: boolean
+    dry_run: boolean
+    routine_days: number
+    keep_last_routine: number
+    warning_rows_per_hero: number
+    batch_size: number
+  }
+  throttle: { mode: string; cooldown_seconds: number; per_hour: number }
+  preview: AdminJournalPreview
+  oversized_heroes: Array<{ hero_id: string; rows: number }>
+}
+
+export interface AdminJournalStats {
+  range: { from: string; to: string; days: number }
+  summary: {
+    hero_days: number
+    heroes: number
+    game_events: number
+    published: number
+    suppressed: number
+    victories: number
+    defeats: number
+    quests: number
+    xp: number
+    gold: number
+    deaths: number
+    level_ups: number
+  }
+  daily: Array<{
+    day: string
+    heroes: number
+    game_events: number
+    published: number
+    suppressed: number
+    victories: number
+    defeats: number
+    quests: number
+    deaths: number
+    level_ups: number
+    xp: number
+    gold: number
+  }>
 }
 
 class ApiClient {
@@ -281,11 +452,13 @@ class ApiClient {
     return this.request<{ pets: (Pet & { created_at: string | null })[] }>("/hero/pets/history")
   }
 
-  // Journal
+  // Journal. Ответ — объект: {entries, has_more, next_cursor, limit}.
+  // Старый фронт ждал голый массив; после смены контракта лента пустела.
   async getJournal(limit = 50, offset = 0, entry_type?: string) {
     const params = new URLSearchParams({ limit: String(limit), offset: String(offset) })
     if (entry_type) params.set("entry_type", entry_type)
-    return this.request<any[]>(`/journal/?${params}`)
+    const body = await this.request<{ entries?: any[]; has_more?: boolean; next_cursor?: string | null } | any[]>(`/journal?${params}`)
+    return Array.isArray(body) ? body : (body.entries ?? [])
   }
 
   async getJournalCount() {
@@ -388,8 +561,8 @@ class ApiClient {
 
   // ─── Admin ─────────────────────────────────────────
 
-  async adminStats() {
-    return this.request<any>("/admin/stats")
+  async adminStats(days = 14) {
+    return this.request<AdminWorldPulse>(`/admin/stats?days=${days}`)
   }
 
   async adminUsers(page = 1, perPage = 20) {
@@ -433,15 +606,15 @@ class ApiClient {
   }
 
   async adminTickAll() {
-    return this.request<any>("/admin/game/tick-all", { method: "POST" })
+    return this.request<{ message: string; heroes: number }>("/admin/game/tick-all", { method: "POST" })
   }
 
   async adminLoops() {
-    return this.request<any>("/admin/game/loops")
+    return this.request<AdminLoops>("/admin/game/loops")
   }
 
   async adminRestartLoops() {
-    return this.request<any>("/admin/game/restart-loops", { method: "POST" })
+    return this.request<{ message: string; restarted: boolean }>("/admin/game/restart-loops", { method: "POST" })
   }
 
   async adminValidateNarrativeBatch(payload: { templates: Array<Record<string, unknown>>; activation_policy?: "pending" | "active_system" }) {
@@ -479,12 +652,29 @@ class ApiClient {
     })
   }
 
-  async adminNarrativeUsage(days = 30) {
-    return this.request<any>(`/admin/narrative-stats?days=${days}`)
+  async adminBrainStats(params: DecisionAuditQuery = {}) {
+    const search = new URLSearchParams()
+    if (params.days !== undefined) search.set("days", String(params.days))
+    if (params.limit !== undefined) search.set("limit", String(params.limit))
+    if (params.eventType) search.set("event_type", params.eventType)
+    if (params.goal) search.set("goal", params.goal)
+    if (params.heroId) search.set("hero_id", params.heroId)
+    if (params.q) search.set("q", params.q)
+    if (params.offset !== undefined) search.set("offset", String(params.offset))
+    const query = search.toString()
+    return this.request<DecisionAuditReport>(`/admin/brain/stats${query ? `?${query}` : ""}`)
   }
 
-  async adminBrainStats(days = 30, limit = 50) {
-    return this.request<DecisionAuditReport>(`/admin/brain/stats?days=${days}&limit=${limit}`)
+  /** URL выгрузки аналитики решений — файл скачивается браузером напрямую. */
+  adminBrainExportUrl(params: DecisionAuditQuery = {}, format: "md" | "json" | "csv" = "md") {
+    const search = new URLSearchParams({ format })
+    if (params.days !== undefined) search.set("days", String(params.days))
+    if (params.eventType) search.set("event_type", params.eventType)
+    if (params.goal) search.set("goal", params.goal)
+    if (params.heroId) search.set("hero_id", params.heroId)
+    if (params.q) search.set("q", params.q)
+    if (params.limit !== undefined) search.set("limit", String(params.limit))
+    return `${API_BASE}/admin/brain/export?${search.toString()}`
   }
 
   // ─── Каталог контента: предметы и монстры ────────────
@@ -611,20 +801,30 @@ class ApiClient {
     return this.request<any>(`/admin/narrative-templates/${id}`, { method: "DELETE" })
   }
 
-  async adminGenerateMonsters(count = 5) {
-    return this.request<any>(`/admin/simulation/generate-monsters?count=${count}`, { method: "POST" })
+  // ─── S-7: политика хроники ──────────────────────────
+
+  async adminJournalRetention() {
+    return this.request<AdminJournalRetention>("/admin/journal/retention")
   }
 
-  async adminGenerateItems(count = 10) {
-    return this.request<any>(`/admin/simulation/generate-items?count=${count}`, { method: "POST" })
+  async adminJournalRetentionPreview() {
+    return this.request<AdminJournalPreview>("/admin/journal/retention/preview")
   }
 
-  async adminRunTests() {
-    return this.request<any>("/admin/tests/run", { method: "POST" })
+  async adminJournalRetentionRun() {
+    return this.request<{
+      dry_run?: boolean
+      deleted: number
+      candidates: number
+      heroes?: number
+      batches?: number
+      skipped?: boolean
+      reason?: string
+    }>("/admin/journal/retention/run", { method: "POST" })
   }
 
-  async adminLastTests() {
-    return this.request<any>("/admin/tests/last")
+  async adminJournalStats(days = 30) {
+    return this.request<AdminJournalStats>(`/admin/journal/stats?days=${days}`)
   }
 
   async adminConfigs() {
@@ -646,24 +846,6 @@ class ApiClient {
 
   async adminLlmToggle(enabled: boolean) {
     return this.request<any>(`/admin/llm-toggle?enabled=${enabled}`, { method: "POST" })
-  }
-
-  async adminGenerateAll() {
-    return this.request<any>("/admin/simulation/generate-all", { method: "POST" })
-  }
-
-  async adminGenerateNarrativesModerated(type: string, location: string, count: number, sentences = 2, tone = "atmospheric") {
-    const params = new URLSearchParams({
-      template_type: type,
-      location_name: location,
-      count: String(count),
-      sentences: String(sentences),
-      tone,
-    })
-    return this.request<any>(
-      `/admin/simulation/generate-narratives-moderated?${params}`,
-      { method: "POST" }
-    )
   }
 
   async adminExport() {
@@ -694,11 +876,7 @@ class ApiClient {
     })
   }
 
-  // ─── Hero Simulation ───────────────────────────────
-
-  async adminSimulationRun(ticks: number = 300) {
-    return this.request<any>(`/admin/simulation/run?ticks=${ticks}`, { method: "POST" })
-  }
+  // ─── Hero Simulation удалена вместе с вкладкой «Симуляция» ───
 }
 
 export const api = new ApiClient()

@@ -95,7 +95,7 @@
 .observatory-purse strong { font-size: 19px; font-weight: 500; font-variant-numeric: tabular-nums; }
 .observatory-purse > span { color: var(--muted); font-size: 12px; }
 .observatory-bounty { position: relative; display: flex; align-items: center; gap: 8px; padding: 0 0 16px; font-size: 13px; color: var(--danger); }
-.observatory-workspace { display: grid; grid-template-columns: minmax(0, 1fr) 350px; gap: 28px; align-items: start; }
+.observatory-workspace { display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 28px; align-items: start; }
 .observatory-story, .observatory-sidebar { min-width: 0; display: flex; flex-direction: column; gap: 18px; }
 .observatory-section-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 26px; }
 .observatory-section-heading > span { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); }
@@ -122,18 +122,27 @@
 .observatory .gilded-divider span { white-space: normal !important; text-align: center; }
 .observatory .loot-tag, .observatory .combat-tag { background: transparent; border: 0; padding: 0; color: var(--accent); font-size: 12px; }
 .observatory-dossier { border: 1px solid var(--border); border-radius: 10px; background: var(--surface); overflow: hidden; }
-.observatory-dossier > summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 20px; cursor: pointer; color: var(--fg); font-size: 14px; }
+.observatory-dossier > summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; cursor: pointer; color: var(--fg); font-size: 14px; }
 .observatory-dossier > summary::-webkit-details-marker { display: none; }
-.observatory-dossier > summary > span { display: grid; grid-template-columns: 18px 1fr; align-items: center; gap: 6px 10px; }
-.observatory-dossier > summary small { grid-column: 2; color: var(--muted); font-size: 12px; line-height: 1.5; }
+.observatory-dossier > summary > span { display: grid; grid-template-columns: 18px 1fr; align-items: center; gap: 2px 10px; }
+.observatory-dossier > summary small { grid-column: 2; color: var(--muted); font-size: 12px; line-height: 1.4; }
 .observatory-dossier > summary > svg { flex-shrink: 0; color: var(--muted); transition: transform 180ms ease; }
 .observatory-dossier[open] > summary > svg { transform: rotate(180deg); }
 .observatory-dossier > summary:hover { background: var(--surface-raised); }
-.observatory-dossier-content { border-top: 1px solid var(--border); padding: 12px; display: flex; flex-direction: column; gap: 12px; }
-.observatory-dossier-content > .panel { border: 0; background: transparent; }
-.observatory-dossier-content .panel-header { padding: 12px 8px; }
-.observatory-dossier-content .panel-body { padding: 12px 8px; }
-.observatory-dossier-content .arsenal-module { overflow: hidden; }
+.observatory-dossier > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+/* Одна карточка на всё досье: внутренние панели теряют собственные шапки и поля. */
+.observatory-dossier-content { border-top: 1px solid var(--border); padding: 4px 14px 14px; display: flex; flex-direction: column; gap: 0; }
+.observatory-dossier-content > .panel,
+.observatory-dossier-content > .panel.mood-graph { border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+.observatory-dossier-content .panel-header { display: none; }
+.observatory-dossier-content .panel-body { padding: 12px 0; border-top: 1px solid color-mix(in srgb, var(--border) 70%, transparent); }
+.observatory-dossier-content > .panel:first-child .panel-body,
+.observatory-dossier-content > :first-child .panel-body { border-top: 0; }
+.observatory-dossier-content .needs-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.observatory-dossier-content .need-item { padding: 8px 4px; gap: 2px; }
+.observatory-dossier-content .mood-graph canvas { height: 52px; }
+.observatory-dossier-content .arsenal-module { overflow: hidden; border-top: 1px solid color-mix(in srgb, var(--border) 70%, transparent); border-radius: 0; }
+.observatory-dossier-content .arsenal-module > div:first-child { padding: 10px 0 !important; background: transparent !important; }
 .observatory .status-bar { background: transparent; border-top: 1px solid var(--border); padding: 16px 0; font-size: 12px; color: var(--muted); }
 /* Interventions: six readable, keyboard-friendly actions. */
 .observatory-intervention { border: 1px solid var(--border); border-radius: 10px; background: var(--surface); overflow: hidden; }
@@ -198,9 +207,9 @@
 @media (max-width: 1100px) { .hero-activity-strip { grid-template-columns: 1fr; } }
 @media (max-width: 700px) { .hero-live-signals { grid-template-columns: 1fr; } .hero-current-intent { border-left: 0; border-top: 1px solid var(--border); } .hero-skill-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 480px) { .hero-activity-copy { flex-direction: column; gap: 3px; } .hero-skill-list { grid-template-columns: 1fr; } }
-@media (min-width: 1101px) { .observatory-sidebar { padding-top: 44px; } }
+@media (min-width: 1101px) { .observatory-story { padding-top: 0; } }
 @media (max-width: 1100px) {
-  .observatory-workspace { grid-template-columns: minmax(0, 1fr) 310px; gap: 20px; }
+  .observatory-workspace { grid-template-columns: 280px minmax(0, 1fr); gap: 20px; }
   .observatory-section-heading { flex-wrap: wrap; }
   .observatory-identity { gap: 16px; }
   .observatory-vitals { gap: 18px; }
@@ -216,9 +225,13 @@
   .observatory-workspace { display: flex; flex-direction: column; }
   .observatory-story, .observatory-sidebar { width: 100%; }
   .observatory-sidebar { display: contents; }
-  .observatory-intervention { order: -1; width: 100%; }
+  .observatory-dossier { order: 2; width: 100%; }
+  .observatory-world { order: 4; }
+  .observatory-story { display: contents; }
+  .observatory-section-heading { order: 1; }
+  .observatory-intervention { order: 0; width: 100%; }
   .observatory-intervention-actions { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 14px; }
-  .observatory-dossier { width: 100%; }
+  .observatory-story > :not(.observatory-section-heading):not(.observatory-intervention) { order: 3; width: 100%; }
   .observatory-hero { padding: 20px 20px 0; }
   .observatory-identity { flex-wrap: wrap; padding: 24px 0; }
   .observatory-location { flex-basis: 100%; max-width: none; margin-left: 0; padding: 12px 0 0; gap: 5px; }

@@ -3,30 +3,7 @@ defmodule TesIdleWeb.Admin.NarrativeController do
 
   alias TesIdle.Repo
   alias TesIdle.Schemas.NarrativeTemplate
-  alias TesIdle.Game.Narrative.Analytics
   import Ecto.Query
-
-  # A-2: нарративная аналитика из journal_entries + narrative_templates.
-  def usage(conn, params) do
-    days = days_param(params)
-
-    json(conn, %{
-      totals: Analytics.totals(days),
-      type_usage: Analytics.type_usage(days),
-      daily_volume: Analytics.daily_volume(min(days, 14)),
-      unused_template_types: Analytics.unused_template_types(days),
-      factory_targets: Analytics.factory_targets(days)
-    })
-  end
-
-  defp days_param(%{"days" => d}) when is_binary(d) do
-    case Integer.parse(d) do
-      {n, ""} when n in 1..365 -> n
-      _ -> 30
-    end
-  end
-
-  defp days_param(_), do: 30
 
   def index(conn, params) do
     page = Map.get(params, "page", "1") |> String.to_integer()

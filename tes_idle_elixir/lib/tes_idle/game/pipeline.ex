@@ -7,6 +7,7 @@ defmodule TesIdle.Game.Pipeline do
   alias TesIdle.Repo
   alias TesIdle.Game.{ContextBuilder, AutoEquip, FSMExecutor, Memory}
   alias TesIdle.Game.Narrative.{TemplateEngine, NarrativeDirector, NarrativeContext}
+  alias TesIdle.Game.Journal.{Aggregator, Classifier, Milestones, Throttle}
   alias TesIdle.Schemas.{Hero, JournalEntry}
   import Ecto.Query
 
@@ -150,6 +151,12 @@ defmodule TesIdle.Game.Pipeline do
           # Build context, select event, format via TemplateEngine
           narrative_ctx = NarrativeContext.build(ctx, result)
 
+          # 7a. Учёт события для агрегатов и политика публикации хроники.
+          #
+          # Важно: награды и состояние героя УЖЕ применены выше, поэтому
+          # решение о публикации текста ничего не отнимает у игрока —
+          # оно влияет только на то, попадёт ли строка в дневник.
+          # Учёт идёт всегда, подавление — только для атмосферы.
           journal_entry =
             if result[:combat_progress] do
               nil
@@ -159,10 +166,12 @@ defmodule TesIdle.Game.Pipeline do
               text = TemplateEngine.format(template_type, narrative_ctx)
               NarrativeDirector.track_used(updated_hero, event.name)
 
-              create_journal_entry(
+              publish_narrative(
                 updated_hero,
-                %{type: template_type, text: text},
+                template_type,
+                text,
                 result,
+                ctx,
                 chapter,
                 chapter_title,
                 decision_motive(ctx, merged_sd)
@@ -418,8 +427,90 @@ defmodule TesIdle.Game.Pipeline do
     {updated, brain_state}
   end
 
-  defp create_journal_entry(hero, narrative, result, chapter, chapter_title, motive) do
-    is_combat_event =
+  # Публикация нарратива с учётом политики хроники.
+  #
+  # Решение принимает Throttle: атмосферные повторы не создают строку,
+  # важные события проходят всегда. Учёт ведётся в обоих случаях, поэтому
+  # «сколько событий было» и «сколько строк осталось» не смешиваются.
+  #
+  # Возвращает запись журнала или nil (подавлено / шаблона нет).
+  defp publish_narrative(hero, template_type, text, result, ctx, chapter, chapter_title, motive) do
+    {_meta, decision} = Throttle.check(hero.id, template_type, result, ctx.configs)
+
+    if decision == :suppress do
+      # Текста нет, но событие случилось: считаем его в агрегатах
+      # и в сквозных счётчиках с пометкой «подавлено».
+      Aggregator.record_suppressed(hero.id, template_type, result, deltas: event_deltas(result))
+      nil
+    else
+      Throttle.mark_published(hero.id, template_type)
+      Aggregator.record_published(hero.id, template_type, result, deltas: event_deltas(result))
+
+      entry =
+        create_journal_entry(
+          hero,
+          %{type: template_type, text: text},
+          result,
+          chapter,
+          chapter_title,
+          motive
+        )
+
+      # Вехи ставим только по факту значимого события, а не на каждую победу.
+      record_milestone(hero, template_type, result, chapter, text)
+      entry
+    end
+  end
+
+  # Счётчики события для суточного агрегата: победы/поражения/квесты/экономика.
+  defp event_deltas(result) do
+    combat = (result && (result[:combat_result] || result["combat_result"])) || %{}
+
+    %{
+      victories: if(bool_field(combat, :victory), do: 1, else: 0),
+      defeats: if(bool_field(combat, :hero_defeated), do: 1, else: 0),
+      deaths: if(result && result[:death] == true, do: 1, else: 0),
+      level_ups: if(result && (result[:level_up] == true or (result[:levels_gained] || 0) > 0), do: 1, else: 0),
+      quests_completed: if(result && quest_done?(result), do: 1, else: 0),
+      xp_gained: max_int(result && result[:xp]),
+      gold_gained: max_int(result && result[:gold_change])
+    }
+  end
+
+  # Отрицательные дельты не должны уменьшать накопленный агрегат:
+  # «золото за день» считаем только по приросту, потери видны в victories/defeats.
+  defp max_int(nil), do: 0
+  defp max_int(value) when is_number(value) and value > 0, do: trunc(value)
+  defp max_int(_), do: 0
+
+  defp quest_done?(result) do
+    result[:quest_complete] == true or result[:quest_completed] == true or
+      result[:quest_done] == true
+  end
+
+  defp bool_field(map, key) when is_map(map) do
+    Map.get(map, key) == true or Map.get(map, to_string(key)) == true
+  end
+
+  defp bool_field(_, _), do: false
+
+  # Памятная веха: сохраняем снимок текста, а не ссылку на шаблон.
+  defp record_milestone(hero, template_type, result, chapter, text) do
+    case Classifier.milestone_candidate(template_type, result) do
+      nil ->
+        :ok
+
+      kind ->
+        Milestones.record(hero, kind, %{
+          entry_type: template_type,
+          text: text,
+          chapter: chapter,
+          payload: %{"template_type" => template_type}
+        })
+    end
+  end
+
+  defp create_journal_entry(hero, narrative, result, chapter, chapter_title, motive) do    is_combat_event =
       narrative.type in [
         "hero_victory",
         "hero_defeat",

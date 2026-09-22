@@ -2,8 +2,7 @@ defmodule TesIdleWeb.GodController do
   use TesIdleWeb, :controller
 
   alias TesIdle.Repo
-  alias TesIdle.Schemas.{Hero, JournalEntry}
-  alias TesIdle.Game.Narrative.TemplateEngine
+  alias TesIdle.Schemas.{Hero, JournalEntry, NarrativeTemplate}
   import Ecto.Query
 
   @effects %{
@@ -65,17 +64,36 @@ defmodule TesIdleWeb.GodController do
 
         # Generate narrative via TemplateEngine
         template_type = @template_types[action_type] || "god_encourage"
-        ctx = %{hero: hero, location: hero.location, configs: %{}, hour: 8,
-                location_type: if(hero.location, do: hero.location.location_type, else: "wilderness"),
-                mood: hero.mood}
-        result = %{state_to: template_type}
+        text = god_text(template_type, hero, @fallback_texts[action_type])
 
-        narrative = TemplateEngine.generate(result, ctx)
-        text = narrative.text || @fallback_texts[action_type] || "#{hero.name} ощутил присутствие бога."
-
-        Repo.insert!(%JournalEntry{hero_id: hero.id, entry_type: "god", text: text})
+        Repo.insert!(%JournalEntry{
+          hero_id: hero.id,
+          entry_type: "god",
+          text: text,
+          xp_gained: 0,
+          gold_gained: 0
+        })
 
         json(conn, %{message: "God action applied", narrative: text})
     end
+  end
+
+  # Не зовём TemplateEngine.generate/2: он читает result.state_to как поле
+  # структуры и падает на карте. format/2 для god_* уходит в fallback "explore".
+  defp god_text(template_type, hero, fallback) do
+    template =
+      Repo.one(
+        from t in NarrativeTemplate,
+          where: t.template_type == ^template_type and t.is_active == true,
+          order_by: fragment("RANDOM()"),
+          limit: 1
+      )
+
+    raw = (template && template.text_template) || fallback || "#{hero.name} ощутил присутствие бога."
+
+    raw
+    |> String.replace("{god_name}", "Талос")
+    |> String.replace("{hero_name}", hero.name || "")
+    |> String.replace("{location_name}", if(hero.location, do: hero.location.name || "", else: ""))
   end
 end

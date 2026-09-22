@@ -84,6 +84,7 @@ defmodule TesIdleWeb.Router do
     # Journal
     get "/journal", JournalController, :index
     get "/journal/count", JournalController, :count
+    get "/journal/summary", JournalController, :summary
 
     # Locations
     get "/locations", LocationController, :index
@@ -132,7 +133,6 @@ defmodule TesIdleWeb.Router do
 
     get "/narrative-templates", NarrativeController, :index
     get "/narrative-templates/stats", NarrativeController, :stats
-    get "/narrative-stats", NarrativeController, :usage
     post "/narrative-batches/validate", NarrativeBatchController, :validate
     post "/narrative-batches/import", NarrativeBatchController, :import
     post "/narrative-templates/bulk", NarrativeController, :bulk
@@ -152,15 +152,6 @@ defmodule TesIdleWeb.Router do
     post "/llm-generate-batch", LlmController, :generate_batch
     post "/narrative-templates/approve-batch", NarrativeController, :approve_batch
 
-    post "/simulation/run", SimulationController, :run
-    post "/simulation/generate-monsters", SimulationController, :generate_monsters
-    post "/simulation/generate-items", SimulationController, :generate_items
-    post "/simulation/generate-all", SimulationController, :generate_all
-
-    post "/simulation/generate-narratives-moderated",
-         SimulationController,
-         :generate_narratives_moderated
-
     # Ручное управление каталогом контента (предметы/монстры)
     get "/content/options", ContentController, :options
 
@@ -174,9 +165,6 @@ defmodule TesIdleWeb.Router do
     post "/monsters", ContentController, :monster_create
     patch "/monsters/:id", ContentController, :monster_update
     delete "/monsters/:id", ContentController, :monster_delete
-
-    get "/tests/last", TestController, :last
-    post "/tests/run", TestController, :run
 
     post "/export", ExportController, :export
     post "/export/file", ExportController, :export_file
@@ -193,7 +181,14 @@ defmodule TesIdleWeb.Router do
     post "/world/events", WorldController, :force_event
     post "/world/gates/open", WorldController, :open_gates
 
-    # S-5: телеметрия решений (Utility AI)
+    # S-5/S-6: телеметрия решений (Utility AI) + выгрузка аналитики
     get "/brain/stats", BrainStatsController, :show
+    get "/brain/export", BrainStatsController, :export
+
+    # S-7: политика хроники — предпросмотр очистки и агрегаты
+    get "/journal/retention", JournalRetentionController, :show
+    get "/journal/retention/preview", JournalRetentionController, :preview
+    post "/journal/retention/run", JournalRetentionController, :run
+    get "/journal/stats", JournalRetentionController, :stats
   end
 end
